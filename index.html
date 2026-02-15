@@ -2,7 +2,7 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
-  <title>Générateur de Prompt – Portrait Cinématique</title>
+  <title>Générateur de Prompt – Faceless Cinematic</title>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -10,12 +10,8 @@
       margin: 20px auto;
       line-height: 1.5;
     }
-    h1 {
-      text-align: center;
-    }
-    h2 {
-      margin-top: 25px;
-    }
+    h1 { text-align: center; }
+    h2 { margin-top: 25px; }
     .options {
       display: flex;
       flex-wrap: wrap;
@@ -52,10 +48,9 @@
 </head>
 <body>
 
-<h1>Générateur de Prompt – Portrait Cinématique</h1>
+<h1>Générateur de Prompt – Faceless Cinematic Portrait</h1>
 
-<!-- PHRASE 2 : STYLE + TENUE -->
-<h2>1. Style artistique du portrait</h2>
+<h2>1. Style artistique (couleur / N&B / faceless)</h2>
 <div class="options" data-category="style">
   <div class="option">artistic</div>
   <div class="option">cinematic</div>
@@ -63,36 +58,47 @@
   <div class="option">high-end</div>
   <div class="option">black and white</div>
   <div class="option">monochrome</div>
-  <div class="option">minimalist</div>
-  <div class="option">dramatic</div>
-  <div class="option">refined</div>
-  <div class="option">mysterious</div>
-  <div class="option">elegant</div>
+  <div class="option">high-contrast black and white</div>
+  <div class="option">film-noir inspired</div>
+  <div class="option">vibrant cinematic colors</div>
+  <div class="option">soft pastel tones</div>
+  <div class="option">warm golden-hour palette</div>
+  <div class="option">cool desaturated tones</div>
+  <div class="option">rich editorial color grading</div>
+  <div class="option">teal and orange cinematic palette</div>
+  <div class="option">faceless aesthetic</div>
+  <div class="option">anonymous portrait style</div>
+  <div class="option">identity-concealed artistic style</div>
+  <div class="option">silhouette-driven composition</div>
 </div>
 
-<h2>2. Tenue & éléments visibles sur la personne</h2>
+<h2>2. Tenue & éléments visibles</h2>
 <div class="options" data-category="tenue">
-  <div class="option">wearing a black cap</div>
+  <div class="option">wearing a hood partially covering the head</div>
+  <div class="option">wearing a cap hiding the upper face</div>
   <div class="option">wearing a black cap embroidered with the words "Code Liberté" in white thread</div>
   <div class="option">wearing dark clothing</div>
   <div class="option">wearing a minimalist outfit</div>
   <div class="option">wearing streetwear style</div>
   <div class="option">wearing luxury-inspired clothing</div>
-  <div class="option">wearing casual clothing</div>
   <div class="option">wearing techwear elements</div>
+  <div class="option">wearing an oversized coat seen from behind</div>
+  <div class="option">wearing a scarf covering part of the face</div>
 </div>
 
-<!-- PHRASE 3 : SCÈNE / GESTE / OBJET -->
-<h2>3. Scène, geste, objet narratif</h2>
+<h2>3. Scène, geste, objet narratif (faceless)</h2>
 <div class="options" data-category="scene">
-  <div class="option">A hand emerges from the shadows, holding a smartphone whose soft screen glow subtly illuminates the contours of her face without fully revealing it</div>
-  <div class="option">She stands partially hidden in the shadows, with a smartphone casting a faint glow on her features</div>
-  <div class="option">She looks down at a smartphone, its light gently outlining her profile in the darkness</div>
-  <div class="option">She is framed in a close-up, with a subtle light source revealing only part of her expression</div>
+  <div class="option">She walks away from the camera, her silhouette softly illuminated</div>
+  <div class="option">She stands with her back to the viewer, holding a smartphone</div>
+  <div class="option">She looks toward the horizon, seen only from behind</div>
+  <div class="option">She adjusts her cap, hiding her face from the light</div>
+  <div class="option">Her hands interact with a smartphone while her face remains unseen</div>
+  <div class="option">A hand emerges from the shadows, holding a smartphone whose glow outlines her silhouette</div>
+  <div class="option">She is framed from above, her face completely out of view</div>
+  <div class="option">She sits with her back turned, body language expressing emotion</div>
 </div>
 
-<!-- PHRASE 4 : ÉCLAIRAGE -->
-<h2>4. Type d’éclairage & effet</h2>
+<h2>4. Éclairage & effet (faceless)</h2>
 <div class="options" data-category="lighting">
   <div class="option">dramatic and sculptural lighting</div>
   <div class="option">soft, cinematic lighting</div>
@@ -104,40 +110,43 @@
 <div class="options" data-category="lightingEffect">
   <div class="option">playing with deep blacks, strong contrasts, and delicate highlights</div>
   <div class="option">creating a subtle interplay of light and shadow</div>
-  <div class="option">sculpting the face with gentle highlights and rich shadows</div>
+  <div class="option">sculpting the body outline with gentle highlights and rich shadows</div>
   <div class="option">enhancing the sense of depth, mystery, and tension</div>
+  <div class="option">keeping the face hidden in shadow while the silhouette is defined</div>
 </div>
 
-<!-- PHRASE 5 : COMPOSITION & ATMOSPHÈRE -->
 <h2>5. Composition & ce qu’elle met en avant</h2>
 <div class="options" data-category="composition">
-  <div class="option">The minimalist, cinematic composition</div>
-  <div class="option">The tightly framed, editorial composition</div>
-  <div class="option">The carefully balanced, high-end composition</div>
+  <div class="option">The faceless, cinematic composition</div>
+  <div class="option">The silhouette-focused composition</div>
+  <div class="option">The back-view composition</div>
   <div class="option">The atmospheric, film-inspired composition</div>
+  <div class="option">The tightly framed, editorial composition</div>
 </div>
 
 <div class="options" data-category="emphasis">
   <div class="option">emphasizes atmosphere, texture, and mystery</div>
-  <div class="option">focuses on emotional intensity and subtle expression</div>
+  <div class="option">focuses on body language and emotional storytelling</div>
   <div class="option">highlights contrast, depth, and visual tension</div>
   <div class="option">centers on elegance, restraint, and visual impact</div>
+  <div class="option">reinforces anonymity and modern identity</div>
 </div>
 
-<!-- PHRASE 6 : TEXTURE, QUALITÉ, THÈMES -->
 <h2>6. Texture, rendu & thèmes</h2>
 <div class="options" data-category="texture">
   <div class="option">Contrasting monochrome tones, subtle gradations, magazine-quality precision</div>
   <div class="option">Fine, detailed textures with a refined, cinematic finish</div>
   <div class="option">Smooth tonal transitions and carefully controlled grain</div>
   <div class="option">Rich blacks, crisp highlights, and a polished editorial look</div>
+  <div class="option">Soft, diffused textures with a dreamy cinematic feel</div>
 </div>
 
 <div class="options" data-category="themes">
-  <div class="option">underscore secrecy, focus, and digital empowerment</div>
+  <div class="option">underscore anonymity, mystery, and emotional storytelling</div>
   <div class="option">underscore introspection, elegance, and quiet strength</div>
   <div class="option">underscore mystery, control, and technological presence</div>
   <div class="option">underscore confidence, sophistication, and modern identity</div>
+  <div class="option">underscore digital minimalism and faceless aesthetics</div>
 </div>
 
 <button type="button" onclick="generatePrompt()">Générer le prompt</button>
@@ -145,7 +154,6 @@
 <div id="result"></div>
 
 <script>
-  // Toggle sélection
   document.querySelectorAll('.option').forEach(opt => {
     opt.addEventListener('click', () => {
       opt.classList.toggle('selected');
@@ -166,7 +174,6 @@
     const lastSentence =
       "Shot taken with a Sony A7R V and an 85mm f/1.4 GM lens at f/2.0 for optimal sharpness of facial details.";
 
-    // Phrase 2 : style + tenue
     const style = getSelectedText("style", ", ");
     const tenue = getSelectedText("tenue", ", ");
     let sentence2 = "";
@@ -176,11 +183,9 @@
       sentence2 = "This " + stylePart + "portrait " + tenuePart + ".";
     }
 
-    // Phrase 3 : scène / geste / objet
     const scene = getSelectedText("scene", " ");
     const sentence3 = scene ? scene + "." : "";
 
-    // Phrase 4 : éclairage
     const lighting = getSelectedText("lighting", ", ");
     const lightingEffect = getSelectedText("lightingEffect", ", ");
     let sentence4 = "";
@@ -191,7 +196,6 @@
       sentence4 = base + ".";
     }
 
-    // Phrase 5 : composition + emphasis
     const composition = getSelectedText("composition", ", ");
     const emphasis = getSelectedText("emphasis", ", ");
     let sentence5 = "";
@@ -201,7 +205,6 @@
       sentence5 = base + ".";
     }
 
-    // Phrase 6 : texture + thèmes
     const texture = getSelectedText("texture", ", ");
     const themes = getSelectedText("themes", ", ");
     let sentence6 = "";
@@ -226,7 +229,6 @@
     ].filter(Boolean);
 
     const finalPrompt = parts.join(" ");
-
     document.getElementById("result").textContent = finalPrompt;
   }
 </script>
