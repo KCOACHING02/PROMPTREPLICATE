@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Générateur de Prompt – Portrait Cinématique</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 900px;
+      margin: 20px auto;
+      line-height: 1.5;
+    }
+    h1 {
+      text-align: center;
+    }
+    .field-group {
+      margin-bottom: 15px;
+    }
+    label {
+      font-weight: bold;
+      display: block;
+      margin-bottom: 5px;
+    }
+    textarea, select, input[type="text"] {
+      width: 100%;
+      padding: 8px;
+      box-sizing: border-box;
+      font-family: inherit;
+    }
+    textarea {
+      min-height: 70px;
+    }
+    button {
+      padding: 10px 20px;
+      font-size: 16px;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+    #result {
+      margin-top: 25px;
+      padding: 15px;
+      border: 1px solid #ccc;
+      background: #f9f9f9;
+      white-space: pre-wrap;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Générateur de Prompt – Portrait IA</h1>
+
+  <!-- Style / Ambiance -->
+  <div class="field-group">
+    <label for="style">Style / ambiance générale</label>
+    <textarea id="style" placeholder="Ex : Artistic black and white portrait, cinematic, mysterious, elegant..."></textarea>
+  </div>
+
+  <!-- Tenue -->
+  <div class="field-group">
+    <label for="tenue">Description de la tenue</label>
+    <textarea id="tenue" placeholder='Ex : A woman wearing a black cap embroidered with the words "Code Liberté" in white thread...'></textarea>
+  </div>
+
+  <!-- Éclairage -->
+  <div class="field-group">
+    <label for="eclairage">Éclairage</label>
+    <textarea id="eclairage" placeholder="Ex : Dramatic and sculptural lighting, deep blacks, strong contrasts, delicate highlights..."></textarea>
+  </div>
+
+  <!-- Composition -->
+  <div class="field-group">
+    <label for="composition">Composition & mise en scène</label>
+    <textarea id="composition" placeholder="Ex : A hand emerges from the shadows holding a smartphone, minimalist and cinematic framing..."></textarea>
+  </div>
+
+  <!-- Éléments narratifs -->
+  <div class="field-group">
+    <label for="narratif">Éléments narratifs / symboliques</label>
+    <textarea id="narratif" placeholder="Ex : Emphasizes secrecy, focus, and digital themes..."></textarea>
+  </div>
+
+  <!-- Texture / rendu -->
+  <div class="field-group">
+    <label for="texture">Texture, détails & rendu final</label>
+    <textarea id="texture" placeholder="Ex : Contrasting monochrome tones, subtle gradations, magazine-quality precision, enigmatic ambiance..."></textarea>
+  </div>
+
+  <button type="button" onclick="generatePrompt()">Générer le prompt</button>
+
+  <div id="result" placeholder="Le prompt généré apparaîtra ici..."></div>
+
+  <script>
+    function generatePrompt() {
+      const firstSentence =
+        "Produce a high-end cinematic portrait of the woman from the original photo, ensuring exact identity preservation of her face, facial features, skin tone, body shape and overall appearance, with subtly softened under-eye shadows for a natural, polished look.";
+
+      const lastSentence =
+        "The photo was taken with a Sony A7R V and an 85mm f/1.4 GM lens at f/2.0 for optimal sharpness of facial details.";
+
+      const style = document.getElementById("style").value.trim();
+      const tenue = document.getElementById("tenue").value.trim();
+      const eclairage = document.getElementById("eclairage").value.trim();
+      const composition = document.getElementById("composition").value.trim();
+      const narratif = document.getElementById("narratif").value.trim();
+      const texture = document.getElementById("texture").value.trim();
+
+      let middleParts = [];
+
+      if (style) {
+        middleParts.push(style);
+      }
+      if (tenue) {
+        middleParts.push(tenue);
+      }
+      if (eclairage) {
+        middleParts.push(eclairage);
+      }
+      if (composition) {
+        middleParts.push(composition);
+      }
+      if (narratif) {
+        middleParts.push(narratif);
+      }
+      if (texture) {
+        middleParts.push(texture);
+      }
+
+      const middleText = middleParts.join(" ");
+
+      const finalPrompt = firstSentence + " " + middleText + " " + lastSentence;
+
+      document.getElementById("result").textContent = finalPrompt;
+    }
+  </script>
+
+</body>
+</html>
