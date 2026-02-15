@@ -13,125 +13,223 @@
     h1 {
       text-align: center;
     }
-    .field-group {
-      margin-bottom: 15px;
+    h2 {
+      margin-top: 25px;
     }
-    label {
-      font-weight: bold;
-      display: block;
-      margin-bottom: 5px;
+    .options {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 10px;
     }
-    textarea, select, input[type="text"] {
-      width: 100%;
-      padding: 8px;
-      box-sizing: border-box;
-      font-family: inherit;
+    .option {
+      padding: 8px 12px;
+      border: 2px solid #444;
+      border-radius: 8px;
+      cursor: pointer;
+      user-select: none;
+      transition: 0.2s;
+      font-size: 14px;
     }
-    textarea {
-      min-height: 70px;
+    .option.selected {
+      background-color: #444;
+      color: #fff;
     }
     button {
-      padding: 10px 20px;
+      margin-top: 20px;
+      padding: 10px 18px;
       font-size: 16px;
       cursor: pointer;
-      margin-top: 10px;
     }
     #result {
       margin-top: 25px;
       padding: 15px;
       border: 1px solid #ccc;
-      background: #f9f9f9;
+      background: #f7f7f7;
       white-space: pre-wrap;
     }
   </style>
 </head>
 <body>
 
-  <h1>Générateur de Prompt – Portrait IA</h1>
+<h1>Générateur de Prompt – Portrait Cinématique</h1>
 
-  <!-- Style / Ambiance -->
-  <div class="field-group">
-    <label for="style">Style / ambiance générale</label>
-    <textarea id="style" placeholder="Ex : Artistic black and white portrait, cinematic, mysterious, elegant..."></textarea>
-  </div>
+<!-- PHRASE 2 : STYLE + TENUE -->
+<h2>1. Style artistique du portrait</h2>
+<div class="options" data-category="style">
+  <div class="option">artistic</div>
+  <div class="option">cinematic</div>
+  <div class="option">editorial</div>
+  <div class="option">high-end</div>
+  <div class="option">black and white</div>
+  <div class="option">monochrome</div>
+  <div class="option">minimalist</div>
+  <div class="option">dramatic</div>
+  <div class="option">refined</div>
+  <div class="option">mysterious</div>
+  <div class="option">elegant</div>
+</div>
 
-  <!-- Tenue -->
-  <div class="field-group">
-    <label for="tenue">Description de la tenue</label>
-    <textarea id="tenue" placeholder='Ex : A woman wearing a black cap embroidered with the words "Code Liberté" in white thread...'></textarea>
-  </div>
+<h2>2. Tenue & éléments visibles sur la personne</h2>
+<div class="options" data-category="tenue">
+  <div class="option">wearing a black cap</div>
+  <div class="option">wearing a black cap embroidered with the words "Code Liberté" in white thread</div>
+  <div class="option">wearing dark clothing</div>
+  <div class="option">wearing a minimalist outfit</div>
+  <div class="option">wearing streetwear style</div>
+  <div class="option">wearing luxury-inspired clothing</div>
+  <div class="option">wearing casual clothing</div>
+  <div class="option">wearing techwear elements</div>
+</div>
 
-  <!-- Éclairage -->
-  <div class="field-group">
-    <label for="eclairage">Éclairage</label>
-    <textarea id="eclairage" placeholder="Ex : Dramatic and sculptural lighting, deep blacks, strong contrasts, delicate highlights..."></textarea>
-  </div>
+<!-- PHRASE 3 : SCÈNE / GESTE / OBJET -->
+<h2>3. Scène, geste, objet narratif</h2>
+<div class="options" data-category="scene">
+  <div class="option">A hand emerges from the shadows, holding a smartphone whose soft screen glow subtly illuminates the contours of her face without fully revealing it</div>
+  <div class="option">She stands partially hidden in the shadows, with a smartphone casting a faint glow on her features</div>
+  <div class="option">She looks down at a smartphone, its light gently outlining her profile in the darkness</div>
+  <div class="option">She is framed in a close-up, with a subtle light source revealing only part of her expression</div>
+</div>
 
-  <!-- Composition -->
-  <div class="field-group">
-    <label for="composition">Composition & mise en scène</label>
-    <textarea id="composition" placeholder="Ex : A hand emerges from the shadows holding a smartphone, minimalist and cinematic framing..."></textarea>
-  </div>
+<!-- PHRASE 4 : ÉCLAIRAGE -->
+<h2>4. Type d’éclairage & effet</h2>
+<div class="options" data-category="lighting">
+  <div class="option">dramatic and sculptural lighting</div>
+  <div class="option">soft, cinematic lighting</div>
+  <div class="option">high-contrast lighting</div>
+  <div class="option">refined chiaroscuro</div>
+  <div class="option">moody, low-key lighting</div>
+</div>
 
-  <!-- Éléments narratifs -->
-  <div class="field-group">
-    <label for="narratif">Éléments narratifs / symboliques</label>
-    <textarea id="narratif" placeholder="Ex : Emphasizes secrecy, focus, and digital themes..."></textarea>
-  </div>
+<div class="options" data-category="lightingEffect">
+  <div class="option">playing with deep blacks, strong contrasts, and delicate highlights</div>
+  <div class="option">creating a subtle interplay of light and shadow</div>
+  <div class="option">sculpting the face with gentle highlights and rich shadows</div>
+  <div class="option">enhancing the sense of depth, mystery, and tension</div>
+</div>
 
-  <!-- Texture / rendu -->
-  <div class="field-group">
-    <label for="texture">Texture, détails & rendu final</label>
-    <textarea id="texture" placeholder="Ex : Contrasting monochrome tones, subtle gradations, magazine-quality precision, enigmatic ambiance..."></textarea>
-  </div>
+<!-- PHRASE 5 : COMPOSITION & ATMOSPHÈRE -->
+<h2>5. Composition & ce qu’elle met en avant</h2>
+<div class="options" data-category="composition">
+  <div class="option">The minimalist, cinematic composition</div>
+  <div class="option">The tightly framed, editorial composition</div>
+  <div class="option">The carefully balanced, high-end composition</div>
+  <div class="option">The atmospheric, film-inspired composition</div>
+</div>
 
-  <button type="button" onclick="generatePrompt()">Générer le prompt</button>
+<div class="options" data-category="emphasis">
+  <div class="option">emphasizes atmosphere, texture, and mystery</div>
+  <div class="option">focuses on emotional intensity and subtle expression</div>
+  <div class="option">highlights contrast, depth, and visual tension</div>
+  <div class="option">centers on elegance, restraint, and visual impact</div>
+</div>
 
-  <div id="result" placeholder="Le prompt généré apparaîtra ici..."></div>
+<!-- PHRASE 6 : TEXTURE, QUALITÉ, THÈMES -->
+<h2>6. Texture, rendu & thèmes</h2>
+<div class="options" data-category="texture">
+  <div class="option">Contrasting monochrome tones, subtle gradations, magazine-quality precision</div>
+  <div class="option">Fine, detailed textures with a refined, cinematic finish</div>
+  <div class="option">Smooth tonal transitions and carefully controlled grain</div>
+  <div class="option">Rich blacks, crisp highlights, and a polished editorial look</div>
+</div>
 
-  <script>
-    function generatePrompt() {
-      const firstSentence =
-        "Produce a high-end cinematic portrait of the woman from the original photo, ensuring exact identity preservation of her face, facial features, skin tone, body shape and overall appearance, with subtly softened under-eye shadows for a natural, polished look.";
+<div class="options" data-category="themes">
+  <div class="option">underscore secrecy, focus, and digital empowerment</div>
+  <div class="option">underscore introspection, elegance, and quiet strength</div>
+  <div class="option">underscore mystery, control, and technological presence</div>
+  <div class="option">underscore confidence, sophistication, and modern identity</div>
+</div>
 
-      const lastSentence =
-        "The photo was taken with a Sony A7R V and an 85mm f/1.4 GM lens at f/2.0 for optimal sharpness of facial details.";
+<button type="button" onclick="generatePrompt()">Générer le prompt</button>
 
-      const style = document.getElementById("style").value.trim();
-      const tenue = document.getElementById("tenue").value.trim();
-      const eclairage = document.getElementById("eclairage").value.trim();
-      const composition = document.getElementById("composition").value.trim();
-      const narratif = document.getElementById("narratif").value.trim();
-      const texture = document.getElementById("texture").value.trim();
+<div id="result"></div>
 
-      let middleParts = [];
+<script>
+  // Toggle sélection
+  document.querySelectorAll('.option').forEach(opt => {
+    opt.addEventListener('click', () => {
+      opt.classList.toggle('selected');
+    });
+  });
 
-      if (style) {
-        middleParts.push(style);
-      }
-      if (tenue) {
-        middleParts.push(tenue);
-      }
-      if (eclairage) {
-        middleParts.push(eclairage);
-      }
-      if (composition) {
-        middleParts.push(composition);
-      }
-      if (narratif) {
-        middleParts.push(narratif);
-      }
-      if (texture) {
-        middleParts.push(texture);
-      }
+  function getSelectedText(category, joinWith = ", ") {
+    const group = document.querySelector('.options[data-category="' + category + '"]');
+    if (!group) return "";
+    const selected = [...group.querySelectorAll('.selected')].map(el => el.textContent.trim());
+    return selected.join(joinWith);
+  }
 
-      const middleText = middleParts.join(" ");
+  function generatePrompt() {
+    const firstSentence =
+      "Produce a high-end cinematic portrait of the woman from the original photo, ensuring exact identity preservation of her face, facial features, skin tone, body shape and overall appearance, with subtly softened under-eye shadows for a natural, polished look.";
 
-      const finalPrompt = firstSentence + " " + middleText + " " + lastSentence;
+    const lastSentence =
+      "Shot taken with a Sony A7R V and an 85mm f/1.4 GM lens at f/2.0 for optimal sharpness of facial details.";
 
-      document.getElementById("result").textContent = finalPrompt;
+    // Phrase 2 : style + tenue
+    const style = getSelectedText("style", ", ");
+    const tenue = getSelectedText("tenue", ", ");
+    let sentence2 = "";
+    if (style || tenue) {
+      const stylePart = style ? style + " " : "";
+      const tenuePart = tenue ? "depicts a woman " + tenue : "depicts a woman";
+      sentence2 = "This " + stylePart + "portrait " + tenuePart + ".";
     }
-  </script>
+
+    // Phrase 3 : scène / geste / objet
+    const scene = getSelectedText("scene", " ");
+    const sentence3 = scene ? scene + "." : "";
+
+    // Phrase 4 : éclairage
+    const lighting = getSelectedText("lighting", ", ");
+    const lightingEffect = getSelectedText("lightingEffect", ", ");
+    let sentence4 = "";
+    if (lighting || lightingEffect) {
+      let base = "The lighting";
+      if (lighting) base += ", " + lighting;
+      if (lightingEffect) base += ", " + lightingEffect;
+      sentence4 = base + ".";
+    }
+
+    // Phrase 5 : composition + emphasis
+    const composition = getSelectedText("composition", ", ");
+    const emphasis = getSelectedText("emphasis", ", ");
+    let sentence5 = "";
+    if (composition || emphasis) {
+      let base = composition || "The composition";
+      if (emphasis) base += " " + emphasis;
+      sentence5 = base + ".";
+    }
+
+    // Phrase 6 : texture + thèmes
+    const texture = getSelectedText("texture", ", ");
+    const themes = getSelectedText("themes", ", ");
+    let sentence6 = "";
+    if (texture || themes) {
+      let base = "";
+      if (texture) base += texture;
+      if (themes) {
+        if (base) base += " that " + themes;
+        else base += themes.charAt(0).toUpperCase() + themes.slice(1);
+      }
+      sentence6 = base + ".";
+    }
+
+    const parts = [
+      firstSentence,
+      sentence2,
+      sentence3,
+      sentence4,
+      sentence5,
+      sentence6,
+      lastSentence
+    ].filter(Boolean);
+
+    const finalPrompt = parts.join(" ");
+
+    document.getElementById("result").textContent = finalPrompt;
+  }
+</script>
 
 </body>
 </html>
