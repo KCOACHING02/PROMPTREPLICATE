@@ -1,356 +1,414 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8">
-  <title>Générateur de Prompt – Faceless Cinematic</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      max-width: 900px;
-      margin: 20px auto;
-      line-height: 1.5;
-    }
-    h1 { text-align: center; }
-    h2 { margin-top: 25px; }
-    .options {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      margin-bottom: 10px;
-    }
-    .option {
-      padding: 8px 12px;
-      border: 2px solid #444;
-      border-radius: 8px;
-      cursor: pointer;
-      user-select: none;
-      transition: 0.2s;
-      font-size: 14px;
-    }
-    .option.selected {
-      background-color: #444;
-      color: #fff;
-    }
-    button {
-      margin-top: 20px;
-      padding: 10px 18px;
-      font-size: 16px;
-      cursor: pointer;
-    }
-    #result {
-      margin-top: 25px;
-      padding: 15px;
-      border: 1px solid #ccc;
-      background: #f7f7f7;
-      white-space: pre-wrap;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <title>Générateur Faceless Cinematic – Brille & Vibre</title>
+    <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
 
-<h1>Générateur de Prompt – Faceless Cinematic Portrait</h1>
+<div class="container">
 
-<h2>1. Style artistique (couleur / N&B / faceless)</h2>
-<div class="options" data-category="style">
-  <div class="option">artistic</div>
-  <div class="option">cinematic</div>
-  <div class="option">editorial</div>
-  <div class="option">high-end</div>
-  <div class="option">black and white</div>
-  <div class="option">monochrome</div>
-  <div class="option">high-contrast black and white</div>
-  <div class="option">film-noir inspired</div>
-  <div class="option">vibrant cinematic colors</div>
-  <div class="option">soft pastel tones</div>
-  <div class="option">warm golden-hour palette</div>
-  <div class="option">cool desaturated tones</div>
-  <div class="option">rich editorial color grading</div>
-  <div class="option">teal and orange cinematic palette</div>
-  <div class="option">faceless aesthetic</div>
-  <div class="option">anonymous portrait style</div>
-  <div class="option">identity-concealed artistic style</div>
-  <div class="option">silhouette-driven composition</div>
+    <h1>Générateur Faceless Cinematic Portrait</h1>
+
+    <!-- Barre de progression -->
+    <div class="progress-container">
+        <div class="progress-bar" id="progressBar"></div>
+    </div>
+
+    <!-- ÉTAPE 1 -->
+    <div class="step active" data-step="1">
+        <h2>1. Style artistique</h2>
+        <div class="options" data-category="style">
+            <div class="option">artistic</div>
+            <div class="option">cinematic</div>
+            <div class="option">editorial</div>
+            <div class="option">high-end</div>
+            <div class="option">black and white</div>
+            <div class="option">monochrome</div>
+            <div class="option">high-contrast black and white</div>
+            <div class="option">film-noir inspired</div>
+            <div class="option">vibrant cinematic colors</div>
+            <div class="option">soft pastel tones</div>
+            <div class="option">warm golden-hour palette</div>
+            <div class="option">cool desaturated tones</div>
+            <div class="option">rich editorial color grading</div>
+            <div class="option">teal and orange cinematic palette</div>
+            <div class="option">faceless aesthetic</div>
+            <div class="option">anonymous portrait style</div>
+            <div class="option">identity-concealed artistic style</div>
+            <div class="option">silhouette-driven composition</div>
+        </div>
+        <button class="btn" onclick="nextStep()">Suivant</button>
+    </div>
+
+    <!-- ÉTAPE 2 -->
+    <div class="step" data-step="2">
+        <h2>2. Tenue & éléments visibles</h2>
+        <div class="options" data-category="tenue">
+            <div class="option">wearing a hood partially covering the head</div>
+            <div class="option">wearing a cap hiding the upper face</div>
+            <div class="option">wearing a black cap embroidered with the words "Code Liberté"</div>
+            <div class="option">wearing dark clothing</div>
+            <div class="option">wearing a minimalist outfit</div>
+            <div class="option">wearing streetwear style</div>
+            <div class="option">wearing luxury-inspired clothing</div>
+            <div class="option">wearing black baseball cap</div>
+            <div class="option">wearing an oversized coat seen from behind</div>
+            <div class="option">wearing a scarf covering part of the face</div>
+
+            <div class="option">oversized hoodie</div>
+            <div class="option">cropped hoodie</div>
+            <div class="option">bomber jacket</div>
+            <div class="option">oversized denim jacket</div>
+            <div class="option">black long sleeve top or sweater</div>
+            <div class="option">wide-leg trousers</div>
+            <div class="option">black crossbody bag</div>
+            <div class="option">layered streetwear outfit</div>
+
+            <div class="option">monochrome outfit</div>
+            <div class="option">long minimalist coat</div>
+            <div class="option">turtleneck sweater</div>
+            <div class="option">straight-cut trousers</div>
+            <div class="option">neutral-toned outfit</div>
+
+            <div class="option">holding white Starbucks coffee cup</div>
+            <div class="option">tailored blazer</div>
+            <div class="option">satin blouse seen from behind</div>
+            <div class="option">high-waisted trousers</div>
+            <div class="option">long flowing skirt</div>
+            <div class="option">elegant scarf partially covering the face</div>
+            <div class="option">wearing black blazer and jeans</div>
+            <div class="option">black turtleneck and tailored pants</div>
+            <div class="option">beige oversized sweater</div>
+            <div class="option">minimalist elegant outfit</div>
+
+            <div class="option">relaxed denim jeans</div>
+            <div class="option">hand in pocket</div>
+            <div class="option">multi-pocket cargo jacket</div>
+            <div class="option">reflective details</div>
+            <div class="option">asymmetrical cuts</div>
+            <div class="option">hooded techwear cloak</div>
+
+            <div class="option">simple cotton t-shirt</div>
+            <div class="option">knit sweater</div>
+            <div class="option">denim jeans</div>
+            <div class="option">light cardigan</div>
+            <div class="option">casual chic outfit</div>
+            <div class="option">tote bag or backpack</div>
+
+            <div class="option">fitted sports jacket</div>
+            <div class="option">running hoodie</div>
+            <div class="option">yoga top seen from behind</div>
+            <div class="option">athletic leggings</div>
+            <div class="option">windbreaker</div>
+
+            <div class="option">oversized shirt dress</div>
+            <div class="option">loose linen shirt</div>
+            <div class="option">woven hat hiding the face</div>
+            <div class="option">textured knitwear</div>
+            <div class="option">earth-toned outfit</div>
+        </div>
+
+        <button class="btn-secondary" onclick="prevStep()">Retour</button>
+        <button class="btn" onclick="nextStep()">Suivant</button>
+    </div>
+
+    <!-- ÉTAPE 3 -->
+    <div class="step" data-step="3">
+        <h2>3. Scène, geste, narration</h2>
+        <div class="options" data-category="scene">
+            <div class="option">She walks away from the camera, her silhouette softly illuminated</div>
+            <div class="option">She stands with her back to the viewer, holding a smartphone</div>
+            <div class="option">She looks toward the horizon, seen only from behind</div>
+            <div class="option">She is sitting with laptop on lap, seen from behind</div>
+            <div class="option">walking on city street</div>
+            <div class="option">working on laptop faceless shot</div>
+            <div class="option">She is framed from above, her face completely out of view</div>
+            <div class="option">She sits with her back turned, body language expressing emotion</div>
+            <div class="option">Woman crossing a busy NYC crosswalk, golden hour</div>
+            <div class="option">head down, face hidden by cap</div>
+            <div class="option">cap covering face</div>
+            <div class="option">sitting in modern chair, crossed legs</div>
+            <div class="option">standing confident, arms crossed</div>
+            <div class="option">walking with shopping bag</div>
+            <div class="option">hands in pocket, relaxed pose</div>
+        </div>
+
+        <button class="btn-secondary" onclick="prevStep()">Retour</button>
+        <button class="btn" onclick="nextStep()">Suivant</button>
+    </div>
+
+    <!-- ÉTAPE 4 -->
+    <div class="step" data-step="4">
+        <h2>4. Éclairage & Effets</h2>
+
+        <h3>Éclairage</h3>
+        <div class="options" data-category="lighting">
+            <div class="option">dramatic and sculptural lighting</div>
+            <div class="option">soft, cinematic lighting, warm tones</div>
+            <div class="option">high-contrast lighting</div>
+            <div class="option">refined chiaroscuro</div>
+            <div class="option">moody, low-key lighting</div>
+            <div class="option">backlighting creating a silhouette effect</div>
+            <div class="option">rim light outlining the body</div>
+            <div class="option">soft glow illuminating only the outline</div>
+        </div>
+
+        <h3>Effets</h3>
+        <div class="options" data-category="lightingEffect">
+            <div class="option">playing with deep blacks and delicate highlights</div>
+            <div class="option">subtle interplay of light and shadow</div>
+            <div class="option">studio lighting, clean shadows</div>
+            <div class="option">enhancing depth, mystery, and tension</div>
+            <div class="option">face hidden in shadow, silhouette defined</div>
+            <div class="option">backlit rim light effect</div>
+        </div>
+
+        <button class="btn-secondary" onclick="prevStep()">Retour</button>
+        <button class="btn" onclick="nextStep()">Suivant</button>
+    </div>
+
+    <!-- ÉTAPE 5 -->
+    <div class="step" data-step="5">
+        <h2>5. Composition & Mise en avant</h2>
+
+        <div class="options" data-category="composition">
+            <div class="option">The faceless, cinematic composition</div>
+            <div class="option">The silhouette-focused composition</div>
+            <div class="option">The back-view composition</div>
+            <div class="option">The atmospheric, film-inspired composition</div>
+            <div class="option">The tightly framed, editorial composition</div>
+            <div class="option">The top-down composition hiding the face</div>
+            <div class="option">The profile-turned-away composition</div>
+            <div class="option">The over-the-shoulder composition</div>
+        </div>
+
+        <div class="options" data-category="emphasis">
+            <div class="option">emphasizes atmosphere, texture, and mystery</div>
+            <div class="option">focuses on body language and emotional storytelling</div>
+            <div class="option">highlights contrast, depth, and visual tension</div>
+            <div class="option">centers on elegance, restraint, and visual impact</div>
+            <div class="option">reinforces anonymity and modern identity</div>
+            <div class="option">enhances the faceless aesthetic</div>
+        </div>
+
+        <button class="btn-secondary" onclick="prevStep()">Retour</button>
+        <button class="btn" onclick="nextStep()">Suivant</button>
+    </div>
+
+    <!-- ÉTAPE 6 -->
+    <div class="step" data-step="6">
+        <h2>6. Texture & Thèmes</h2>
+
+        <div class="options" data-category="texture">
+            <div class="option">Contrasting monochrome tones</div>
+            <div class="option">Fine, detailed textures</div>
+            <div class="option">Smooth tonal transitions</div>
+            <div class="option">Rich blacks, crisp highlights</div>
+            <div class="option">Soft, diffused textures</div>
+            <div class="option">Film-like grain</div>
+            <div class="option">High-end glossy finish</div>
+        </div>
+
+        <div class="options" data-category="themes">
+            <div class="option">underscore anonymity, mystery, and emotional storytelling</div>
+            <div class="option">underscore introspection, elegance, and quiet strength</div>
+            <div class="option">underscore mystery, control, and technological presence</div>
+            <div class="option">underscore confidence, sophistication, and modern identity</div>
+            <div class="option">underscore digital minimalism and faceless aesthetics</div>
+            <div class="option">underscore solitude, atmosphere, and cinematic tension</div>
+        </div>
+
+        <button class="btn-secondary" onclick="prevStep()">Retour</button>
+        <button class="btn" onclick="nextStep()">Suivant</button>
+    </div>
+
+    <!-- ÉTAPE 7 -->
+    <div class="step" data-step="7">
+        <h2>7. Environnement / Landscape</h2>
+
+        <div class="options" data-category="landscape">
+            <div class="option">urban rooftop at sunset</div>
+            <div class="option">NYC crosswalk, skyscrapers, golden hour</div>
+            <div class="option">rainy city alley with reflections</div>
+            <div class="option">minimalist modern architecture</div>
+            <div class="option">subway platform with moody lighting</div>
+            <div class="option">industrial warehouse</div>
+            <div class="option">glass building reflections</div>
+            <div class="option">empty parking lot at night</div>
+            <div class="option">futuristic cyberpunk street</div>
+
+            <div class="option">minimalist white studio background</div>
+            <div class="option">modern office with city view</div>
+            <div class="option">urban street, soft bokeh</div>
+            <div class="option">lakeside at golden hour</div>
+            <div class="option">desert dunes</div>
+            <div class="option">bright modern interior</div>
+            <div class="option">cliffside overlooking the ocean</div>
+            <div class="option">waterfall environment</div>
+            <div class="option">open field with tall grass</div>
+
+            <div class="option">beach at sunrise</div>
+            <div class="option">rocky coastline</div>
+            <div class="option">pier with moody atmosphere</div>
+            <div class="option">calm lake reflections</div>
+            <div class="option">foggy harbor silhouettes</div>
+
+            <div class="option">cozy minimalist living room</div>
+            <div class="option">modern workspace</div>
+            <div class="option">coffee shop ambiance</div>
+            <div class="option">art studio</div>
+            <div class="option">vintage textured room</div>
+            <div class="option">hotel corridor shadows</div>
+
+            <div class="option">dark void with rim light</div>
+            <div class="option">gradient background glow</div>
+            <div class="option">textured backdrop</div>
+            <div class="option">silhouette against bright window</div>
+            <div class="option">bokeh-filled background</div>
+        </div>
+
+        <button class="btn-secondary" onclick="prevStep()">Retour</button>
+        <button class="btn" onclick="generatePrompt()">Générer le prompt</button>
+    </div>
+
+    <!-- RÉSULTAT -->
+    <div id="result"></div>
+
 </div>
-
-<h2>2. Tenue & éléments visibles</h2>
-<div class="options" data-category="tenue">
-  <div class="option">wearing a hood partially covering the head</div>
-  <div class="option">wearing a cap hiding the upper face</div>
-  <div class="option">wearing a black cap embroidered with the words "Code Liberté" in white thread</div>
-  <div class="option">wearing dark clothing</div>
-  <div class="option">wearing a minimalist outfit</div>
-  <div class="option">wearing streetwear style</div>
-  <div class="option">wearing luxury-inspired clothing</div>
-  <div class="option">wearing black baseball cap</div>
-  <div class="option">wearing an oversized coat seen from behind</div>
-  <div class="option">wearing a scarf covering part of the face</div>
-
-  <div class="option">oversized hoodie</div>
-  <div class="option">cropped hoodie</div>
-  <div class="option">bomber jacket</div>
-  <div class="option">oversized denim jacket</div>
-  <div class="option">black long sleeve top or sweater</div>
-  <div class="option">wide-leg trousers</div>
-  <div class="option">black crossbody bag or shoulder bag</div>
-  <div class="option">layered streetwear outfit</div>
-
-  <div class="option">monochrome outfit</div>
-  <div class="option">long minimalist coat</div>
-  <div class="option">turtleneck sweater</div>
-  <div class="option">straight-cut trousers</div>
-  <div class="option">neutral-toned outfit</div>
-
-  <div class="option">holding white Starbucks coffe cup</div>
-  <div class="option">tailored blazer</div>
-  <div class="option">satin blouse seen from behind</div>
-  <div class="option">high-waisted trousers</div>
-  <div class="option">long flowing skirt</div>
-  <div class="option">elegant scarf partially covering the face</div>
-  <div class="option">wearing black blazer and jeans</div>
-  <div class="option">black turtleneck and tailored pants</div>
-  <div class="option">beige oversized sweater, casual chic</div>
-  <div class="option">minimalist elegant outfit</div>
-
-  <div class="option">relaxed denim jeans</div>
-  <div class="option">hand in pocket</div>
-  <div class="option">multi-pocket cargo jacket</div>
-  <div class="option">reflective details</div>
-  <div class="option">asymmetrical cuts</div>
-  <div class="option">hooded techwear cloak</div>
-
-  <div class="option">simple cotton t-shirt</div>
-  <div class="option">knit sweater</div>
-  <div class="option">denim jeans</div>
-  <div class="option">light cardigan</div>
-  <div class="option">casual chic outfit</div>
-  <div class="option">tote bag or backpack</div>
-
-  <div class="option">fitted sports jacket</div>
-  <div class="option">running hoodie</div>
-  <div class="option">yoga top seen from behind</div>
-  <div class="option">athletic leggings</div>
-  <div class="option">windbreaker</div>
-
-  <div class="option">oversized shirt dress</div>
-  <div class="option">loose linen shirt</div>
-  <div class="option">woven hat hiding the face</div>
-  <div class="option">textured knitwear</div>
-  <div class="option">earth-toned outfit</div>
-</div>
-
-<h2>3. Scène, geste, objet narratif (faceless)</h2>
-<div class="options" data-category="scene">
-  <div class="option">She walks away from the camera, her silhouette softly illuminated</div>
-  <div class="option">She stands with her back to the viewer, holding a smartphone</div>
-  <div class="option">She looks toward the horizon, seen only from behind</div>
-  <div class="option">She is sitting with laptop on lap, seen from behind</div>
-  <div class="option">walking on city street</div>
-  <div class="option">working on laptop faceless shot</div>
-  <div class="option">She is framed from above, her face completely out of view</div>
-  <div class="option">She sits with her back turned, body language expressing emotion</div>
-  <div class="option">Woman crossing a busy New York City crosswalk, seen from behind with back to camera, holding smartphone up taking a photo, yellow taxi cabs passing by, tall skyscrapers in background, urban street scene, golden hour lighting, face ner visible</div>
-  <div class="option">head down, looking down, face hidden by cap</div>
-  <div class="option">cap covering face, face not visible</div>
-  <div class="option">sitting in modern chair, crossed legs</div>
-  <div class="option">standing confident, arms crossed</div>
-  <div class="option">walking with shopping bag</div>
-  <div class="option">hands in pocket, relaxed pose</div>
-</div>
-
-<h2>4. Éclairage & effet (faceless)</h2>
-<div class="options" data-category="lighting">
-  <div class="option">dramatic and sculptural lighting</div>
-  <div class="option">soft, cinematic lighting, warm tones</div>
-  <div class="option">high-contrast lighting</div>
-  <div class="option">refined chiaroscuro</div>
-  <div class="option">moody, low-key lighting</div>
-  <div class="option">backlighting creating a silhouette effect</div>
-  <div class="option">rim light outlining the body</div>
-  <div class="option">soft glow illuminating only the outline</div>
-</div>
-
-<div class="options" data-category="lightingEffect">
-  <div class="option">playing with deep blacks, strong contrasts, and delicate highlights</div>
-  <div class="option">creating a subtle interplay of light and shadow</div>
-  <div class="option">studio lighting, clean shadows</div>
-  <div class="option">enhancing the sense of depth, mystery, and tension</div>
-  <div class="option">keeping the face hidden in shadow while the silhouette is defined</div>
-  <div class="option">backlit, rim light effect</div>
-</div>
-
-<h2>5. Composition & ce qu’elle met en avant</h2>
-<div class="options" data-category="composition">
-  <div class="option">The faceless, cinematic composition</div>
-  <div class="option">The silhouette-focused composition</div>
-  <div class="option">The back-view composition</div>
-  <div class="option">The atmospheric, film-inspired composition</div>
-  <div class="option">The tightly framed, editorial composition</div>
-  <div class="option">The top-down composition hiding the face</div>
-  <div class="option">The profile-turned-away composition</div>
-  <div class="option">The over-the-shoulder composition with the face out of frame</div>
-</div>
-
-<div class="options" data-category="emphasis">
-  <div class="option">emphasizes atmosphere, texture, and mystery</div>
-  <div class="option">focuses on body language and emotional storytelling</div>
-  <div class="option">highlights contrast, depth, and visual tension</div>
-  <div class="option">centers on elegance, restraint, and visual impact</div>
-  <div class="option">reinforces anonymity and modern identity</div>
-  <div class="option">enhances the faceless aesthetic and narrative subtlety</div>
-</div>
-
-<h2>6. Texture, rendu & thèmes</h2>
-<div class="options" data-category="texture">
-  <div class="option">Contrasting monochrome tones, subtle gradations, magazine-quality precision</div>
-  <div class="option">Fine, detailed textures with a refined, cinematic finish</div>
-  <div class="option">Smooth tonal transitions and carefully controlled grain</div>
-  <div class="option">Rich blacks, crisp highlights, and a polished editorial look</div>
-  <div class="option">Soft, diffused textures with a dreamy cinematic feel</div>
-  <div class="option">Film-like grain with atmospheric depth</div>
-  <div class="option">High-end glossy finish with controlled highlights</div>
-</div>
-
-<div class="options" data-category="themes">
-  <div class="option">underscore anonymity, mystery, and emotional storytelling</div>
-  <div class="option">underscore introspection, elegance, and quiet strength</div>
-  <div class="option">underscore mystery, control, and technological presence</div>
-  <div class="option">underscore confidence, sophistication, and modern identity</div>
-  <div class="option">underscore digital minimalism and faceless aesthetics</div>
-  <div class="option">underscore solitude, atmosphere, and cinematic tension</div>
-</div>
-
-<h2>7. Landscape / Environment</h2>
-<div class="options" data-category="landscape">
-  <div class="option">urban rooftop at sunset</div>
-  <div class="option">crossing the street at a crosswalk in New York City, tall building and skyscrapers in the background, urban street scene, busy citu atmosphere</div>
-  <div class="option">rainy city alley with reflections</div>
-  <div class="option">minimalist modern architecture</div>
-  <div class="option">subway platform with moody lighting</div>
-  <div class="option">industrial warehouse environment</div>
-  <div class="option">glass building reflections</div>
-  <div class="option">empty parking lot at night</div>
-  <div class="option">futuristic cyberpunk street</div>
-
-  <div class="option">minimalist white studio backgroung</div>
-  <div class="option">modern office with city view</div>
-  <div class="option">urban street, soft bokeh background</div>
-  <div class="option">lakeside at golden hour</div>
-  <div class="option">desert dunes with long shadows</div>
-  <div class="option">bright modern interior, pink accent lighting</div>
-  <div class="option">cliffside overlooking the ocean</div>
-  <div class="option">waterfall environment with misty air</div>
-  <div class="option">open field with tall grass</div>
-
-  <div class="option">beach at sunrise</div>
-  <div class="option">rocky coastline with crashing waves</div>
-  <div class="option">pier with moody atmosphere</div>
-  <div class="option">calm lake with mirror reflections</div>
-  <div class="option">foggy harbor with silhouettes</div>
-
-  <div class="option">cozy minimalist living room</div>
-  <div class="option">modern workspace with soft lighting</div>
-  <div class="option">coffe shop, warm ambiance</div>
-  <div class="option">art studio with natural light</div>
-  <div class="option">vintage room with textured walls</div>
-  <div class="option">hotel corridor with cinematic shadows</div>
-
-  <div class="option">dark void with soft rim light</div>
-  <div class="option">gradient background with cinematic glow</div>
-  <div class="option">textured backdrop with shadows</div>
-  <div class="option">silhouette against bright window light</div>
-  <div class="option">bokeh-filled background</div>
-</div>
-
-<button type="button" onclick="generatePrompt()">Générer le prompt</button>
-
-<div id="result"></div>
 
 <script>
-  document.querySelectorAll('.option').forEach(opt => {
+/* Sélection des options */
+document.querySelectorAll('.option').forEach(opt => {
     opt.addEventListener('click', () => {
-      opt.classList.toggle('selected');
+        opt.classList.toggle('selected');
     });
-  });
+});
 
-  function getSelectedText(category, joinWith = ", ") {
+/* Navigation entre étapes */
+let currentStep = 1;
+const totalSteps = 7;
+
+function updateProgress() {
+    const bar = document.getElementById("progressBar");
+    const percent = ((currentStep - 1) / (totalSteps - 1)) * 100;
+    bar.style.width = percent + "%";
+}
+
+function showStep(step) {
+    document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
+    document.querySelector('.step[data-step="' + step + '"]').classList.add('active');
+    updateProgress();
+}
+
+function nextStep() {
+    if (currentStep < totalSteps) {
+        currentStep++;
+        showStep(currentStep);
+    }
+}
+
+function prevStep() {
+    if (currentStep > 1) {
+        currentStep--;
+        showStep(currentStep);
+    }
+}
+
+/* Récupération des options */
+function getSelectedText(category, joinWith = ", ") {
     const group = document.querySelector('.options[data-category="' + category + '"]');
     if (!group) return "";
     const selected = [...group.querySelectorAll('.selected')].map(el => el.textContent.trim());
     return selected.join(joinWith);
-  }
+}
 
-  function generatePrompt() {
+/* Génération du prompt */
+function generatePrompt() {
+
     const firstSentence =
-      "Produce a high-end cinematic portrait of the woman from the original photo, ensuring exact identity preservation of her skin tone, body shape and overall appearance, polished look.";
+        "Produce a high-end cinematic portrait of the woman from the original photo, ensuring exact identity preservation of her skin tone, body shape and overall appearance, polished look.";
 
-    const style = getSelectedText("style", ", ");
-    const tenue = getSelectedText("tenue", ", ");
+    const style = getSelectedText("style");
+    const tenue = getSelectedText("tenue");
+
     let sentence2 = "";
     if (style || tenue) {
-      const stylePart = style ? style + " " : "";
-      const tenuePart = tenue ? "depicts a woman " + tenue : "depicts a woman";
-      sentence2 = "This " + stylePart + "portrait " + tenuePart + ".";
+        const stylePart = style ? style + " " : "";
+        const tenuePart = tenue ? "depicts a woman " + tenue : "depicts a woman";
+        sentence2 = "This " + stylePart + "portrait " + tenuePart + ".";
     }
 
     const scene = getSelectedText("scene", " ");
-    const landscape = getSelectedText("landscape", ", ");
+    const landscape = getSelectedText("landscape");
+
     let sentence3 = "";
     if (scene && landscape) {
-      sentence3 = scene + ", set in " + landscape + ".";
+        sentence3 = scene + ", set in " + landscape + ".";
     } else if (scene) {
-      sentence3 = scene + ".";
+        sentence3 = scene + ".";
     } else if (landscape) {
-      sentence3 = "The scene takes place in " + landscape + ".";
+        sentence3 = "The scene takes place in " + landscape + ".";
     }
 
-    const lighting = getSelectedText("lighting", ", ");
-    const lightingEffect = getSelectedText("lightingEffect", ", ");
+    const lighting = getSelectedText("lighting");
+    const lightingEffect = getSelectedText("lightingEffect");
+
     let sentence4 = "";
     if (lighting || lightingEffect) {
-      let base = "The lighting";
-      if (lighting) base += ", " + lighting;
-      if (lightingEffect) base += ", " + lightingEffect;
-      sentence4 = base + ".";
+        let base = "The lighting";
+        if (lighting) base += ", " + lighting;
+        if (lightingEffect) base += ", " + lightingEffect;
+        sentence4 = base + ".";
     }
 
-    const composition = getSelectedText("composition", ", ");
-    const emphasis = getSelectedText("emphasis", ", ");
+    const composition = getSelectedText("composition");
+        const emphasis = getSelectedText("emphasis");
+
     let sentence5 = "";
     if (composition || emphasis) {
-      let base = composition || "The composition";
-      if (emphasis) base += " " + emphasis;
-      sentence5 = base + ".";
+        let base = composition || "The composition";
+        if (emphasis) base += " " + emphasis;
+        sentence5 = base + ".";
     }
 
-    const texture = getSelectedText("texture", ", ");
-    const themes = getSelectedText("themes", ", ");
+    const texture = getSelectedText("texture");
+    const themes = getSelectedText("themes");
+
     let sentence6 = "";
     if (texture || themes) {
-      let base = "";
-      if (texture) base += texture;
-      if (themes) {
-        if (base) base += " that " + themes;
-        else base += themes.charAt(0).toUpperCase() + themes.slice(1);
-      }
-      sentence6 = base + ".";
+        let base = "";
+        if (texture) base += texture;
+        if (themes) {
+            if (base) base += " that " + themes;
+            else base += themes.charAt(0).toUpperCase() + themes.slice(1);
+        }
+        sentence6 = base + ".";
     }
 
     const lastSentence =
-      "Shot taken with a Sony A7R V and an 85mm f/1.4 GM lens at f/2.0 for optimal sharpness of facial details.";
+        "Shot taken with a Sony A7R V and an 85mm f/1.4 GM lens at f/2.0 for optimal sharpness of facial details.";
 
     const parts = [
-      firstSentence,
-      sentence2,
-      sentence3,
-      sentence4,
-      sentence5,
-      sentence6,
-      lastSentence
+        firstSentence,
+        sentence2,
+        sentence3,
+        sentence4,
+        sentence5,
+        sentence6,
+        lastSentence
     ].filter(Boolean);
 
     const finalPrompt = parts.join(" ");
+
     document.getElementById("result").textContent = finalPrompt;
-  }
+
+    // Aller automatiquement au résultat
+    currentStep = totalSteps;
+    showStep(totalSteps);
+}
 </script>
 
 </body>
