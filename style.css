@@ -1,0 +1,140 @@
+/* PALETTE BRILLE & VIBRE */
+:root {
+    --nude-bg: #f3e9dd;
+    --nude-light: #f8f1ea;
+    --white: #ffffff;
+    --gold: #d8b98b;
+    --gold-dark: #b79c84;
+    --brown: #6b5a4a;
+    --shadow: rgba(0,0,0,0.08);
+}
+
+/* GLOBAL */
+body {
+    font-family: "Segoe UI", sans-serif;
+    background: var(--nude-bg);
+    color: var(--brown);
+    margin: 0;
+    padding: 0;
+}
+
+.container {
+    max-width: 900px;
+    margin: 40px auto;
+    padding: 20px;
+}
+
+/* TITRE */
+h1 {
+    text-align: center;
+    font-size: 32px;
+    font-weight: 700;
+    margin-bottom: 25px;
+}
+
+/* ÉTAPES */
+.step {
+    display: none;
+    background: var(--white);
+    padding: 25px;
+    border-radius: 14px;
+    box-shadow: 0 4px 14px var(--shadow);
+    margin-bottom: 25px;
+}
+
+.step.active {
+    display: block;
+}
+
+/* TITRES D’ÉTAPE */
+.step h2 {
+    font-size: 20px;
+    margin-bottom: 15px;
+    color: var(--brown);
+}
+
+/* OPTIONS */
+.options {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.option {
+    padding: 10px 14px;
+    border: 2px solid var(--gold-dark);
+    border-radius: 10px;
+    background: var(--nude-light);
+    cursor: pointer;
+    transition: 0.2s;
+    font-size: 14px;
+}
+
+.option:hover {
+    background: var(--gold);
+    color: var(--white);
+}
+
+.option.selected {
+    background: var(--gold);
+    color: var(--white);
+    border-color: var(--gold);
+}
+
+/* BOUTONS */
+.btn {
+    padding: 12px 20px;
+    font-size: 16px;
+    font-weight: 700;
+    border-radius: 12px;
+    border: 2px solid var(--gold);
+    background: var(--nude-light);
+    color: var(--brown);
+    cursor: pointer;
+    transition: 0.25s;
+    width: 100%;
+    margin-top: 20px;
+}
+
+.btn:hover {
+    background: var(--gold);
+    color: var(--white);
+}
+
+.btn-secondary {
+    border-color: var(--gold-dark);
+    background: transparent;
+}
+
+.btn-secondary:hover {
+    background: var(--gold-dark);
+    color: var(--white);
+}
+
+/* BARRE DE PROGRESSION */
+.progress-container {
+    width: 100%;
+    height: 8px;
+    background: var(--nude-light);
+    border-radius: 10px;
+    margin-bottom: 25px;
+}
+
+.progress-bar {
+    height: 100%;
+    width: 0%;
+    background: var(--gold);
+    border-radius: 10px;
+    transition: width 0.3s ease;
+}
+
+/* RÉSULTAT */
+#result {
+    background: var(--white);
+    padding: 20px;
+    border-radius: 14px;
+    box-shadow: 0 4px 14px var(--shadow);
+    white-space: pre-wrap;
+    margin-top: 20px;
+    font-size: 15px;
+}
