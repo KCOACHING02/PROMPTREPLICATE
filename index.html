@@ -361,12 +361,60 @@
 
 <script>
 const FRAMEWORKS=[
-  {id:"charniere_4",name:"Charnière 4 Slides",icon:"🌉",color:"#E8A838",steps:["Moment de vie","Charnière","Offre / Témoignage","Lien"],desc:"Le pont entre ta vie et ton offre. La méthode la plus naturelle pour vendre sans forcer."},
-  {id:"aida",name:"AIDA",icon:"🧲",color:"#E05263",steps:["Attention","Intérêt","Désir","Action"],desc:"Le grand classique du copywriting. Tu captes l'attention, tu crées le désir, tu fais passer à l'action."},
-  {id:"pas",name:"PAS",icon:"💊",color:"#3CBBB1",steps:["Problème","Agitation","Solution"],desc:"Court et percutant. Tu poses le problème, tu remues le couteau, tu apportes la solution."},
-  {id:"ppn",name:"Preuve → Projection → Normalisation",icon:"🔮",color:"#9B5DE5",steps:["Preuve","Projection","Normalisation"],desc:"Tu montres un résultat concret, tu fais visualiser le futur, tu normalises le passage à l'action."},
-  {id:"avant_apres",name:"Avant / Après",icon:"🔄",color:"#FF6B6B",steps:["Le Passé (Douleur)","Le Déclic","Le Présent (Victoire)","L'Appel"],desc:"Idéal pour créer un contraste saisissant et prouver l'efficacité de ta méthode."},
-  {id:"story_5",name:"5 Étapes Vente",icon:"🎯",color:"#06D6A0",steps:["Accroche","Problème","Solution","Preuve","CTA"],desc:"Le tunnel de vente complet. 5 stories = un mini-lancement."},
+  {
+    id:"charniere_4",
+    name:"Charnière 4 Slides",
+    icon:"🌉",
+    color:"#E8A838",
+    steps:["Moment de vie","Charnière","Offre / Témoignage","Lien"],
+    power:"La Spontanée (Crée un pont invisible entre ta vie et ton offre).",
+    when:"Idéal pour les jours où tu veux vendre de manière très naturelle, sans avoir l'air de forcer."
+  },
+  {
+    id:"aida",
+    name:"AIDA",
+    icon:"🧲",
+    color:"#E05263",
+    steps:["Attention","Intérêt","Désir","Action"],
+    power:"La Captivante (Le grand classique pour capter l'attention et donner envie).",
+    when:"Parfait pour présenter un nouveau produit ou une offre phare de ta semaine."
+  },
+  {
+    id:"pas",
+    name:"PAS",
+    icon:"💊",
+    color:"#3CBBB1",
+    steps:["Problème","Agitation","Solution"],
+    power:"La Résolutive (Appuie là où ça fait mal pour proposer le remède).",
+    when:"À utiliser quand ton audience procrastine ou n'a pas conscience de l'urgence de son problème."
+  },
+  {
+    id:"ppn",
+    name:"Preuve → Projection",
+    icon:"🔮",
+    color:"#9B5DE5",
+    steps:["Preuve","Projection","Normalisation"],
+    power:"La Rassurante (Montre des résultats concrets pour lever les peurs).",
+    when:"Le top quand tu as un super témoignage client ou un chiffre fort à partager."
+  },
+  {
+    id:"avant_apres",
+    name:"Avant / Après",
+    icon:"🔄",
+    color:"#FF6B6B",
+    steps:["Le Passé","Le Déclic","Le Présent","L'Appel"],
+    power:"La Transformatrice (Le choc visuel et émotionnel du changement).",
+    when:"Idéal pour vendre un accompagnement ou un programme de transformation."
+  },
+  {
+    id:"story_5",
+    name:"5 Étapes Vente",
+    icon:"🎯",
+    color:"#06D6A0",
+    steps:["Accroche","Problème","Solution","Preuve","CTA"],
+    power:"La Complète (Le tunnel de vente condensé en quelques slides).",
+    when:"La méthode forte à sortir pour un jour de gros lancement ou une offre limitée."
+  }
 ];
 
 const DAY_THEMES=[
@@ -511,7 +559,15 @@ function selectFw(id){
     c.querySelector('.fwn').style.color=s?fw.color:'';
   });
   const fw=FRAMEWORKS.find(f=>f.id===id);
-  document.getElementById('fwinfo-box').innerHTML='<div style="border: 1px solid #2a2a3a; padding: 15px; border-radius: 8px; margin-top: 10px; background: #1a1a26;">'+fw.icon+' <strong>'+fw.name+'</strong> — '+fw.desc+'</div>';
+  
+  // Affichage ultra guidé sans jargon
+  document.getElementById('fwinfo-box').innerHTML=`
+    <div style="border: 1px solid #2a2a3a; padding: 15px; border-radius: 8px; margin-top: 10px; background: #1a1a26;">
+      <div style="margin-bottom: 8px;">${fw.icon} <strong>Méthode ${fw.name}</strong></div>
+      <div style="font-size: 0.9rem; margin-bottom: 5px;"><span style="color: var(--text-muted);">Son super-pouvoir :</span> ${fw.power}</div>
+      <div style="font-size: 0.9rem;"><span style="color: var(--text-muted);">Quand l'utiliser :</span> ${fw.when}</div>
+    </div>
+  `;
   document.getElementById('btn-gen').disabled=false;
 }
 
