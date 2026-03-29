@@ -309,6 +309,8 @@ function switchTab(tabId) {
 function handleGenerate() {
   const cfg = { productName: document.getElementById('f-product').value.trim(), cta: document.getElementById('f-cta').value.trim() };
   strategy = {};
+  
+  // 1. On génère d'abord toute la structure
   Object.keys(BIBLE).forEach(j => {
     const data = BIBLE[j];
     strategy[j] = {
@@ -318,13 +320,11 @@ function handleGenerate() {
     };
     strategy[j].fullDraft = strategy[j].hook + fill(strategy[j].body, cfg);
   });
+  
   activeDay = "lundi";
-  
-  // Correction ici : On ne force la sauvegarde du texte tapé que s'il existe déjà
-  const textInput = document.getElementById('story-text');
-  if (textInput) strategy[activeDay].fullDraft = textInput.value;
-  
   saveToLocalStorage();
+  
+  // 2. Ensuite on change d'onglet, ce qui va déclencher l'affichage complet
   switchTab('result');
 }
 
