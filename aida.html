@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generateur AIDA Story – Brille & Vibre</title>
+    <link rel="stylesheet" href="aida.css">
+</head>
+<body>
+
+<div class="container">
+
+    <h1>Generateur de Stories AIDA</h1>
+    <p class="subtitle">Psychologie de la vente &mdash; Contenu genere par IA</p>
+
+    <!-- Barre de progression -->
+    <div class="progress-container">
+        <div class="progress-bar" id="progressBar"></div>
+        <div class="progress-labels" id="progressLabels">
+            <span class="progress-label active" data-step="1">Offre</span>
+            <span class="progress-label" data-step="2">Cible</span>
+            <span class="progress-label" data-step="3">Plateforme</span>
+            <span class="progress-label" data-step="4">Ton</span>
+            <span class="progress-label" data-step="5">Objectif</span>
+            <span class="progress-label" data-step="6">API</span>
+        </div>
+    </div>
+
+    <!-- ETAPE 1 : Offre -->
+    <div class="step active" data-step="1">
+        <div class="step-header">
+            <span class="step-number">1</span>
+            <h2>Definissez votre offre</h2>
+        </div>
+        <p class="step-desc">Decrivez le produit, service ou offre que vous souhaitez promouvoir.</p>
+
+        <div class="form-group">
+            <label for="productName">Nom du produit / service</label>
+            <input type="text" id="productName" placeholder="Ex: Formation en ligne, Coaching, E-book...">
+        </div>
+
+        <div class="form-group">
+            <label for="productDesc">Description de l'offre</label>
+            <textarea id="productDesc" rows="3" placeholder="Decrivez en quelques phrases ce que vous proposez, ses benefices principaux..."></textarea>
+        </div>
+
+        <div class="form-group">
+            <label for="productPrice">Prix / Positionnement (optionnel)</label>
+            <input type="text" id="productPrice" placeholder="Ex: 97EUR, Gratuit, Premium...">
+        </div>
+
+        <div class="form-group">
+            <label>Categorie</label>
+            <div class="options" data-category="productCategory">
+                <div class="option">Formation en ligne</div>
+                <div class="option">Coaching</div>
+                <div class="option">E-book / Guide</div>
+                <div class="option">Produit physique</div>
+                <div class="option">Service freelance</div>
+                <div class="option">SaaS / App</div>
+                <div class="option">Evenement / Webinaire</div>
+                <div class="option">Consulting</div>
+                <div class="option">Abonnement</div>
+                <div class="option">Communaute privee</div>
+            </div>
+        </div>
+
+        <button class="btn" onclick="nextStep()">Suivant</button>
+    </div>
+
+    <!-- ETAPE 2 : Cible -->
+    <div class="step" data-step="2">
+        <div class="step-header">
+            <span class="step-number">2</span>
+            <h2>Definissez votre audience cible</h2>
+        </div>
+        <p class="step-desc">Plus vous etes precis, plus le contenu genere sera pertinent et percutant.</p>
+
+        <div class="form-group">
+            <label for="targetAudience">Description de votre audience</label>
+            <textarea id="targetAudience" rows="3" placeholder="Ex: Femmes entrepreneures de 25-40 ans qui veulent developper leur business en ligne..."></textarea>
+        </div>
+
+        <div class="form-group">
+            <label>Probleme principal de votre cible</label>
+            <div class="options" data-category="painPoint">
+                <div class="option">Manque de temps</div>
+                <div class="option">Manque de confiance</div>
+                <div class="option">Revenus insuffisants</div>
+                <div class="option">Pas de visibilite</div>
+                <div class="option">Ne sait pas par ou commencer</div>
+                <div class="option">Procrastination</div>
+                <div class="option">Syndrome de l'imposteur</div>
+                <div class="option">Trop de concurrence</div>
+                <div class="option">Manque de strategie</div>
+                <div class="option">Burn-out / fatigue</div>
+                <div class="option">Pas de communaute</div>
+                <div class="option">Difficulte a vendre</div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label>Desir profond de votre cible</label>
+            <div class="options" data-category="desire">
+                <div class="option">Liberte financiere</div>
+                <div class="option">Reconnaissance</div>
+                <div class="option">Impact positif</div>
+                <div class="option">Independance</div>
+                <div class="option">Style de vie de reve</div>
+                <div class="option">Croissance personnelle</div>
+                <div class="option">Securite financiere</div>
+                <div class="option">Devenir une reference</div>
+                <div class="option">Aider les autres</div>
+                <div class="option">Equilibre vie pro/perso</div>
+            </div>
+        </div>
+
+        <div class="btn-group">
+            <button class="btn btn-secondary" onclick="prevStep()">Retour</button>
+            <button class="btn" onclick="nextStep()">Suivant</button>
+        </div>
+    </div>
+
+    <!-- ETAPE 3 : Plateforme -->
+    <div class="step" data-step="3">
+        <div class="step-header">
+            <span class="step-number">3</span>
+            <h2>Choisissez la plateforme</h2>
+        </div>
+        <p class="step-desc">Le format et le style seront adaptes a la plateforme choisie.</p>
+
+        <div class="form-group">
+            <label>Plateforme de diffusion</label>
+            <div class="options single-select" data-category="platform">
+                <div class="option option-large">
+                    <span class="option-icon">&#9679;</span>
+                    <span class="option-title">Instagram Stories</span>
+                    <span class="option-detail">Slides visuelles, format vertical</span>
+                </div>
+                <div class="option option-large">
+                    <span class="option-icon">&#9654;</span>
+                    <span class="option-title">TikTok</span>
+                    <span class="option-detail">Script video court, hook puissant</span>
+                </div>
+                <div class="option option-large">
+                    <span class="option-icon">&#9998;</span>
+                    <span class="option-title">Facebook</span>
+                    <span class="option-detail">Post narratif, storytelling</span>
+                </div>
+                <div class="option option-large">
+                    <span class="option-icon">&#9993;</span>
+                    <span class="option-title">Email / Newsletter</span>
+                    <span class="option-detail">Sequence email persuasive</span>
+                </div>
+                <div class="option option-large">
+                    <span class="option-icon">&#128196;</span>
+                    <span class="option-title">LinkedIn</span>
+                    <span class="option-detail">Post professionnel engageant</span>
+                </div>
+                <div class="option option-large">
+                    <span class="option-icon">&#127760;</span>
+                    <span class="option-title">Landing Page</span>
+                    <span class="option-detail">Page de vente structuree</span>
+                </div>
+                <div class="option option-large">
+                    <span class="option-icon">&#128250;</span>
+                    <span class="option-title">YouTube Shorts / Reels</span>
+                    <span class="option-detail">Script video vertical</span>
+                </div>
+                <div class="option option-large">
+                    <span class="option-icon">&#128172;</span>
+                    <span class="option-title">WhatsApp / Telegram</span>
+                    <span class="option-detail">Message direct persuasif</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label>Nombre de slides / sections</label>
+            <div class="options single-select" data-category="slideCount">
+                <div class="option">3 slides</div>
+                <div class="option selected">5 slides</div>
+                <div class="option">7 slides</div>
+                <div class="option">10 slides</div>
+            </div>
+        </div>
+
+        <div class="btn-group">
+            <button class="btn btn-secondary" onclick="prevStep()">Retour</button>
+            <button class="btn" onclick="nextStep()">Suivant</button>
+        </div>
+    </div>
+
+    <!-- ETAPE 4 : Ton -->
+    <div class="step" data-step="4">
+        <div class="step-header">
+            <span class="step-number">4</span>
+            <h2>Choisissez le ton et le style</h2>
+        </div>
+        <p class="step-desc">Definissez la personnalite de votre communication.</p>
+
+        <div class="form-group">
+            <label>Ton de voix</label>
+            <div class="options" data-category="tone">
+                <div class="option">Inspirant & motivant</div>
+                <div class="option">Autoritaire & expert</div>
+                <div class="option">Amical & accessible</div>
+                <div class="option">Provocant & audacieux</div>
+                <div class="option">Emotionnel & intime</div>
+                <div class="option">Luxe & premium</div>
+                <div class="option">Humoristique & decale</div>
+                <div class="option">Urgent & percutant</div>
+                <div class="option">Educatif & pedagogique</div>
+                <div class="option">Mysterieux & intrigant</div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label>Style de storytelling</label>
+            <div class="options" data-category="storytelling">
+                <div class="option">Transformation personnelle</div>
+                <div class="option">Avant / Apres</div>
+                <div class="option">Temoignage client</div>
+                <div class="option">Coulisses / Behind the scenes</div>
+                <div class="option">Lecon de vie</div>
+                <div class="option">Erreur a eviter</div>
+                <div class="option">Secret revele</div>
+                <div class="option">Defi / Challenge</div>
+                <div class="option">Question rhethorique</div>
+                <div class="option">Chiffres & preuves</div>
+                <div class="option">Methode pas-a-pas</div>
+                <div class="option">Mythe vs Realite</div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label>Langue du contenu</label>
+            <div class="options single-select" data-category="language">
+                <div class="option selected">Francais</div>
+                <div class="option">Anglais</div>
+                <div class="option">Espagnol</div>
+                <div class="option">Arabe</div>
+            </div>
+        </div>
+
+        <div class="btn-group">
+            <button class="btn btn-secondary" onclick="prevStep()">Retour</button>
+            <button class="btn" onclick="nextStep()">Suivant</button>
+        </div>
+    </div>
+
+    <!-- ETAPE 5 : Objectif -->
+    <div class="step" data-step="5">
+        <div class="step-header">
+            <span class="step-number">5</span>
+            <h2>Objectif et Call-to-Action</h2>
+        </div>
+        <p class="step-desc">Quel est le resultat attendu de cette story ?</p>
+
+        <div class="form-group">
+            <label>Objectif principal</label>
+            <div class="options single-select" data-category="objective">
+                <div class="option">Generer des ventes</div>
+                <div class="option">Capturer des leads</div>
+                <div class="option">Augmenter l'engagement</div>
+                <div class="option">Construire la confiance</div>
+                <div class="option">Lancer un produit</div>
+                <div class="option">Creer de l'urgence</div>
+                <div class="option">Eduquer l'audience</div>
+                <div class="option">Rediriger vers un lien</div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label>Call-to-Action souhaite</label>
+            <div class="options" data-category="cta">
+                <div class="option">Swipe up / Lien en bio</div>
+                <div class="option">Envoie-moi un DM</div>
+                <div class="option">Commente "INFO"</div>
+                <div class="option">Inscris-toi maintenant</div>
+                <div class="option">Telecharge gratuitement</div>
+                <div class="option">Rejoins la communaute</div>
+                <div class="option">Partage cette story</div>
+                <div class="option">Profite de l'offre (-X%)</div>
+                <div class="option">Reserve ta place</div>
+                <div class="option">Clique sur le lien</div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="ctaCustom">CTA personnalise (optionnel)</label>
+            <input type="text" id="ctaCustom" placeholder="Ex: Utilise le code PROMO20 avant minuit...">
+        </div>
+
+        <div class="btn-group">
+            <button class="btn btn-secondary" onclick="prevStep()">Retour</button>
+            <button class="btn" onclick="nextStep()">Suivant</button>
+        </div>
+    </div>
+
+    <!-- ETAPE 6 : API Key & Generation -->
+    <div class="step" data-step="6">
+        <div class="step-header">
+            <span class="step-number">6</span>
+            <h2>Generation avec Claude AI</h2>
+        </div>
+        <p class="step-desc">Entrez votre cle API Anthropic pour generer le contenu. Votre cle reste stockee localement.</p>
+
+        <div class="form-group">
+            <label for="apiKey">Cle API Anthropic</label>
+            <div class="api-key-wrapper">
+                <input type="password" id="apiKey" placeholder="sk-ant-...">
+                <button class="btn-icon" onclick="toggleApiKey()" title="Afficher / masquer">&#128065;</button>
+            </div>
+            <small class="hint">Votre cle est sauvegardee localement dans votre navigateur uniquement.</small>
+        </div>
+
+        <div class="form-group">
+            <label>Modele Claude</label>
+            <div class="options single-select" data-category="model">
+                <div class="option selected">Claude Sonnet 4</div>
+                <div class="option">Claude Haiku 3.5</div>
+                <div class="option">Claude Opus 4</div>
+            </div>
+        </div>
+
+        <!-- Resume des choix -->
+        <div class="summary-box" id="summaryBox">
+            <h3>Resume de vos choix</h3>
+            <div id="summaryContent"></div>
+        </div>
+
+        <div class="btn-group">
+            <button class="btn btn-secondary" onclick="prevStep()">Retour</button>
+            <button class="btn btn-generate" id="generateBtn" onclick="generateAIDA()">
+                Generer ma Story AIDA
+            </button>
+        </div>
+    </div>
+
+    <!-- RESULTAT -->
+    <div id="resultSection" class="result-section" style="display: none;">
+        <div class="result-header">
+            <h2>Votre Story AIDA</h2>
+            <div class="result-actions">
+                <button class="btn btn-small" onclick="copyResult()">Copier</button>
+                <button class="btn btn-small btn-secondary" onclick="regenerate()">Regenerer</button>
+                <button class="btn btn-small btn-secondary" onclick="resetAll()">Nouveau</button>
+            </div>
+        </div>
+
+        <!-- Loading -->
+        <div id="loadingIndicator" class="loading" style="display: none;">
+            <div class="loading-spinner"></div>
+            <p>Claude genere votre contenu AIDA...</p>
+            <p class="loading-sub">Analyse de votre offre et creation de la strategie</p>
+        </div>
+
+        <!-- AIDA Tabs -->
+        <div id="aidaTabs" class="aida-tabs" style="display: none;">
+            <button class="aida-tab active" data-tab="full" onclick="showTab('full')">Complet</button>
+            <button class="aida-tab" data-tab="attention" onclick="showTab('attention')">A - Attention</button>
+            <button class="aida-tab" data-tab="interest" onclick="showTab('interest')">I - Interet</button>
+            <button class="aida-tab" data-tab="desire" onclick="showTab('desire')">D - Desir</button>
+            <button class="aida-tab" data-tab="action" onclick="showTab('action')">A - Action</button>
+            <button class="aida-tab" data-tab="strategy" onclick="showTab('strategy')">Strategie</button>
+        </div>
+
+        <div id="resultContent" class="result-content"></div>
+    </div>
+
+</div>
+
+<script src="aida.js"></script>
+
+</body>
+</html>
