@@ -1,435 +1,412 @@
 <!DOCTYPE html>
+
 <html lang="fr">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Studio Stories Mono-Slide Pro</title>
-  
-  <style>
-    :root {
-      --bg: #0c0c10;
-      --panel-bg: #14141d;
-      --card-bg: #1a1a26;
-      --accent: #FF8C42;
-      --text: #f5f0e8;
-      --text-muted: #8a8aa3;
-      --border: #2a2a3a;
-      --success: #10B981;
-      --star: #FFD700;
-    }
-    body {
-      font-family: 'Inter', -apple-system, sans-serif;
-      background-color: var(--bg);
-      color: var(--text);
-      margin: 0;
-      padding: 20px;
-      display: flex;
-      justify-content: center;
-    }
-    .container {
-      max-width: 1200px;
-      width: 100%;
-    }
-    h1 { text-align: center; margin-bottom: 5px; font-size: 1.8rem; }
-    .subtitle { text-align: center; color: var(--text-muted); margin-bottom: 30px; font-size: 0.95rem; }
-    
-    /* Onglets Principaux */
-    .tabs { display: flex; gap: 10px; margin-bottom: 20px; justify-content: center; }
-    .tab-btn { background: var(--panel-bg); color: var(--text-muted); border: 1px solid var(--border); padding: 12px 24px; border-radius: 8px; cursor: pointer; font-weight: bold; transition: 0.2s; }
-    .tab-btn:hover { background: var(--card-bg); color: var(--text); }
-    .tab-btn.active { background: var(--accent); color: var(--bg); border-color: var(--accent); }
-
-    /* Panneaux */
-    .panel { display: none; background: var(--panel-bg); border: 1px solid var(--border); border-radius: 12px; padding: 25px; margin-bottom: 30px; }
-    .panel.active { display: block; }
-
-    /* Formulaire Config */
-    .form-group { margin-bottom: 20px; }
-    label { display: block; margin-bottom: 8px; font-weight: 500; }
-    input[type="text"] { width: 100%; padding: 14px; background: var(--card-bg); border: 1px solid var(--border); border-radius: 8px; color: var(--text); box-sizing: border-box; font-size: 1rem; }
-    .btn-large { width: 100%; padding: 16px; background: var(--accent); color: var(--bg); border: none; border-radius: 8px; font-size: 1.1rem; font-weight: bold; cursor: pointer; transition: 0.2s; }
-    .btn-large:hover { opacity: 0.9; }
-
-    /* Résultats - Onglets Jours */
-    .daytabs { display: flex; gap: 8px; overflow-x: auto; margin-bottom: 20px; padding-bottom: 10px; border-bottom: 1px solid var(--border); }
-    .dtab { background: var(--card-bg); color: var(--text-muted); border: 1px solid var(--border); padding: 10px 16px; border-radius: 6px; cursor: pointer; font-weight: bold; white-space: nowrap; transition: 0.2s; }
-    .dtab:hover { color: var(--text); background: var(--panel-bg); }
-    .dtab.active { background: rgba(255,140,66,0.1); color: var(--accent); border-color: var(--accent); }
-
-    .dayinfo { margin-bottom: 20px; background: rgba(255,255,255,0.03); padding: 15px; border-radius: 8px; }
-    .dayinfo-t { font-weight: bold; font-size: 1.1rem; }
-
-    /* Layout Simulateur + Contrôles */
-    .clayout { display: flex; gap: 30px; flex-wrap: wrap; }
-    
-    /* ZONE TÉLÉPHONE (Simulateur) */
-    .phonewrap { flex: 1; min-width: 300px; max-width: 320px; display: flex; flex-direction: column; align-items: center; gap: 15px; }
-    .phone { 
-      background: #111; 
-      border: 12px solid #222; 
-      border-radius: 36px; 
-      width: 100%;
-      height: 570px; 
-      position: relative; 
-      box-sizing: border-box; 
-      overflow: hidden; 
-      background-size: cover;
-      background-position: center;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-    }
-    /* Conteneur de texte déplaçable */
-    .phone-text-container {
-      position: absolute;
-      left: 15px;
-      right: 15px;
-      top: 50%; 
-      transform: translateY(-50%);
-      cursor: grab;
-      user-select: none; 
-      text-align: center;
-      padding: 10px;
-      border-radius: 8px;
-    }
-    .phone-text-container:active { cursor: grabbing; }
-    .phone-ct { 
-      font-size: 1.1rem; 
-      line-height: 1.5; 
-      white-space: pre-line; 
-      margin: 0;
-    }
-    
-    /* Contrôles sous le téléphone */
-    .phone-controls { width: 100%; display: flex; flex-direction: column; gap: 10px; }
-    .control-row { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; }
-    .cbtn { background: var(--card-bg); border: 1px solid var(--border); color: var(--text); padding: 8px 12px; border-radius: 6px; font-size: 0.85rem; cursor: pointer; font-weight: bold; transition: 0.2s; }
-    .cbtn:hover { background: var(--panel-bg); }
-    .cbtn.active { background: var(--accent); color: var(--bg); border-color: var(--accent); }
-    .file-input { display: none; }
-
-    /* ZONE PANNEAU DE CONTRÔLE (Actions) */
-    .cpanel { flex: 2; min-width: 300px; display: flex; flex-direction: column; }
-    
-    /* Zone de texte éditable par l'utilisateur */
-    .editable-box {
-      background: var(--card-bg);
-      padding: 25px;
-      border-radius: 12px;
-      border: 1px solid var(--border);
-      min-height: 150px;
-      margin-bottom: 20px;
-      font-size: 1.1rem;
-      position: relative;
-      line-height: 1.6;
-      color: var(--text);
-      width: 100%;
-      box-sizing: border-box;
-      resize: vertical;
-      font-family: inherit;
-    }
-    .editable-box:focus {
-      outline: none;
-      border-color: var(--accent);
-    }
-    
-    .action-row { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 20px;}
-    .abtn { flex: 1; min-width: 160px; padding: 14px; border-radius: 8px; border: 1px solid var(--border); background: var(--card-bg); color: var(--text); font-weight: bold; cursor: pointer; transition: 0.2s; display: flex; align-items: center; justify-content: center; gap: 8px; }
-    .abtn:hover { background: var(--panel-bg); }
-
-    .cbox-header { display: flex; justify-content: flex-end; gap: 8px; margin-bottom: 5px; }
-    .cb-btn { background: rgba(255,255,255,0.05); border: 1px solid var(--border); color: var(--text); padding: 6px 10px; border-radius: 6px; font-size: 0.8rem; cursor: pointer; font-weight: bold; transition: 0.2s; }
-    .cb-btn:hover { background: rgba(255,255,255,0.1); }
-    .cb-btn.copied { background: var(--success); color: white; border-color: var(--success); }
-    .cb-btn.starred { background: rgba(255,215,0,0.1); color: var(--star); border-color: var(--star); }
-
-    /* PANNEAU PÉPITES */
-    #pepites-list { display: flex; flex-direction: column; gap: 15px; }
-    .pepite-item { background: var(--card-bg); border: 1px solid var(--border); border-radius: 10px; padding: 20px; position: relative; transition: 0.2s; }
-    .pepite-item:hover { border-color: rgba(255,255,255,0.1); }
-    .pepite-meta { font-size: 0.8rem; color: var(--text-muted); margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
-    .pepite-text { font-size: 1rem; line-height: 1.6; white-space: pre-line; color: var(--text); }
-    .pepite-actions { position: absolute; top: 15px; right: 15px; display: flex; gap: 8px; }
-
-    /* Alerte de sauvegarde */
-    .save-alert { text-align: center; color: var(--success); font-size: 0.85rem; margin-top: -15px; margin-bottom: 15px; opacity: 0; transition: opacity 0.5s ease; pointer-events: none; }
-    .save-alert.visible { opacity: 1; }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Studio Stories Mono-Slide Pro</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<style>
+:root{--bg:#0c0c10;--panel:#14141d;--card:#1a1a26;--accent:#FF8C42;--text:#f5f0e8;--muted:#8a8aa3;--border:#2a2a3a;--success:#10B981;--star:#FFD700;--font:'Segoe UI',system-ui,-apple-system,sans-serif}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--font);background:var(--bg);color:var(--text);padding:12px;display:flex;justify-content:center}
+.container{max-width:1100px;width:100%}
+h1{text-align:center;margin-bottom:4px;font-size:1.5rem}
+.subtitle{text-align:center;color:var(--muted);margin-bottom:6px;font-size:.85rem}
+.combo-line{text-align:center;color:var(--accent);font-size:.75rem;font-weight:700;margin-bottom:18px;letter-spacing:.5px}
+.tabs{display:flex;gap:6px;margin-bottom:14px;justify-content:center;flex-wrap:wrap;position:sticky;top:0;z-index:10;background:var(--bg);padding:8px 0}
+.tab-btn{background:var(--panel);color:var(--muted);border:1px solid var(--border);padding:10px 16px;border-radius:8px;cursor:pointer;font-weight:700;font-size:12px;font-family:var(--font);transition:.2s}
+.tab-btn:hover{background:var(--card);color:var(--text)}
+.tab-btn.active{background:var(--accent);color:var(--bg);border-color:var(--accent)}
+.panel{display:none;background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:20px;margin-bottom:24px}
+.panel.active{display:block}
+.fg{margin-bottom:16px}
+.fg label{display:block;margin-bottom:6px;font-weight:600;font-size:12px;color:var(--accent);text-transform:uppercase;letter-spacing:.5px}
+.fg input{width:100%;padding:12px 14px;background:var(--card);border:1.5px solid var(--border);border-radius:8px;color:var(--text);font-size:14px;font-family:var(--font);outline:none;transition:border .2s}
+.fg input:focus{border-color:var(--accent)}
+.fg .hint{font-size:11px;color:var(--muted);margin-top:4px}
+.btn-large{width:100%;padding:14px;background:linear-gradient(135deg,var(--accent),#FF6B2B);color:var(--bg);border:none;border-radius:8px;font-size:15px;font-weight:800;cursor:pointer;font-family:var(--font);transition:.2s}
+.btn-large:hover{filter:brightness(1.1)}.btn-large:active{transform:scale(.98)}
+.daytabs{display:flex;gap:6px;overflow-x:auto;margin-bottom:14px;padding-bottom:8px;border-bottom:1px solid var(--border);-webkit-overflow-scrolling:touch}
+.dtab{background:var(--card);color:var(--muted);border:1px solid var(--border);padding:9px 14px;border-radius:6px;cursor:pointer;font-weight:700;white-space:nowrap;font-size:12px;font-family:var(--font);flex-shrink:0;transition:.2s}
+.dtab:hover{color:var(--text)}.dtab.active{background:rgba(255,140,66,.1);color:var(--accent);border-color:var(--accent)}
+.dayinfo{margin-bottom:16px;background:rgba(255,255,255,.03);padding:12px;border-radius:8px;border-left:3px solid var(--accent)}
+.dayinfo-t{font-weight:700;font-size:14px}.dayinfo-s{font-size:11px;color:var(--muted);margin-top:3px}
+.clayout{display:flex;gap:24px;align-items:flex-start}
+.phonewrap{width:280px;min-width:280px;flex-shrink:0;display:flex;flex-direction:column;align-items:center;gap:12px}
+/* PHONE — scrollable text */
+.phone{background:#111;border:10px solid #222;border-radius:32px;width:100%;height:520px;position:relative;overflow:hidden;background-size:cover;background-position:center;box-shadow:0 8px 24px rgba(0,0,0,.4);display:flex;flex-direction:column}
+.phone-header{padding:12px 14px 0;flex-shrink:0}
+.phone-prof{display:flex;align-items:center;gap:6px;margin-bottom:8px}
+.phone-av{width:26px;height:26px;border-radius:50%;background:linear-gradient(135deg,var(--accent),#FF6B2B);display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:900;color:#fff}
+.phone-un{font-size:11px;color:#bbb;font-weight:600}
+.phone-scroll{flex:1;overflow-y:auto;padding:0 14px 16px;-webkit-overflow-scrolling:touch}
+.phone-scroll::-webkit-scrollbar{width:3px}.phone-scroll::-webkit-scrollbar-thumb{background:#444;border-radius:3px}
+.phone-ct{font-size:13px;line-height:1.6;white-space:pre-line;margin:0}
+.phone-controls{width:100%;display:flex;flex-direction:column;gap:8px}
+.control-row{display:flex;gap:6px;justify-content:center;flex-wrap:wrap}
+.cbtn{background:var(--card);border:1px solid var(--border);color:var(--text);padding:7px 10px;border-radius:6px;font-size:12px;cursor:pointer;font-weight:700;font-family:var(--font);transition:.2s}
+.cbtn:hover{background:var(--panel)}.cbtn.active{background:var(--accent);color:var(--bg);border-color:var(--accent)}
+.file-input{display:none}
+.cpanel{flex:1;min-width:0;display:flex;flex-direction:column}
+.editable-box{background:var(--card);padding:18px;border-radius:10px;border:1.5px solid var(--border);min-height:180px;margin-bottom:14px;font-size:14px;line-height:1.65;color:var(--text);width:100%;resize:vertical;font-family:var(--font);outline:none;transition:border .2s}
+.editable-box:focus{border-color:var(--accent)}
+.cbox-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+.cbox-left{font-size:11px;color:var(--muted)}.cbox-right{display:flex;gap:6px}
+.cb-btn{background:rgba(255,255,255,.05);border:1px solid var(--border);color:var(--text);padding:5px 10px;border-radius:6px;font-size:12px;cursor:pointer;font-weight:700;font-family:var(--font);transition:.2s}
+.cb-btn:hover{background:rgba(255,255,255,.1)}.cb-btn.copied{background:var(--success);color:#fff;border-color:var(--success)}.cb-btn.starred{background:rgba(255,215,0,.1);color:var(--star);border-color:var(--star)}
+.action-row{display:flex;gap:8px;flex-wrap:wrap}
+.abtn{flex:1;min-width:100px;padding:11px 8px;border-radius:6px;border:1px solid var(--border);background:var(--card);color:var(--text);font-weight:700;cursor:pointer;font-size:12px;font-family:var(--font);text-align:center;transition:.2s}
+.abtn:hover{background:var(--panel)}
+#pepites-list{display:flex;flex-direction:column;gap:12px}
+.pepite-item{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:16px;position:relative}
+.pepite-text{font-size:13px;line-height:1.6;white-space:pre-line;color:var(--text);padding-right:60px}
+.pepite-actions{position:absolute;top:12px;right:12px;display:flex;gap:6px}
+.save-alert{text-align:center;color:var(--success);font-size:.8rem;margin-bottom:12px;opacity:0;transition:opacity .5s;pointer-events:none}
+.save-alert.visible{opacity:1}
+#pdf-zone{position:absolute;left:-9999px;top:-9999px;width:700px;background:#fff;color:#333;padding:30px;font-family:sans-serif}
+@media(max-width:750px){.clayout{flex-direction:column;align-items:stretch}.phonewrap{width:100%;min-width:0}.phone{width:260px;min-width:260px;height:480px;margin:0 auto}.cpanel{width:100%}}
+@media(max-width:480px){body{padding:8px}h1{font-size:1.3rem}.phone{width:240px;min-width:240px;height:450px}.phone-ct{font-size:12px}.tab-btn{padding:8px 10px;font-size:11px}.panel{padding:14px}.dtab{padding:7px 10px;font-size:11px}}
+@media(max-width:360px){.phone{width:210px;min-width:210px;height:400px}}
+</style>
 </head>
 <body>
-
 <div class="container">
-  <h1>🎯 Studio Stories Mono-Slide</h1>
-  <div class="subtitle">Hooks Interchangeables • Simulateur Visuel • Banque de Pépites</div>
-  <div id="save-status" class="save-alert">✓ Données synchronisées</div>
-
-  <div class="tabs">
-    <button class="tab-btn active" id="tab-config" onclick="switchTab('config')">⚙️ Configuration</button>
-    <button class="tab-btn" id="tab-result" onclick="switchTab('result')">📱 Studio Création</button>
-    <button class="tab-btn" id="tab-pepites" onclick="switchTab('pepites')">⭐ Mes Pépites (<span id="pepites-count">0</span>)</button>
-  </div>
-
-  <div class="panel active" id="panel-config">
-    <div class="form-group">
-      <label>Nom de ton produit ou service</label>
-      <input type="text" id="f-product" value="mon programme" oninput="saveInputs()">
-    </div>
-    <div class="form-group">
-      <label>Ton appel à l'action (CTA)</label>
-      <input type="text" id="f-cta" value="écris-moi 'GO' en DM" oninput="saveInputs()">
-    </div>
-    <button class="btn-large" onclick="handleGenerate()">🚀 RÉGÉNÉRER MA SEMAINE</button>
-  </div>
-
-  <div class="panel" id="panel-result"></div>
-
-  <div class="panel" id="panel-pepites">
-    <div id="pepites-list"></div>
-  </div>
+<h1>🎯 Studio Stories Mono-Slide</h1>
+<div class="subtitle">Stories complètes pré-écrites • Simulateur • Pépites</div>
+<div class="combo-line" id="combo-line"></div>
+<div id="save-status" class="save-alert">✓ Synchronisé</div>
+<div class="tabs">
+  <button class="tab-btn active" id="tab-config" onclick="switchTab('config')">⚙️ Config</button>
+  <button class="tab-btn" id="tab-result" onclick="switchTab('result')">📱 Studio</button>
+  <button class="tab-btn" id="tab-pepites" onclick="switchTab('pepites')">⭐ Pépites (<span id="pepites-count">0</span>)</button>
 </div>
-
+<div class="panel active" id="panel-config">
+  <div class="fg"><label>Nom de ta formation / offre</label><input type="text" id="f-product" placeholder="Ex : Code Liberté"></div>
+  <div class="fg"><label>Ton appel à l'action (CTA)</label><input type="text" id="f-cta" placeholder="Ex : Envoie-moi le mot CODE en message privé"><div class="hint">C'est la phrase qui termine chaque story.</div></div>
+  <button class="btn-large" onclick="handleGenerate()">🚀 CRÉER MA SEMAINE DE STORIES</button>
+</div>
+<div class="panel" id="panel-result"></div>
+<div class="panel" id="panel-pepites"><div id="pepites-list"></div></div>
+</div>
+<div id="pdf-zone"></div>
 <script>
-const HOOKS = [
-  "Arrête de scroller 2 secondes ! 🛑 \n\n", "Alerte gros ras-le-bol. 😤 \n\n", "Regarde bien cette slide, elle est pour toi. 👀 \n\n", 
-  "Est-ce que tu t'es déjà demandé pourquoi certains réussissent si vite ? 🤔 \n\n", "Oublie tout ce qu'on t'a dit sur la vente. 🤫 \n\n", 
-  "Avis aux entrepreneures déterminées : 📣 \n\n", "Lis bien ce qui va suivre si tu veux passer un cap. 🚀 \n\n", 
-  "Stop au syndrome de l'imposteur ! 🧠 \n\n"
+const DAYS=[
+{key:"lundi",jour:"Lundi",theme:"Déclic & Motivation",emoji:"🔥",color:"#FF595E"},
+{key:"mardi",jour:"Mardi",theme:"Éducation & Valeur",emoji:"📚",color:"#FFCA3A"},
+{key:"mercredi",jour:"Mercredi",theme:"Storytelling & Vécu",emoji:"🎬",color:"#8AC926"},
+{key:"jeudi",jour:"Jeudi",theme:"Blocages & Objections",emoji:"🧱",color:"#1982C4"},
+{key:"vendredi",jour:"Vendredi",theme:"Preuve & Résultats",emoji:"🏆",color:"#6A4C93"},
+{key:"samedi",jour:"Samedi",theme:"Lifestyle & Coulisses",emoji:"☀️",color:"#FF9F1C"},
+{key:"dimanche",jour:"Dimanche",theme:"Offre & CTA direct",emoji:"🚀",color:"#2EC4B6"},
 ];
 
-const BIBLE = {
-  lundi: { theme: "LUNDI — Formule AIDA (Attention, Intérêt, Désir, Action)", color: "#FF595E", B: ["Tu mérites un business fluide. C'est exactement ce qu'on fait dans {product}. Prête à changer ? Alors {cta} !", "Si tu veux doubler tes résultats sans travailler plus, {product} est fait pour toi. Envie de voir comment ? Simple : {cta}."] },
-  mardi: { theme: "MARDI — Formule PAS (Problème, Agitation, Solution)", color: "#FFCA3A", B: ["C'est parce qu'il te manque une structure. C'est ce qu'on règle ensemble dans {product}. Marre de galérer ? {cta}.", "Le problème n'est pas ton offre, c'est ton process. Avec {product}, on remet tout à plat. Pour en discuter : {cta}."] },
-  mercredi: { theme: "MERCREDI — Formule FOMO (Urgence & Rareté)", color: "#8AC926", B: ["Ne regrette pas demain de ne pas avoir sauté le pas aujourd'hui. {product} t'attend. Pour sécuriser ta place : {cta}.", "C'est le moment de prendre une vraie décision pour ton avenir. Embarque dans {product} dès maintenant ! {cta}."] },
-  jeudi: { theme: "JEUDI — Preuve Sociale", color: "#1982C4", B: ["Elles ont toutes commencé au même point que toi avant d'intégrer {product}. Tu attends quoi ? {cta}.", "La méthode fonctionne pour tout le monde, pourquoi pas pour toi ? Rejoins {product} ! Pour postuler : {cta}."] },
-  vendredi: { theme: "VENDREDI — Le Contraste", color: "#6A4C93", B: ["C'est exactement la transformation qu'on opère à l'intérieur de {product}. Tu veux la tienne ? {cta}.", "Ce n'est pas de la magie, c'est de la pure stratégie appliquée dans {product}. Envie de voir le plan ? {cta}."] },
-  samedi: { theme: "SAMEDI — Le Storytelling", color: "#FF9F1C", B: ["Mais j'ai trouvé la clé. Elle est dans {product}. Ne fais pas les mêmes erreurs que moi : {cta}.", "C'est de cet échec qu'est né {product}. Épargne-toi ces mois de souffrance : {cta}."] },
-  dimanche: { theme: "DIMANCHE — La Clarté", color: "#2EC4B6", B: ["La réponse est non. Dans {product}, on s'adapte à ton niveau. Tu as encore des doutes ? Viens me les poser : {cta}.", "On reprend tout à zéro ensemble. C'est le but de {product}. Si tu veux la vérité : {cta}."] }
+/* ═══════════════════════════════════════════════════════════
+210+ STORIES PRÉ-ÉCRITES — 30 PAR JOUR
+Chaque story = fil narratif cohérent A → B
+Ton amical • Charnière obligatoire • Preuve avant CTA
+═══════════════════════════════════════════════════════════ */
+const S={
+lundi:[
+`Ce matin j'ai emmené mon fils à l'école. À pied. Tranquillement.\n\nAvant, je le déposais en speed à la garderie à 7h30 pour pas être en retard. Je le voyais à peine.\n\nMaintenant c'est moi qui décide de mon emploi du temps.\n\nUne élève m'a dit la semaine dernière : « Le premier matin où j'ai pu emmener ma fille sans courir, j'ai pleuré. »\n\nC'est ça que {product} permet de construire.\n\n{cta}`,
+`Un truc que j'ai compris tard : le problème c'est pas toi. C'est que personne ne t'a montré comment faire.\n\nTu peux être bosseuse, motivée, intelligente — sans méthode, tu tournes en rond.\n\nAvant je testais des trucs dans tous les sens. Rien marchait. Le jour où j'ai suivi un vrai plan, tout a bougé.\n\n[Prénom] a vécu la même chose. Premières ventes en 3 semaines avec {product}.\n\n{cta}`,
+`Tu te lèves. Tu bosses. Tu rentres. Tu recommences.\n\nEt un jour tu te demandes : c'est ça ma vie ?\n\nC'est la question que je me suis posée il y a un an. Et j'ai décidé que non.\n\nAvant je vivais pour le week-end. Maintenant chaque jour me plaît.\n\nUne élève m'a écrit : « Je pensais pas que c'était possible pour quelqu'un comme moi. » Et pourtant.\n\n{cta}`,
+`Si tu attends d'être prête, je vais te dire un secret : tu ne le seras jamais.\n\nJ'ai attendu des mois. J'avais peur de me planter.\n\nEt puis j'ai commencé quand même. Pas parce que j'étais prête. Parce que j'en pouvais plus d'attendre.\n\nAvant j'avais peur. Maintenant j'ai des résultats.\n\n[Prénom] aussi avait peur. Première vente en 10 jours.\n\n{cta}`,
+`On m'a dit : « T'as de la chance. »\n\nNon. J'ai un système.\n\nAvant je ne savais même pas ce que je pouvais vendre. Maintenant j'ai un plan clair.\n\nCe plan, il est dans {product}. C'est le même que mes élèves suivent.\n\n{cta}`,
+`Tu sais ce qui m'énerve ? Qu'on fasse croire que c'est compliqué.\n\nQue pour vendre en ligne il faut être influenceuse ou super technique.\n\nC'est faux. Il faut une offre claire, une méthode, et passer à l'action.\n\nAvant je croyais que c'était pour les autres. Maintenant c'est ma réalité.\n\n[Prénom] avait 200 abonnés quand elle a fait sa première vente. 200.\n\n{cta}`,
+`Ce matin, notification de paiement en prenant mon café.\n\nQuelqu'un a acheté pendant que je dormais.\n\nAvant je troquais mes heures contre un salaire. Maintenant mon business tourne même quand je suis pas devant mon écran.\n\nUne élève a reçu sa première vente pendant la nuit. Son message : « Je croyais que c'était une erreur 😂 »\n\n{cta}`,
+`La différence entre celles qui avancent et celles qui restent bloquées ?\n\nC'est pas le talent. C'est la décision de commencer.\n\nAvant j'avais des excuses pour tout. Maintenant j'ai des résultats.\n\nLes femmes dans {product} ne sont pas extraordinaires. Elles ont juste décidé de ne plus attendre.\n\n{cta}`,
+`Un truc simple que personne n'applique : arrête de chercher la motivation. Cherche un plan.\n\nLa motivation va et vient. Un plan, ça reste.\n\nAvant je me boostais avec des podcasts. À fond le lundi. Plus rien le mercredi.\n\nMaintenant j'ai un système. Je sais quoi faire chaque jour. Les résultats suivent.\n\nCe système est dans {product}.\n\n{cta}`,
+`J'ai longtemps cru que je devais tout comprendre avant de commencer.\n\nRésultat : 6 mois à apprendre sans rien faire.\n\nLe jour où j'ai juste suivi une méthode, première vente en 2 semaines.\n\nAvant je voulais être prête. Maintenant je suis lancée.\n\n[Prénom] a fait pareil. Et ça a marché.\n\n{cta}`,
+`Petite question honnête : dans un an, tu veux être au même endroit ?\n\nMême job. Même stress. Même compte en banque.\n\nAvant je me disais "un jour". Maintenant c'est mon quotidien.\n\nUne élève : « Il y a 6 mois je scrollais tes stories en rêvant. Maintenant c'est moi qui vends. »\n\n{cta}`,
+`Le plus dur c'est pas de se lancer. C'est de croire que c'est possible pour soi.\n\nMais les femmes qui réussissent dans {product} ne sont pas celles qui n'ont pas de doutes. Ce sont celles qui avancent avec.\n\nAvant je doutais de tout. Maintenant j'ai des preuves.\n\n{cta}`,
+`J'ai reçu un message ce matin qui m'a fait sourire.\n\nUne élève : « J'ai fait ma première vente et j'ai hurlé dans ma cuisine 😂 »\n\nAvant, elle pensait que c'était pas pour elle. Maintenant elle vend.\n\nC'est ça {product}. Pas des promesses. Des résultats.\n\n{cta}`,
+`Ce que j'aurais aimé qu'on me dise quand j'ai commencé :\n\nT'as pas besoin de tout savoir. T'as besoin de commencer. Avec les bonnes personnes.\n\nAvant je faisais tout seule. Maintenant j'ai une méthode. Et je la transmets.\n\n{product} c'est un cadre. Un plan concret.\n\n{cta}`,
+`Y'a 6 mois, j'étais à ta place. Je scrollais. Je rêvais. Je me disais « un jour ».\n\nEt puis j'ai fait un truc simple : j'ai commencé.\n\nAvant je disais "j'aimerais bien". Maintenant je dis "j'ai fait".\n\n[Prénom] a commencé comme ça. Premières ventes le mois suivant.\n\n{cta}`,
+`Ce matin mon alarme a sonné. Je l'ai éteinte. Et je me suis rendormie.\n\nPas parce que je suis fainéante. Parce que je peux.\n\nAvant mon réveil c'était une obligation. Maintenant c'est un choix.\n\nUne élève : « La première fois que j'ai éteint mon réveil un mardi matin sans stress, j'ai compris que ça valait le coup. »\n\n{cta}`,
+`J'ai une copine qui bosse 50h par semaine. Elle me dit souvent : « J'aimerais tellement faire comme toi. »\n\nEt moi je lui réponds toujours la même chose : « Tu peux. »\n\nAvant j'étais exactement comme elle. Maintenant j'ai construit autre chose.\n\nPas par chance. Par méthode. Celle de {product}.\n\n{cta}`,
+`Un déclic que j'ai eu un soir, devant mon ordi :\n\nJe gagnais le même salaire depuis 3 ans. Malgré les efforts. Malgré les heures sup.\n\nJ'ai compris que le problème c'était pas moi. C'était le système dans lequel j'étais.\n\nAvant j'essayais de progresser dans un cadre qui me limitait. Maintenant j'ai créé le mien.\n\n{product} t'aide à faire pareil.\n\n{cta}`,
+`Tu sais quoi ? J'ai pas de talent particulier.\n\nJe suis pas plus intelligente que toi. Pas plus courageuse.\n\nJ'ai juste trouvé un plan qui marche. Et je l'ai suivi.\n\nAvant je cherchais LE truc qui allait tout changer. Maintenant je sais que c'est pas un truc. C'est une méthode.\n\nElle est dans {product}. Et elle marche.\n\n{cta}`,
+`Ce qui m'a débloquée c'est pas le courage. C'est un cadre.\n\nQuelqu'un qui m'a dit : fais ça, puis ça, puis ça.\n\nAvant je m'éparpillais. Je testais 10 trucs en même temps. Rien fonctionnait.\n\nMaintenant j'ai un plan. Simple. Clair. Et les résultats suivent.\n\n{product} c'est ce cadre. Celui que j'aurais voulu avoir dès le début.\n\n{cta}`,
+`Un matin j'ai ouvert mon appli bancaire et j'ai vu un chiffre que j'avais jamais vu avant.\n\nPas un héritage. Pas un gain au loto. Mes ventes.\n\nAvant mon compte me faisait peur. Maintenant il me rassure.\n\nC'est pas de la magie. C'est {product}.\n\n{cta}`,
+`Tu veux que je te dise un truc que personne ne dit ?\n\nLa plupart des gens ne se lancent pas parce qu'ils ont peur du regard des autres. Pas de l'échec.\n\nJ'ai eu la même peur. Et puis j'ai compris que les gens qui me jugeaient n'avaient pas la vie que je voulais.\n\nAvant j'avais peur du jugement. Maintenant je m'en fiche. Parce que j'ai des résultats.\n\n{cta}`,
+`J'ai acheté un truc sans regarder le prix l'autre jour. Rien de fou. Un resto.\n\nMais pour moi c'était énorme. Parce qu'avant, chaque dépense était un calcul.\n\nMaintenant je me pose plus la question. Pas parce que je suis riche. Parce que je gagne assez pour choisir.\n\n{product} m'a donné ça.\n\n{cta}`,
+`Ce matin j'ai fermé mon ordi à 14h. Parce que j'avais fini.\n\nPas fini ma journée. Fini ce que j'avais à faire.\n\nAvant je remplissais mes journées pour avoir l'air occupée. Maintenant je bosse sur ce qui compte.\n\nLe reste du temps ? Je vis.\n\nC'est ce qu'on apprend dans {product}. Travailler moins mais mieux.\n\n{cta}`,
+`Un truc qui a changé ma vie : comprendre que l'argent n'est pas lié au temps.\n\nAu salariat, plus tu bosses = plus tu gagnes (en théorie).\n\nEn business, tu gagnes en fonction de ton système. Pas de tes heures.\n\nAvant je vendais mon temps. Maintenant je vends une solution.\n\nC'est ce shift qu'on fait dans {product}.\n\n{cta}`,
+`Si tu lis ça en ce moment, c'est que quelque chose te travaille.\n\nPeut-être l'envie de plus. Peut-être la fatigue du quotidien.\n\nÉcoute ce truc. C'est le même signal que j'ai eu avant de commencer.\n\nAvant j'ignorais ce signal. Maintenant je suis contente de l'avoir écouté.\n\n[Prénom] a écouté le sien aussi. Résultat : premières ventes en 3 semaines avec {product}.\n\n{cta}`,
+`Le meilleur investissement de ma vie ? Pas un sac. Pas un voyage.\n\nMe faire accompagner. Avoir quelqu'un qui me montre le chemin.\n\nAvant je perdais du temps à chercher seule. Maintenant j'avance vite parce que j'ai un plan.\n\nC'est ça {product}. Le raccourci que j'aurais aimé prendre plus tôt.\n\n{cta}`,
+`Mon fils m'a demandé de jouer cet après-midi. J'ai dit oui. Sans culpabiliser.\n\nAvant je culpabilisais toujours. Soit de pas bosser assez. Soit de pas être assez présente.\n\nMaintenant j'ai trouvé l'équilibre. Parce que j'ai un business qui me le permet.\n\n{product} c'est aussi ça. Pas juste de l'argent. Du temps.\n\n{cta}`,
+`J'ai reçu un vocal d'une élève ce matin. Elle pleurait. De joie.\n\nElle venait de faire sa première vente. Après des mois à douter d'elle.\n\nAvant elle pensait qu'elle n'y arriverait jamais. Maintenant elle sait que si.\n\nC'est le moment le plus beau de mon métier.\n\n{cta}`,
+`Dernier truc avant que tu scrolles :\n\nTu mérites mieux que ce que tu as en ce moment. Pas parce que ta vie est nulle. Parce que tu es capable de plus.\n\nAvant j'avais du mal à me dire ça. Maintenant j'en suis convaincue. Pour moi. Et pour toi.\n\nSi tu veux voir ce qui est possible, regarde {product}.\n\n{cta}`,
+],
+mardi:[
+`Tu n'as pas besoin de plus de contenu. Tu as besoin d'une offre claire.\n\nLa plupart des femmes que j'accompagne postent des trucs. Des reels, des stories. Mais elles vendent rien.\n\nLe problème c'est pas la visibilité. C'est la clarté.\n\nQuand ton audience comprend en 5 secondes ce que tu proposes, elle achète.\n\nC'est ce qu'on construit dans {product}.\n\n[Prénom] avait 300 abonnés et zéro vente. On a clarifié son offre. Première vente en 10 jours.\n\n{cta}`,
+`Erreur n°1 : vouloir plaire à tout le monde.\n\nTu parles à tout le monde ? Tu parles à personne.\n\nLe jour où j'ai choisi UNE cible et UN problème, tout a changé.\n\nDans {product}, c'est la première chose qu'on fait. Et c'est ce qui débloque tout.\n\n{cta}`,
+`Pourquoi tes stories ne vendent pas ?\n\nC'est pas parce qu'elles sont moches. C'est parce qu'elles racontent ta vie sans montrer ce que ça change.\n\n« Regardez mon café » → sympa.\n« Ce café je le bois à 10h un mardi parce que c'est moi qui choisis » → ça vend.\n\nC'est la charnière. On apprend ça dans {product}.\n\n{cta}`,
+`On me demande : « Combien d'abonnés pour vendre ? »\n\n[Prénom] a fait sa première vente avec 180 abonnés.\n\nLe nombre c'est pas le sujet. Le sujet c'est : est-ce que les bonnes personnes comprennent ce que tu proposes ?\n\n{product} travaille sur ça.\n\n{cta}`,
+`Un truc que personne ne dit : vendre c'est pas un don. C'est une compétence.\n\nOn peut l'apprendre. Comme la cuisine.\n\nAvant je pensais que celles qui vendaient avaient un truc en plus. Non. Elles ont appris une méthode.\n\nCette méthode est dans {product}.\n\n{cta}`,
+`Tu sais pourquoi tu procrastines ? C'est pas la fainéantise. C'est que tu sais pas quoi faire en premier.\n\nQuand t'as un plan — étape 1, 2, 3 — tu avances.\n\nAvant je « réfléchissais à ma stratégie ». En vrai je tournais en rond.\n\nMaintenant j'ouvre mon plan, je fais. Résultats.\n\n{product} te donne ce plan.\n\n{cta}`,
+`Le jour où j'ai compris que poster du contenu ≠ vendre, tout a changé.\n\nLa question c'est pas « qu'est-ce que je poste ? ». C'est « qu'est-ce que je vends, à qui, et pourquoi ? ».\n\nDans {product}, on répond à ces 3 questions. Après, le contenu se crée tout seul.\n\n[Prénom] postait tous les jours sans résultat. Avec la bonne offre : 4 ventes le premier mois.\n\n{cta}`,
+`« Il faut être experte pour vendre. » Mythe.\n\nIl faut avoir de l'avance sur ta cliente. C'est tout.\n\nSi tu as résolu un problème que d'autres ont encore, tu peux les aider.\n\nC'est ce qu'on met en place dans {product}. Même si tu pars de zéro.\n\n{cta}`,
+`La charnière = la différence entre une story jolie et une story qui vend.\n\nC'est le pont entre ta vie et ton offre.\n\nSans elle, ta story est sympa. Avec elle, ta story fait comprendre quelque chose.\n\nDans {product}, chaque story a une charnière.\n\n{cta}`,
+`Conseil gratuit qui vaut cher :\n\nArrête le contenu éducatif sans fin. Ta cliente veut un résultat. Pas un cours.\n\nMontre-lui le résultat. Montre que c'est possible pour elle. Et dis-lui comment commencer.\n\nC'est la base de {product}.\n\n{cta}`,
+`Par quoi commencer ? Ton offre. Pas ton feed. Pas ton logo. Pas ton site.\n\nSi tu sais pas ce que tu vends et à qui, le reste c'est du vent.\n\nDans {product}, semaine 1 = clarifier ton offre. Souvent ça suffit pour débloquer.\n\n{cta}`,
+`Le piège : vouloir être parfaite avant de se lancer.\n\nLe feed parfait. La bio parfaite. Le logo parfait.\n\nPendant ce temps : zéro vente.\n\nLe jour où j'ai lancé un truc imparfait, j'ai fait mes premières ventes.\n\n{product} t'apprend à avancer vite. Pas à être parfaite.\n\n{cta}`,
+`Vendre c'est aider. Si ton offre résout un vrai problème, la vendre c'est rendre service.\n\nArrête de culpabiliser. Tu aides des gens. C'est normal d'être payée.\n\nAvant j'avais honte de vendre. Maintenant chaque vente = quelqu'un que j'aide.\n\nDans {product}, on change ce rapport. Et ça change tout.\n\n{cta}`,
+`Le meilleur investissement que j'ai fait ? Me faire accompagner.\n\nPas un livre. Pas un podcast. Un vrai programme.\n\nAvant je cherchais des réponses gratuites. Résultat : des mois perdus.\n\nMaintenant je transmets ce raccourci. C'est ça {product}.\n\n{cta}`,
+`{product} t'apprend pas à devenir influenceuse.\n\nÀ créer une offre qui se vend. Trouver les bonnes personnes. Leur parler simplement.\n\nPas de jargon. Juste ce qui marche.\n\n[Prénom] avait zéro compétence technique. En 4 semaines elle vendait.\n\n{cta}`,
+`Un truc que j'ai appris à la dure : tu peux avoir le meilleur produit du monde, si personne sait qu'il existe, tu vendras rien.\n\nLe marketing c'est pas manipuler. C'est faire savoir que tu existes à ceux qui ont besoin de toi.\n\nDans {product}, on apprend à faire ça. Simplement.\n\n{cta}`,
+`La peur de vendre « trop ». Tu connais ?\n\n« J'ai peur de soûler les gens. » « J'ai peur qu'on me voie comme une vendeuse. »\n\nMais réfléchis : est-ce que ton médecin a peur de te prescrire un médicament ? Non. Parce qu'il sait que ça va t'aider.\n\nPareil pour toi. Si ton offre aide, parles-en.\n\nC'est ce qu'on apprend dans {product}.\n\n{cta}`,
+`3 questions à te poser avant de poster quoi que ce soit :\n\n1. Qu'est-ce que je vends ?\n2. À qui ?\n3. Pourquoi elle en a besoin maintenant ?\n\nSi tu sais pas répondre, ton audience non plus.\n\nDans {product}, on commence par là. Et tout le reste se construit dessus.\n\n{cta}`,
+`La différence entre un hobby et un business ? Le business a un système de vente.\n\nTu peux être passionnée par ton sujet. C'est génial. Mais sans système, c'est un hobby.\n\nDans {product}, on transforme ta passion en business. Avec un vrai plan.\n\n{cta}`,
+`Un truc contre-intuitif : moins tu as d'abonnés, plus c'est facile de vendre.\n\nPourquoi ? Parce qu'avec 200 abonnés, tu connais tes gens. Tu peux leur parler directement. En DM.\n\nPas besoin de pub. Pas besoin de viralité. Juste de la connexion humaine.\n\nC'est ce qu'on fait dans {product}.\n\n{cta}`,
+`Le contenu qui vend le mieux ? Celui qui parle d'un problème que ta cliente a en ce moment.\n\nPas tes diplômes. Pas ton parcours. Pas tes valeurs.\n\nSon problème. Sa douleur. Et ce que tu proposes pour le résoudre.\n\nDans {product}, on apprend à identifier ce problème et à en parler simplement.\n\n{cta}`,
+`Tu veux savoir ce que font les filles qui vendent bien ?\n\nElles parlent pas de leur offre tout le temps. Elles parlent du résultat de leur offre.\n\nPas « achète ma formation ». Mais « voilà ce que ça change de suivre ma formation ».\n\nC'est la nuance. Et c'est ce qu'on maîtrise dans {product}.\n\n{cta}`,
+`Tu postes tous les jours mais personne n'achète ? Normal.\n\nParce que poster ≠ vendre.\n\nPoster c'est être visible. Vendre c'est donner envie d'agir.\n\nDans {product}, tu apprends la différence. Et surtout : comment passer de l'un à l'autre.\n\n{cta}`,
+`Un piège courant : copier ce que font les autres.\n\nLeur contenu marche pour elles. Pas forcément pour toi. Parce que ton audience est différente.\n\nDans {product}, on trouve TA voix. Ta façon de parler. Celle qui fait que les bonnes personnes se reconnaissent.\n\n{cta}`,
+`L'offre parfaite ça n'existe pas. Mais une offre qui se vend, ça existe.\n\nLa différence ? L'offre qui se vend répond à un vrai problème. Clairement. Simplement.\n\nDans {product}, on construit cette offre ensemble. Pas parfaite. Efficace.\n\n{cta}`,
+`Pourquoi les stories marchent mieux que les posts pour vendre ?\n\nParce que les stories c'est de l'intime. C'est toi qui parles à une personne. Pas à une foule.\n\nEt les gens achètent à des personnes. Pas à des marques.\n\nDans {product}, on apprend à utiliser les stories pour vendre. Naturellement.\n\n{cta}`,
+`Un exercice simple : regarde tes 5 dernières stories. Est-ce qu'une seule d'entre elles donne envie de t'écrire en DM ?\n\nSi la réponse est non, t'as pas un problème de contenu. T'as un problème de direction.\n\nDans {product}, chaque story a un but. Et ça change tout.\n\n{cta}`,
+`Dernière chose pour aujourd'hui : tu n'as pas besoin de plus d'information. Tu as besoin de plus d'action.\n\nTu sais déjà plein de choses. Mais tu les appliques pas.\n\n{product} c'est pas un cours de plus. C'est un cadre pour FAIRE. Enfin.\n\n{cta}`,
+`Le secret le mieux gardé du business en ligne ? C'est simple. Tellement simple que les gens n'y croient pas.\n\nUne offre. Une cible. Un message. De la constance.\n\nC'est tout. Vraiment.\n\nDans {product}, on met ça en place. Et ça marche.\n\n{cta}`,
+`Tu sais ce qui bloque la plupart des femmes ? C'est pas le manque de temps. C'est le manque de clarté.\n\nQuand tu sais exactement quoi faire, tu trouves le temps. Toujours.\n\n{product} te donne cette clarté. Le reste suit.\n\n{cta}`,
+],
+mercredi:[
+`Il y a un an, je regardais mon compte en fin de mois avec la boule au ventre.\n\nJ'avais un salaire. Mais il suffisait jamais.\n\nUn jour je me suis dit : il doit y avoir autre chose.\n\nAvant je comptais chaque euro. Maintenant je choisis comment je les dépense.\n\nC'est pas de la magie. C'est {product}.\n\n{cta}`,
+`Ma copine m'a dit l'autre jour : « Comment tu fais pour être aussi tranquille ? »\n\nLa vérité : j'ai un business qui tourne. Je sais ce que j'ai à faire.\n\nAvant j'étais celle qui stressait tout le temps. Maintenant c'est moi qu'on appelle pour des conseils.\n\nCe qui a changé ? Ma méthode. Celle de {product}.\n\n{cta}`,
+`Petite histoire. Y'a 8 mois, une femme m'écrit : « Je suis au RSA. Ton programme peut m'aider ? »\n\nElle a rejoint {product}. Elle a appliqué.\n\nLe mois dernier elle m'a envoyé un screen de ses ventes.\n\nC'est pour des moments comme celui-là que je fais ce que je fais.\n\n{cta}`,
+`Le jour où j'ai arrêté de travailler pour quelqu'un d'autre, j'avais la trouille.\n\n« Et si ça marche pas ? Et si je me plante ? »\n\nMais ce qui me faisait encore plus peur : être au même endroit dans 5 ans.\n\nAvant j'avais un CDI et zéro temps. Maintenant j'ai un business et mes matinées.\n\n{cta}`,
+`On m'a dit que j'étais folle de lâcher mon job.\n\nMa famille. Mes collègues.\n\nPuis j'ai écouté les femmes qui avaient réussi. Et j'ai compris que le vrai risque c'était de ne rien faire.\n\nAvant j'écoutais les gens qui avaient peur. Maintenant j'écoute ceux qui avancent.\n\nC'est dans {product} que j'ai trouvé ces femmes.\n\n{cta}`,
+`J'ai fait une erreur longtemps : tout faire seule.\n\nApprendre seule. Créer seule. Vendre seule.\n\nRésultat : des mois de galère pour rien.\n\nLe jour où j'ai rejoint un programme avec un plan et des vraies personnes, tout a débloqué.\n\nAvant je galérais dans mon coin. Maintenant j'avance avec une communauté.\n\nC'est {product}.\n\n{cta}`,
+`Je me souviens d'un moment précis. Ma voiture, garée devant le supermarché. Mon téléphone vibre.\n\nUne vente. Ma deuxième de la journée. Et j'avais rien fait de spécial.\n\nAvant mes revenus dépendaient de mes heures. Maintenant ils dépendent de mon système.\n\nCe système c'est {product}.\n\n{cta}`,
+`Le plus dur c'est les 30 premiers jours.\n\nPas de résultats. Tu construis. Tu doutes.\n\nC'est exactement là où la plupart abandonnent.\n\nCelles qui tiennent ? Les résultats arrivent. Et après, plus personne les arrête.\n\nAvant j'abandonnais vite. Maintenant je sais que ça passe.\n\n{product} t'accompagne dans ces 30 jours.\n\n{cta}`,
+`Un matin, j'ai vu que j'avais gagné plus en une nuit qu'en une semaine de salariat.\n\nJe me suis dit : « Ah. C'est vrai que c'est possible. »\n\nParce qu'avant, j'y croyais qu'à moitié.\n\nDans {product}, l'objectif c'est que tu vives ce moment le plus vite possible.\n\n{cta}`,
+`J'ai longtemps cru qu'il fallait un parcours parfait pour réussir.\n\nEn vrai ? Les femmes qui réussissent autour de moi partaient de zéro.\n\nLeur point commun : un plan et de l'accroche.\n\nAvant je croyais que c'était pour les autres. Maintenant je sais que c'est pour tout le monde.\n\n{product} le prouve chaque semaine.\n\n{cta}`,
+`Mes débuts ? Catastrophiques.\n\nJe postais n'importe quoi. Pas d'offre claire. Pas de cible.\n\nQuelqu'un m'a aidée à voir clair. En deux semaines, j'avais une direction.\n\nAvant je m'éparpillais. Maintenant j'ai un business structuré.\n\nC'est ça {product}. Un raccourci.\n\n{cta}`,
+`Le déclic pour moi c'était un mardi soir. Fatiguée. Les enfants dormaient.\n\nJ'ai juste pensé : « Je veux pas refaire ça encore 20 ans. »\n\nPas de grande révélation. Juste la fatigue.\n\nAvant je subissais. Maintenant je construis.\n\nSi tu ressens la même chose, {product} est fait pour toi.\n\n{cta}`,
+`J'ai failli arrêter après 3 mois. Zéro vente. Des stories dans le vide.\n\nEt puis une femme m'a acheté ma première offre. Par message. « Je te suis depuis le début. »\n\nAvant je voulais tout lâcher. Maintenant je sais que la constance paie.\n\n{product} t'aide à tenir. Parce que c'est là que tout se joue.\n\n{cta}`,
+`Quand j'ai annoncé que je vendais en ligne, ma mère a pas compris.\n\n« Vendre quoi ? À qui ? »\n\nJe l'ai pas convaincue avec des mots. Avec mes résultats.\n\nAvant je devais me justifier. Maintenant mes résultats parlent.\n\n{cta}`,
+`Un souvenir : le premier achat que j'ai fait sans regarder le prix.\n\nUn resto. Rien de fou. Mais pour moi c'était énorme.\n\nAvant chaque dépense c'était un calcul. Maintenant je me pose plus la question.\n\n{product} m'a donné ça.\n\n{cta}`,
+`Le moment où j'ai su que j'avais fait le bon choix : un mercredi après-midi, à la maison avec mes enfants.\n\nPas en congé. Pas en arrêt. Juste disponible. Parce que mon business me le permet.\n\nAvant, le mercredi c'était boulot. Maintenant c'est famille.\n\nC'est ça que {product} construit.\n\n{cta}`,
+`J'ai pleuré un soir. Pas de tristesse. De soulagement.\n\nJe venais de réaliser que j'allais pas passer ma vie à stresser pour l'argent.\n\nAvant je survivais. Maintenant je vis.\n\nEt cette transition, des dizaines de femmes l'ont faite avec {product}.\n\n{cta}`,
+`Le truc le plus dur quand tu te lances ? Le silence.\n\nTu postes et personne ne réagit. Tu te sens seule.\n\nMais ce que tu vois pas, c'est que des gens lisent. En silence. Et un jour, l'un d'eux achète.\n\nAvant je voyais le silence comme un échec. Maintenant je sais que c'est la phase de construction.\n\n{product} t'aide à traverser cette phase.\n\n{cta}`,
+`Un message que j'ai reçu et que je relis souvent :\n\n« Grâce à toi, j'ai payé mon loyer avec mon business ce mois-ci. Pour la première fois. »\n\nAvant elle ne savait même pas quoi vendre. Maintenant elle vit de son activité.\n\nC'est ça la puissance d'un bon accompagnement. C'est ça {product}.\n\n{cta}`,
+`Quand j'ai commencé, j'avais honte de parler de mon business à mes proches.\n\n« Vendre sur internet ? C'est sérieux ? »\n\nMaintenant c'est eux qui me demandent des conseils.\n\nAvant j'avais honte. Maintenant j'inspire.\n\nEt c'est ce que vivent mes élèves dans {product}.\n\n{cta}`,
+`Le premier virement que j'ai reçu de mon business, je l'ai regardé 10 fois.\n\nPour être sûre. Vraiment sûre.\n\nAvant l'argent venait d'un employeur. Maintenant il vient de quelque chose que j'ai créé.\n\nC'est un sentiment incroyable. Et {product} t'y amène.\n\n{cta}`,
+`Y'a un truc que je dis à toutes mes élèves le premier jour :\n\n« Tu vas douter. Tu vas te demander si c'était une bonne idée. Et puis un jour, tu vas vendre. Et tu vas comprendre. »\n\nChacune d'entre elles a vécu ce cycle.\n\nSi t'es prête à le vivre aussi, {product} t'attend.\n\n{cta}`,
+`Quand j'ai fait mes premières ventes, j'ai rien dit à personne. Pendant 2 semaines.\n\nParce que j'avais peur que ça s'arrête. Que ce soit un coup de chance.\n\nMais ça s'est pas arrêté. Parce que c'était un système. Pas de la chance.\n\nAvant j'espérais. Maintenant je sais.\n\n{cta}`,
+`Un truc que j'aurais aimé savoir : l'échec fait partie du chemin.\n\nMes 3 premiers mois ont été nuls. Vraiment nuls.\n\nMais sans ces 3 mois, j'aurais pas les résultats d'aujourd'hui.\n\nAvant j'avais peur d'échouer. Maintenant je sais que c'est comme ça qu'on apprend.\n\nDans {product}, on avance avec toi. Même quand c'est dur.\n\n{cta}`,
+`Ce matin j'ai pris mon café en regardant mes stats du mois.\n\nEt j'ai souri. Pas parce que les chiffres sont énormes. Mais parce qu'ils sont MIENS.\n\nAvant mon salaire c'était le résultat du travail de quelqu'un d'autre. Maintenant c'est le résultat du mien.\n\n{product} t'aide à créer tes propres résultats.\n\n{cta}`,
+`Un truc bizarre : depuis que j'ai mon business, j'aime les lundis.\n\nAvant le lundi c'était la corvée. Maintenant c'est le jour où je démarre mes projets à moi.\n\nAvant je comptais les jours jusqu'au vendredi. Maintenant je les compte plus du tout.\n\n{cta}`,
+`Le moment le plus surprenant de mon parcours : quand une inconnue m'a envoyé un message pour me dire que j'avais changé sa vie.\n\nUne inconnue. Sur internet. Grâce à du contenu.\n\nAvant je pensais que je pouvais rien apporter. Maintenant je sais que si.\n\nEt toi aussi tu peux. C'est ce qu'on découvre dans {product}.\n\n{cta}`,
+`Confession : je fais encore des erreurs. Régulièrement.\n\nMais la différence avec avant, c'est que maintenant je les corrige vite. Parce que j'ai un cadre.\n\nAvant une erreur me paralysait. Maintenant c'est juste un ajustement.\n\n{product} t'apprend cette mentalité. Et ça change tout.\n\n{cta}`,
+`Si je devais tout recommencer à zéro, je ferais une seule chose différemment :\n\nMe faire accompagner dès le début.\n\nChaque mois passé seule = un mois perdu.\n\nC'est pour ça que j'ai créé {product}. Pour que toi, tu perdes pas ces mois.\n\n{cta}`,
+`Le dernier truc que je veux te dire aujourd'hui :\n\nTu n'as pas besoin d'une grande histoire pour réussir. Tu as juste besoin de commencer la tienne.\n\nAvant j'attendais d'avoir quelque chose à raconter. Maintenant j'ai une histoire. Et elle continue de s'écrire.\n\n{cta}`,
+],
+jeudi:[
+`« J'ai pas le temps. »\n\nJe comprends. Mais soyons honnêtes : tu as le temps de scroller. De regarder des stories. De douter.\n\nTu as le temps de commencer. Juste pas les mêmes priorités.\n\nLes femmes dans {product} ont des enfants, un job. Elles y arrivent. Parce que le programme est fait pour ça.\n\n{cta}`,
+`« C'est pas pour moi. Je suis pas assez [complète]. »\n\nPas assez jeune. Technique. Visible.\n\n[Prénom] disait ça mot pour mot il y a 4 mois. Aujourd'hui elle vend toutes les semaines.\n\nC'est pas toi qui n'es pas assez. C'est que personne ne t'a montré le chemin.\n\n{product} est là pour ça.\n\n{cta}`,
+`« Et si ça marche pas ? »\n\nMais retourne la question : « Et si ça marchait ? »\n\nLes femmes qui réussissent dans {product} ne sont pas celles qui n'avaient pas peur. Ce sont celles qui ont avancé avec.\n\n{cta}`,
+`« J'ai déjà essayé. Ça a pas marché. »\n\nMais est-ce que tu avais une méthode ? Un plan ? Quelqu'un pour te guider ?\n\nEssayer seule et essayer avec un cadre, c'est pas la même chose.\n\n{product} c'est ce cadre.\n\n{cta}`,
+`« Mon entourage me dit que c'est risqué. »\n\nQuestion sincère : est-ce que ton entourage a la vie que tu veux ?\n\nAvant j'écoutais les gens qui avaient peur pour moi. Maintenant j'écoute les femmes qui avancent.\n\n{cta}`,
+`« Je sais pas quoi vendre. »\n\nNormal. C'est pour ça que {product} existe.\n\n[Prénom] ne savait pas non plus. En 2 semaines on avait son offre. En 4, sa première cliente.\n\n{cta}`,
+`« J'ai pas d'argent pour un programme. »\n\nMais combien ça te coûte de rester où tu es ? Un mois de plus sans revenus en ligne.\n\nParfois le plus cher c'est de ne rien faire.\n\nLes résultats de mes élèves prouvent que {product} est un investissement.\n\n{cta}`,
+`« Le business en ligne c'est pour les influenceuses. »\n\nMes élèves avaient zéro présence en ligne avant de commencer.\n\nT'as pas besoin de danser sur des reels. Juste de parler aux bonnes personnes.\n\nAvant je croyais ça aussi. Maintenant je sais que ça s'apprend.\n\n{cta}`,
+`« J'ai pas confiance en moi. »\n\nPersonne n'a confiance au début.\n\nLa confiance vient avec les résultats. Pas avant.\n\nTu commences → première vente → « ah ok je peux ».\n\nAvant j'attendais la confiance pour agir. Maintenant j'agis pour avoir confiance.\n\n{cta}`,
+`« Je vais y réfléchir. »\n\nTu réfléchis depuis combien de temps ?\n\nLes femmes dans {product} ont toutes eu ce moment d'hésitation. Et elles sont contentes d'avoir sauté.\n\n{cta}`,
+`« Je suis trop vieille. »\n\nIl y a des femmes de 50 ans dans {product} qui vendent en ligne.\n\nL'âge c'est une excuse. Pas un obstacle.\n\n{cta}`,
+`« Y'a trop de concurrence. »\n\nLe marché francophone est immense. Et sous-exploité.\n\nLe problème c'est pas la concurrence. C'est de pas se différencier.\n\nDans {product}, on trouve ta voix unique.\n\n{cta}`,
+`« Je commence lundi. »\n\nLe lundi parfait n'existe pas.\n\nCommence maintenant. Même petit. Même imparfait.\n\n{product} t'accompagne dès le premier pas.\n\n{cta}`,
+`« Je suis pas à l'aise avec la vente. »\n\nPersonne ne l'est au début.\n\nMais vendre c'est aider quelqu'un à résoudre un problème. Quand tu comprends ça, ça devient simple.\n\nC'est le premier déclic dans {product}.\n\n{cta}`,
+`« J'ai peur de me planter devant tout le monde. »\n\nAu début, personne ne te regarde. C'est la bonne nouvelle.\n\nTu peux tester. Rater. Recommencer. En silence.\n\n{product} t'accompagne dans cette phase invisible.\n\n{cta}`,
+`« J'ai pas de réseau. »\n\nMoi non plus au début. Zéro.\n\nMon réseau je l'ai construit en ligne. En parlant aux bonnes personnes.\n\nDans {product}, tu apprends à créer ces connexions.\n\n{cta}`,
+`« Ça prend combien de temps ? »\n\nPremières ventes possibles en 3-4 semaines si tu appliques.\n\nC'est pas une promesse magique. C'est ce qu'on constate chez les élèves qui suivent le plan de {product}.\n\n{cta}`,
+`« J'ai déjà acheté un programme et ça a rien donné. »\n\nLe programme ou toi ?\n\nSi t'as pas appliqué → c'est pas le programme le problème.\nSi t'as appliqué et ça a pas marché → c'était pas le bon programme.\n\n{product} marche parce qu'il est simple et qu'on t'accompagne.\n\n{cta}`,
+`« Mon produit est pas assez bien pour le vendre. »\n\nTon produit n'a pas besoin d'être parfait. Il a besoin de résoudre un problème.\n\nSi une personne dit « merci, ça m'a aidée » → ton produit est assez bien.\n\nDans {product}, on construit des offres qui aident. Pas des offres parfaites.\n\n{cta}`,
+`« J'ai peur d'investir et que ça serve à rien. »\n\nC'est la peur la plus normale du monde.\n\nMais regarde les résultats de mes élèves. Elles avaient la même peur. Et elles ont sauté.\n\nLa seule chose qui ne servira à rien, c'est de ne rien faire.\n\n{cta}`,
+`« C'est facile pour toi, t'as toujours été comme ça. »\n\nNon. J'ai appris. Comme tout le monde.\n\nY'a deux ans j'avais aucune idée de ce que je faisais. Zéro compétence en business.\n\nAujourd'hui j'accompagne des femmes dans {product}. Tout s'apprend.\n\n{cta}`,
+`« Et si les gens se moquent de moi ? »\n\nLes gens qui se moquent ne sont pas tes clients. Tu t'en fiches.\n\nTes clients, eux, ils attendent que tu te montres. Que tu leur parles.\n\nAvant j'avais peur du regard des autres. Maintenant je parle à ceux qui comptent.\n\n{cta}`,
+`« Y'a pas de résultat garanti. »\n\nVrai. Comme dans tout.\n\nMais les probabilités sont de ton côté quand tu as un plan, un cadre, et quelqu'un qui te guide.\n\n{product} te donne les trois.\n\n{cta}`,
+`« J'ai peur de l'échec. »\n\nTu sais ce qui est pire que l'échec ? Le regret.\n\nDans 5 ans, tu préfères te dire « j'ai essayé et j'ai appris » ou « j'aurais dû essayer » ?\n\n{product} c'est essayer. Avec un filet.\n\n{cta}`,
+`« Mon mari / ma mère / ma sœur ne comprend pas. »\n\nNormal. Ils ont pas ta vision.\n\nMais tu n'as pas besoin de leur permission. Tu as besoin de ta propre décision.\n\nLes femmes dans {product} ont souvent commencé sans le soutien de leurs proches. Maintenant leurs proches sont leurs plus grands fans.\n\n{cta}`,
+`« Je préfère économiser plutôt qu'investir dans un programme. »\n\nÉconomiser c'est bien. Mais économiser sans construire de revenus, c'est survivre.\n\n{product} c'est pas une dépense. C'est un outil pour CRÉER de l'argent.\n\nMes élèves ne voient pas ça comme un coût. Elles voient ça comme un tournant.\n\n{cta}`,
+`« Tout le monde vend des formations en ce moment. »\n\nOui. Et ?\n\nTout le monde vend aussi du café, des vêtements, de la nourriture. Ça empêche personne de réussir.\n\nCe qui compte c'est pas le marché. C'est ta façon d'y prendre ta place.\n\n{product} t'aide à trouver cette place.\n\n{cta}`,
+`« J'ai pas d'idée originale. »\n\nT'as pas besoin d'une idée originale. T'as besoin d'une solution à un problème que des gens ont.\n\nL'originalité c'est surfait. L'utilité c'est tout.\n\nDans {product}, on part du problème. Pas de l'idée.\n\n{cta}`,
+`« Je ferai ça quand ma situation sera plus stable. »\n\nTa situation sera plus stable QUAND tu auras un business.\n\nPas l'inverse.\n\nAttendre la stabilité pour agir, c'est attendre d'avoir chaud pour allumer le chauffage.\n\n{product} c'est le chauffage.\n\n{cta}`,
+`« Je veux être sûre avant de me lancer. »\n\nSûre de quoi exactement ? Que ça marche à 100% ? Ça personne ne peut te le garantir.\n\nMais ce que je peux te montrer, c'est des dizaines de femmes qui ont pris le risque avec {product}. Et qui aujourd'hui vendent.\n\nLa certitude vient après. Pas avant.\n\n{cta}`,
+],
+vendredi:[
+`Résultats de la semaine dans {product} :\n\n[Prénom] — première vente. Zéro technique. Zéro expérience.\n[Prénom] — 3 ventes ce mois. En plus de son job.\n[Prénom] — a quitté son CDI. Vit de son business depuis 2 mois.\n\nDes femmes normales. Pas des influenceuses.\n\nTu pourrais être la prochaine.\n\n{cta}`,
+`Message reçu ce matin :\n\n« J'ai fait ma première vente cette nuit. Je tremblais en lisant la notification. »\n\nC'est [Prénom]. Il y a 3 semaines elle disait « je suis nulle en business ».\n\n3 semaines. C'est tout avec {product}.\n\n{cta}`,
+`Je vais être transparente : {product} marche pas pour tout le monde.\n\nPas pour celles qui veulent des résultats sans rien faire.\n\nMais pour celles qui suivent le plan ? Les résultats parlent.\n\n[Prénom] : premières ventes en 3 semaines.\n[Prénom] : a remplacé son salaire en 5 mois.\n\nC'est de l'application. Pas de la chance.\n\n{cta}`,
+`Le chiffre qui me rend le plus fière : le nombre de femmes qui m'écrivent « j'ai fait ma première vente ».\n\nParce que la première vente, c'est le moment où tu te dis : « C'est réel. »\n\nAvant c'est de la croyance. Après c'est de la certitude.\n\n{product} t'amène à ce moment.\n\n{cta}`,
+`Capture d'écran dans mes DM :\n\n« J'étais au RSA il y a 4 mois. Ce matin j'ai reçu mon 8ème paiement. »\n\nJe partage pas ça pour du rêve. Pour que tu comprennes que c'est réel.\n\nLes femmes dans {product} ont juste un plan. Et elles l'appliquent.\n\n{cta}`,
+`Un truc qui me fait sourire : quand une élève me dit « j'ai hurlé dans ma cuisine ».\n\nJe connais ce sentiment. La première vente.\n\nAvant elles doutaient. Comme toi peut-être.\n\nMaintenant elles vendent. Grâce à {product}.\n\n{cta}`,
+`[Prénom] m'a écrit hier :\n\n« Y'a 2 mois je scrollais tes stories en me disant 'ça marchera jamais pour moi'. Aujourd'hui j'ai fait 4 ventes ce mois. »\n\nSi tu scrolles en pensant la même chose… dans 2 mois c'est peut-être toi qui m'écris.\n\n{cta}`,
+`Ce que j'aime le plus : le vocal d'une élève à 23h qui me dit « j'ai fait ma première vente et je sais pas à qui le dire ».\n\nParce que souvent, leur entourage comprend pas. Mais nous on sait.\n\nC'est ça {product}. Des femmes qui comprennent.\n\n{cta}`,
+`Pas de fausses promesses. La vérité :\n\n{product} te rendra pas riche en une semaine.\n\nPar contre, si tu suis le plan, premières ventes en 3-4 semaines. Business solide en quelques mois.\n\nPas sexy. Mais honnête. Et ça marche.\n\n{cta}`,
+`Avant/après d'une élève :\n\nAvant : « Je postais tous les jours sans résultat. »\nAprès : « Première vente en 12 jours. J'ai compris ce qui bloquait. »\n\nCe qui a changé ? Sa méthode. Celle de {product}.\n\n{cta}`,
+`Les femmes qui réussissent le plus vite dans {product} ? Pas les plus techniques. Pas les plus créatives.\n\nCelles qui appliquent sans chercher à tout comprendre d'abord.\n\nElles font. Ajustent. Avancent.\n\n{cta}`,
+`[Prénom] m'a envoyé un screen ce matin.\n\n3 ventes en une semaine. 400 abonnés. Zéro pub.\n\nT'as pas besoin d'être connue. T'as besoin d'être claire.\n\nC'est ce qu'on fait dans {product}.\n\n{cta}`,
+`Les résultats de mes élèves sont ma meilleure pub.\n\nDes femmes normales. Mamans. Salariées. Au chômage.\n\nQui ont suivi un plan. Et qui vendent maintenant.\n\nC'est ça {product}.\n\n{cta}`,
+`Le plus beau feedback que j'ai reçu cette semaine :\n\n« Avant je me sentais nulle. Maintenant je me sens capable. Et en plus, je vends. »\n\n{product} change pas juste les résultats. Il change le regard que tu portes sur toi.\n\n{cta}`,
+`Un chiffre simple : sur les dernières élèves qui ont appliqué le plan de {product}, la majorité a fait sa première vente en moins de 30 jours.\n\nPas toutes. Mais la majorité.\n\nPas parce qu'elles sont géniales. Parce que la méthode est bonne.\n\n{cta}`,
+`Message du jour :\n\n« Merci. J'ai payé mon loyer avec mon business ce mois. Pour la première fois. »\n\nAvant elle savait pas quoi vendre. Maintenant elle vit de son activité.\n\nC'est la puissance d'un bon accompagnement.\n\n{cta}`,
+`J'ai commencé à compter les « premières ventes » de mes élèves.\n\nJ'ai arrêté de compter. Y'en a trop.\n\nEt chacune me touche autant que la première.\n\n{product} c'est ça. Des femmes qui passent de « j'y arriverai jamais » à « j'ai vendu ».\n\n{cta}`,
+`Ce que disent mes élèves le plus souvent ?\n\nPas « ta formation est géniale ». Mais « j'aurais dû commencer plus tôt ».\n\nC'est le plus beau compliment. Et le meilleur conseil que je puisse te donner.\n\n{cta}`,
+`[Prénom] avait tout essayé seule. YouTube. Podcasts. Articles.\n\nEn 6 mois, zéro vente.\n\nEn 3 semaines avec {product}, première vente.\n\nLa différence ? Un plan. Un cadre. Quelqu'un qui te dit « fais ça ».\n\n{cta}`,
+`Je partage pas souvent mes propres chiffres. Mais le mois dernier j'ai gagné plus que mon ancien salaire annuel.\n\nPas pour frimer. Pour te montrer que c'est réel.\n\nJ'étais salariée. Je savais rien du business. J'ai appris.\n\nToi aussi tu peux.\n\n{cta}`,
+`Bilan honnête : dans {product}, y'a des femmes qui abandonnent.\n\nCelles qui n'appliquent pas. Celles qui veulent des résultats sans effort.\n\nMais celles qui restent et qui suivent le plan ? Elles vendent. Toutes.\n\nLa question c'est pas « est-ce que ça marche ? ». C'est « est-ce que TU vas le faire ? ».\n\n{cta}`,
+`Une élève m'a dit un truc qui m'a marquée :\n\n« Le plus dur c'était pas de vendre. C'était de croire que je pouvais vendre. »\n\nAprès sa première vente, plus aucun doute.\n\nC'est ce moment qu'on vise dans {product}.\n\n{cta}`,
+`Le mot qui revient le plus dans les retours de mes élèves ? « Clarté. »\n\n« Enfin j'ai de la clarté. »\n« Je sais quoi faire. »\n« C'est clair. »\n\nC'est ça que {product} apporte avant tout. La clarté.\n\n{cta}`,
+`Si tu veux des résultats, regarde pas ce que je dis. Regarde ce que mes élèves font.\n\nElles vendent. Depuis chez elles. Avec des petites audiences. Sans pub.\n\nC'est pas un miracle. C'est {product}.\n\n{cta}`,
+`J'ai une élève qui m'a dit : « Si moi j'y arrive, n'importe qui peut y arriver. »\n\nElle le disait pas pour se dévaloriser. Elle le disait pour te montrer que c'est accessible.\n\nPas besoin d'être spéciale. Besoin d'un plan.\n\n{cta}`,
+`Le vendredi c'est le jour où je fais le bilan.\n\nEt cette semaine, comme les autres, des femmes dans {product} ont fait des ventes.\n\nCertaines pour la première fois. D'autres pour la dixième.\n\nMais chacune avec le même plan. Le même cadre.\n\n{cta}`,
+`Un dernier truc : les résultats ne mentent pas.\n\nLes avis peuvent être faux. Le marketing peut être trompeur.\n\nMais quand une femme te dit « j'ai fait ma première vente » et qu'elle te montre le screen… c'est réel.\n\nC'est ça {product}. Du réel.\n\n{cta}`,
+`Si tu as besoin d'une seule raison pour commencer, la voici :\n\nDes femmes qui étaient exactement à ta place il y a quelques mois sont aujourd'hui en train de vendre.\n\nPas parce qu'elles sont meilleures. Parce qu'elles ont commencé.\n\n{product} est le premier pas.\n\n{cta}`,
+`Cette semaine une élève m'a envoyé un message : « Je voulais juste te dire merci. Tu m'as changé la vie. »\n\nJe l'ai lu 3 fois.\n\nC'est pour ça que je fais ce que je fais. Pas pour moi. Pour elle. Et pour toi.\n\n{cta}`,
+`Dernier résultat de la semaine : [Prénom], zéro expérience, maman de 3 enfants.\n\nElle a fait sa première vente en 18 jours avec {product}.\n\n18 jours. Maman de 3 enfants. Aucune expérience.\n\nSi elle peut le faire…\n\n{cta}`,
+],
+samedi:[
+`Samedi matin. Grasse mat. Café. Les enfants jouent.\n\nMon ordi est fermé. Et c'est un choix.\n\nAvant le samedi c'était le seul jour où je soufflais. Maintenant je souffle quand je veux.\n\nUne élève : « Le premier samedi où j'ai pas stressé pour le lundi, j'ai compris. »\n\n{cta}`,
+`Aujourd'hui j'ai rien de prévu. Et c'est le plan.\n\nAvant une journée vide me faisait culpabiliser. Maintenant je sais que mon business tourne.\n\nC'est ce système qu'on met en place dans {product}.\n\n{cta}`,
+`Petit-déj en terrasse. Notification de paiement.\n\nIl y a un an j'aurais pas cru ça possible.\n\nAvant mes revenus dépendaient de mes heures. Maintenant de mon système.\n\nCe système est dans {product}.\n\n{cta}`,
+`Mes coulisses : pyjama, canapé, un thé. Et un business qui tourne en fond.\n\nC'est pas glamour. C'est la vraie vie.\n\nAvant je fantasmais ce genre de journée. Maintenant c'est normal.\n\n{cta}`,
+`On me demande : « Tu travailles combien d'heures ? »\n\nÇa dépend. 2h. 5h. Zéro.\n\nLa vraie réponse : JE CHOISIS.\n\nAvant mon emploi du temps c'était un patron. Maintenant c'est moi.\n\n{cta}`,
+`Un truc que je fais souvent le samedi : rien. Et mon business ne s'écroule pas.\n\nAvant une journée off = culpabilité. Maintenant = preuve que le système marche.\n\n{cta}`,
+`Ce qui me plaît dans cette vie ? Les choix.\n\nBosser le matin ou l'après-midi. Aller chercher les enfants. Un mardi off.\n\nAvant j'avais zéro choix. Juste un planning imposé.\n\nC'est le vrai luxe. Celui qu'on construit dans {product}.\n\n{cta}`,
+`Mon bureau du jour : mon canapé.\n\nPas de dress code. Pas de trajet.\n\nAvant je passais 1h30 dans les transports par jour. Récupérées.\n\nMaintenant ces heures, je les passe avec mes enfants.\n\n{cta}`,
+`On me demande si je regrette mon ancien job.\n\nPas une seconde.\n\nPas que c'était nul. Mais ce que j'ai maintenant est tellement mieux.\n\nC'est ça que {product} construit. Pas un business. Une vie.\n\n{cta}`,
+`Le moment le plus marquant de ma semaine : emmener mon fils à son activité. Un mercredi. À 14h.\n\nAvant c'était impossible.\n\nMaintenant je travaille quand je veux. Et je suis là quand il faut.\n\n{cta}`,
+`Routine du samedi :\n1. Grasse mat\n2. Café\n3. Checker mes stats (2 min)\n4. Sourire\n5. Profiter\n\nAvant ma routine du samedi c'était : récupérer de la semaine.\n\n{cta}`,
+`On me dit : « Tu bosses quand exactement ? »\n\nLe matin tôt. Ou le soir tard. Ou entre midi et deux.\n\nJe bosse quand je suis efficace. Pas quand un patron me dit.\n\nAvant j'avais des horaires. Maintenant j'ai des résultats.\n\n{cta}`,
+`Backstage honnête : certains jours, je fais rien du tout.\n\nEt c'est OK. Mon business est structuré pour ça.\n\nAvant je confondais « être occupée » et « être productive ».\n\n{cta}`,
+`Mon luxe perso : un après-midi en semaine sans rien de prévu.\n\nSi t'as un job salarié, tu sais à quel point c'est rare.\n\nAvant j'avais du temps le dimanche. Seulement le dimanche.\n\nMaintenant quand je veux.\n\n{cta}`,
+`Petit aveu : au début je me sentais coupable de gagner de l'argent « facilement ».\n\nMais y'a eu des mois de boulot derrière.\n\nMaintenant que le système est en place, les ventes tombent. Et j'ai appris à l'accepter.\n\nAvant je croyais que gagner devait être dur. Maintenant je sais que ça doit être intelligent.\n\n{cta}`,
+`Ce matin j'ai couru 30 minutes. À 10h. Un mardi.\n\nAvant, à 10h un mardi, j'étais au bureau. Pas le choix.\n\nMaintenant je fais du sport quand j'en ai envie.\n\nC'est simple. Mais ça change tout.\n\n{cta}`,
+`Un truc que je fais maintenant : des pauses. De vraies pauses.\n\nPas 5 minutes devant la machine à café. Des vraies pauses. D'une heure. D'un après-midi.\n\nAvant les pauses étaient chronométrées. Maintenant elles sont choisies.\n\n{product} m'a donné ça.\n\n{cta}`,
+`Mon fils m'a dit un truc hier : « Maman, t'es toujours là maintenant. »\n\nAvant j'étais jamais là. Ou j'étais là mais la tête ailleurs.\n\nMaintenant je suis présente. Vraiment.\n\nC'est ça que {product} permet. Pas juste de l'argent. De la présence.\n\n{cta}`,
+`Week-end en famille. Mon téléphone a vibré. Vente.\n\nMon mec m'a dit : « Encore ? » en rigolant.\n\nAvant le week-end c'était le seul moment sans boulot. Maintenant le boulot et la vie coexistent.\n\n{cta}`,
+`Je suis allée chez le coiffeur en plein mardi matin.\n\nTruc bête. Mais pour moi c'est un symbole.\n\nAvant je prenais RDV le samedi. Comme tout le monde. Parce que j'avais pas le choix.\n\nMaintenant j'ai le choix.\n\n{cta}`,
+`Ce matin j'ai cuisiné un bon petit plat. Pour le plaisir.\n\nAvant je cuisinais par obligation. Vite fait. Mal fait.\n\nMaintenant j'ai le temps de faire les choses bien. Parce que mon business me le permet.\n\n{cta}`,
+`J'ai une question : c'est quoi le premier truc que tu ferais si t'avais plus de temps ?\n\nDormir ? Voir tes enfants ? Te balader ?\n\nQuoi que ce soit, c'est possible. C'est ce qu'on construit dans {product}.\n\n{cta}`,
+`Samedi soir. J'écris cette story depuis mon lit. Mon business a tourné toute la semaine.\n\nAvant, le samedi soir j'étais épuisée de ma semaine.\n\nMaintenant je suis fatiguée de rien du tout. Et c'est le meilleur sentiment.\n\n{cta}`,
+`La question qu'on me pose jamais mais qui est la plus importante : « Est-ce que t'es heureuse ? »\n\nOui. Pas parce que tout est parfait. Parce que j'ai le choix.\n\nAvant j'avais pas le choix. Et ça, ça change tout.\n\n{product} c'est aussi ça.\n\n{cta}`,
+`Mes amies salariées me regardent parfois avec envie.\n\nPas pour l'argent. Pour le temps.\n\nElles voient que je suis dispo. Que je suis tranquille. Que je stresse moins.\n\nAvant j'étais comme elles. Maintenant j'ai un business.\n\n{cta}`,
+`Le plus beau cadeau que mon business m'a fait ? Pas l'argent.\n\nLe temps avec mes enfants. La sérénité. Le droit de dire non.\n\nAvant j'avais pas ces luxes. Maintenant si.\n\nEt chaque femme dans {product} construit les siens.\n\n{cta}`,
+`Ce soir j'ai regardé un film en pleine semaine. Un jeudi soir. Sans stress du lendemain.\n\nAvant le jeudi soir c'était « plus que demain avant le week-end ».\n\nMaintenant tous les soirs sont tranquilles.\n\n{cta}`,
+`Mon ancien collègue m'a appelée. Il m'a demandé si j'étais « toujours dans mon truc internet ».\n\nJ'ai souri. Parce que « mon truc internet » me rapporte plus que son salaire.\n\nAvant je devais me justifier. Maintenant les résultats parlent.\n\n{cta}`,
+`Je suis partie en week-end sans rien planifier. Juste comme ça. Un vendredi midi.\n\nAvant fallait poser des congés. Demander la permission.\n\nMaintenant je fais mes valises et je pars.\n\n{cta}`,
+`Dernier backstage du samedi : je suis en train d'écrire cette story depuis un hamac.\n\nPas au bout du monde. Dans mon jardin.\n\nMais avec le sentiment que tout va bien. Parce que tout va bien.\n\nAvant j'avais toujours une angoisse en fond. Maintenant non.\n\nC'est ça que {product} m'a apporté.\n\n{cta}`,
+],
+dimanche:[
+`Petit message du dimanche.\n\nSi tu lis ça en te disant « il faudrait que je me lance »… c'est le moment.\n\nLes femmes dans {product} ont toutes eu ce moment. Elles sont contentes d'avoir sauté.\n\n[Prénom] a commencé un dimanche soir. Première vente 12 jours après.\n\n{cta}`,
+`Je vais être directe.\n\nSi tu veux des résultats différents, fais quelque chose de différent.\n\nScroller ne changera rien. Un plan + de l'action + un cadre = des résultats.\n\nC'est {product}.\n\n{cta}`,
+`Je ferme les inscriptions bientôt. Parce que j'accompagne un petit nombre.\n\nSi tu hésites, c'est maintenant.\n\nLes résultats prouvent que ça marche. La question c'est : tu te donnes cette chance ?\n\n{cta}`,
+`{product} concrètement :\n\nUn plan clair. Pas vague. Clair.\nUne méthode pour créer ton offre et la vendre.\nUn accompagnement pour pas être seule.\n\n[Prénom] : premières ventes en 3 semaines. Zéro expérience.\n\n{cta}`,
+`Ce qui coûte le plus cher ? Pas un programme.\n\nRester où tu es. Un mois de plus. Puis un an.\n\n{product} c'est un investissement. Les résultats le montrent.\n\n{cta}`,
+`Si tu es encore là, c'est que quelque chose te parle. Écoute-le.\n\nTu n'as pas besoin d'être sûre à 100%. Juste prête à essayer.\n\n{cta}`,
+`Dernière session avant un moment. Quand je rouvre, je sais pas.\n\nSi tu veux faire partie de la prochaine session de {product}, c'est maintenant.\n\n{cta}`,
+`Rappel simple :\n\nT'as pas besoin d'être parfaite.\nPas besoin de tout savoir.\nPas besoin de 10k abonnés.\n\nJuste un plan, un cadre, et de l'action.\n\nC'est {product}.\n\n{cta}`,
+`Question sincère : dans 6 mois, tu veux être où ?\n\nAu même endroit ? Ou en train de construire quelque chose ?\n\nLes femmes dans {product} ont choisi.\n\n{cta}`,
+`Demain c'est lundi.\n\nTu veux un lundi où tu travailles sur TON projet ? Pas celui de quelqu'un d'autre ?\n\n{product} t'aide à construire ça.\n\n[Prénom] a commencé un lundi. 4 semaines après, sa première vente.\n\n{cta}`,
+`Récap honnête de {product} :\n\nC'est pas un truc magique.\nC'est un programme où tu apprends à créer une offre, la vendre, et construire un business qui tient.\n\nC'est du travail. Mais c'est du travail qui paie.\n\n{cta}`,
+`Si tu hésites encore… c'est normal.\n\nMais à un moment, il faut trancher. Soit tu continues comme avant. Soit tu essaies.\n\n{product} c'est cet « autre chose ». Simple. Concret. Prouvé.\n\n{cta}`,
+`Imagine : dans 3 mois, tu as ton offre. Tes premières clientes. Un début de revenus.\n\nC'est ce qui arrive quand tu suis le plan de {product}.\n\nTu veux en faire partie ?\n\n{cta}`,
+`Je fais pas de longues pages de vente.\n\nJuste la vérité : {product} marche. Les résultats sont là. Si tu veux les mêmes, commence.\n\nLe reste, on le fait ensemble.\n\n{cta}`,
+`Dernier message de la semaine.\n\nMerci de me lire. Mais surtout : passe à l'action.\n\nLes stories c'est bien. Les résultats c'est mieux.\n\n{product} t'attend. Et moi aussi.\n\n{cta}`,
+`Un dernier truc avant de refermer ton téléphone :\n\nTu as le droit de vouloir plus. Tu as le droit de construire quelque chose. Tu as le droit de réussir.\n\nPersonne ne viendra te donner la permission. Prends-la.\n\n{cta}`,
+`Tu sais quel est le meilleur moment pour planter un arbre ? Il y a 20 ans.\n\nLe deuxième meilleur moment ? Maintenant.\n\nC'est pareil pour ton business. Le meilleur moment c'était hier. Le deuxième c'est maintenant.\n\n{product} est prêt quand tu l'es.\n\n{cta}`,
+`Je te fais une promesse :\n\nSi tu rejoins {product} et que tu suis le plan, tu vas comprendre des choses sur toi-même que tu soupçonnais même pas.\n\nPas juste sur le business. Sur ta capacité à construire quelque chose.\n\nC'est le cadeau bonus dont personne parle.\n\n{cta}`,
+`Si tu lis mes stories depuis des semaines sans agir, pose-toi cette question :\n\nQu'est-ce qui va changer si tu fais rien ?\n\nRien. Exactement rien.\n\nMais si tu fais UN pas — juste un — tout peut bouger.\n\n{cta}`,
+`On m'a demandé hier : « C'est quoi la pire chose qui peut arriver si quelqu'un rejoint {product} ? »\n\nLa pire chose ? Qu'elle applique pas et qu'elle revienne au même point.\n\nLa meilleure ? Qu'elle fasse ses premières ventes et qu'elle change de vie.\n\nLe risque est limité. Le potentiel est énorme.\n\n{cta}`,
+`Petit exercice du dimanche soir :\n\nFerme les yeux. Imagine ta vie dans 6 mois si tu commences maintenant.\n\nMaintenant imagine ta vie dans 6 mois si tu fais rien.\n\nLa différence entre les deux ? C'est une décision. Celle de rejoindre {product}.\n\n{cta}`,
+`Mon dernier mot pour cette semaine :\n\nTu mérites ce que tu veux. Pas ce que tu te contentes d'avoir.\n\nEt la seule personne qui peut changer ça, c'est toi.\n\n{product} est juste l'outil. Le moteur, c'est toi.\n\n{cta}`,
+`Si j'avais un seul conseil à te donner ce soir, ce serait celui-ci :\n\nArrête de consommer du contenu. Commence à agir.\n\nUne story de plus ne changera pas ta vie. Une décision, si.\n\n{cta}`,
+`Je sais pas si on se reparle la semaine prochaine.\n\nMais si oui, j'espère que tu seras de l'autre côté. Pas en train de lire mes stories. En train de créer les tiennes.\n\nPour vendre. Pour construire. Pour vivre.\n\n{product} t'y amène. Si tu veux.\n\n{cta}`,
+`La meilleure décision que j'ai prise dans ma vie ?\n\nPas mon diplôme. Pas mon ancien job.\n\nAvoir dit oui à un programme qui m'a montré le chemin.\n\nMaintenant c'est mon tour de te le montrer. À travers {product}.\n\nLa question c'est pas « est-ce que ça marche ? ». C'est « est-ce que tu es prête ? ».\n\n{cta}`,
+`Bonne fin de dimanche.\n\nQuoi que tu décides — je serai là.\n\nMais sache que les places dans {product} ne sont pas éternelles. Et que chaque semaine qui passe sans agir est une semaine de perdue.\n\nPas pour me faire du chiffre. Pour toi.\n\n{cta}`,
+`C'est dimanche soir. La semaine recommence demain.\n\nTu peux la commencer comme d'habitude. Ou tu peux la commencer différemment.\n\nTout commence par un message.\n\n{cta}`,
+`Tu as lu 7 jours de stories. Tu sais ce que je propose. Tu connais les résultats.\n\nMaintenant c'est à toi.\n\nJe peux pas décider à ta place. Mais je peux t'accompagner si tu dis oui.\n\n{product} est prêt. Moi aussi.\n\n{cta}`,
+`Dernier rappel : tu n'as pas besoin de plus d'information.\n\nTu as besoin de courage. Et le courage, ça vient en faisant.\n\nPas avant. Pendant.\n\nFais le premier pas.\n\n{cta}`,
+`À la semaine prochaine.\n\nOu pas. Si tu rejoins {product}, on se parle peut-être demain.\n\nDans tous les cas, merci d'être là. Et fais-toi confiance.\n\n{cta}`,
+],
 };
 
-let strategy = {};
-let activeDay = "lundi";
-let pepites = [];
+// Count total
+let totalStories=0;DAYS.forEach(d=>{totalStories+=S[d.key].length});
+document.getElementById(‘combo-line’).textContent=totalStories+’ stories uniques avec fil narratif cohérent’;
 
-const pick = a => a[Math.floor(Math.random() * a.length)];
-const esc = s => {const d = document.createElement('div'); d.textContent = s || ''; return d.innerHTML};
+let strategy={},activeDay=“lundi”,pepites=[];
+const pick=a=>a[Math.floor(Math.random()*a.length)];
+const esc=s=>{const d=document.createElement(‘div’);d.textContent=s||’’;return d.innerHTML};
+const fill=(s,c)=>s.replace(/{product}/g,c.product||‘la formation’).replace(/{cta}/g,c.cta||‘Envoie-moi un message’);
 
-function fill(s, prod, cta) {
-  return s.replace(/\{product\}/g, prod).replace(/\{cta\}/g, cta);
+function showToast(m){const t=document.getElementById(‘save-status’);t.textContent=m;t.classList.add(‘visible’);setTimeout(()=>t.classList.remove(‘visible’),2200)}
+function getCfg(){return{product:document.getElementById(‘f-product’).value.trim(),cta:document.getElementById(‘f-cta’).value.trim()}}
+
+function switchTab(id){
+if(document.getElementById(‘story-text’)&&strategy[activeDay])strategy[activeDay].fullDraft=document.getElementById(‘story-text’).value;
+document.querySelectorAll(’.tab-btn’).forEach(b=>b.classList.remove(‘active’));
+document.querySelectorAll(’.panel’).forEach(p=>p.classList.remove(‘active’));
+document.getElementById(‘tab-’+id).classList.add(‘active’);
+document.getElementById(‘panel-’+id).classList.add(‘active’);
+if(id===‘result’)renderResult();if(id===‘pepites’)renderPepitesList();
 }
 
-// Génération initiale immédiate
-function initStrategy() {
-  const prod = "mon programme";
-  const cta = "écris-moi 'GO' en DM";
-  
-  Object.keys(BIBLE).forEach(j => {
-    const data = BIBLE[j];
-    strategy[j] = {
-      theme: data.theme, color: data.color, hook: pick(HOOKS), body: pick(data.B),
-      yPos: 50, textColor: '#ffffff', textBg: false, fullDraft: "" 
-    };
-    strategy[j].fullDraft = strategy[j].hook + fill(strategy[j].body, prod, cta);
-  });
+function handleGenerate(){
+const cfg=getCfg();localStorage.setItem(‘sm4_product’,cfg.product);localStorage.setItem(‘sm4_cta’,cfg.cta);
+DAYS.forEach(d=>{strategy[d.key]={jour:d.jour,theme:d.theme,color:d.color,emoji:d.emoji,fullDraft:fill(pick(S[d.key]),cfg),poolSize:S[d.key].length,yPos:50,textColor:’#ffffff’,textBg:false,bgImage:null}});
+saveLS();activeDay=“lundi”;switchTab(‘result’);showToast(‘✨ Stories créées !’)
 }
 
-function switchTab(tabId) {
-  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
-  document.getElementById(`tab-${tabId}`).classList.add('active');
-  document.getElementById(`panel-${tabId}`).classList.add('active');
-  if (tabId === 'result') renderResult();
-  if (tabId === 'pepites') renderPepitesList();
+function regenDay(j){const cfg=getCfg();strategy[j].fullDraft=fill(pick(S[j]),cfg);renderResult();showToast(‘🔄 Régénéré !’)}
+function setDay(j){if(document.getElementById(‘story-text’)&&strategy[activeDay])strategy[activeDay].fullDraft=document.getElementById(‘story-text’).value;activeDay=j;renderResult()}
+function saveLS(){if(document.getElementById(‘story-text’)&&strategy[activeDay])strategy[activeDay].fullDraft=document.getElementById(‘story-text’).value;localStorage.setItem(‘sm4_strategy’,JSON.stringify(strategy));localStorage.setItem(‘sm4_pepites’,JSON.stringify(pepites))}
+
+function renderResult(){
+const p=document.getElementById(‘panel-result’);
+if(!strategy[activeDay]){p.innerHTML=’<div style="text-align:center;padding:40px;color:var(--muted)"><p style="font-size:36px;margin-bottom:10px">🎯</p><p>Configure et génère tes stories.</p><button class="abtn" style="margin-top:12px" onclick="switchTab(\'config\')">⚙️ Config</button></div>’;return}
+const d=strategy[activeDay],text=d.fullDraft,starred=pepites.some(x=>x.text===text);
+p.innerHTML=
+‘<div class="daytabs">’+DAYS.map(dy=>’<button class="dtab'+(activeDay===dy.key?' active':'')+'" onclick="setDay(\''+dy.key+'\')" style="'+(activeDay===dy.key?'border-color:'+dy.color+';color:'+dy.color+';background:'+dy.color+'12':'')+'">’+dy.emoji+’ ‘+dy.jour.slice(0,3)+’</button>’).join(’’)+’</div>’+
+‘<div class="dayinfo"><span class="dayinfo-t" style="color:'+d.color+'">’+d.emoji+’ ‘+d.jour+’ — ‘+d.theme+’</span><div class="dayinfo-s">’+d.poolSize+’ stories disponibles</div></div>’+
+‘<div class="clayout"><div class="phonewrap"><div id="phone-sim" class="phone" style="background-image:url(\''+(d.bgImage||'')+'\')"><div class="phone-header"><div class="phone-prof"><div class="phone-av">K</div><span class="phone-un">ton_compte</span></div></div><div class="phone-scroll" style="color:'+d.textColor+';'+(d.textBg?'background:rgba(0,0,0,0.55);margin:0 8px;border-radius:8px;padding:10px':'')+'"><p id="phone-mirror-text" class="phone-ct">’+esc(text)+’</p></div></div>’+
+‘<div class="phone-controls"><div class="control-row"><button class="cbtn" onclick="document.getElementById(\'bgUpload\').click()">🖼️ Fond</button><input type="file" id="bgUpload" class="file-input" accept="image/*" onchange="handleBgUpload(this)">’+(d.bgImage?’<button class="cbtn" onclick="removeBg()">🗑️</button>’:’’)+’</div><div class="control-row"><button class="cbtn '+(d.textColor==='#ffffff'?'active':'')+'" onclick="setTxt(\'#ffffff\','+d.textBg+')">⚪</button><button class="cbtn '+(d.textColor==='#000000'?'active':'')+'" onclick="setTxt(\'#000000\','+d.textBg+')">⚫</button><button class="cbtn '+(d.textBg?'active':'')+'" onclick="setTxt(\''+d.textColor+'\','+!d.textBg+')">🅰️</button></div></div></div>’+
+‘<div class="cpanel"><div class="cbox-header"><div class="cbox-left">Modifie librement ↓</div><div class="cbox-right"><button class="cb-btn '+(starred?'starred':'')+'" onclick="togglePepite()">’+(starred?‘⭐’:‘☆’)+’</button><button class="cb-btn" id="copy-btn" onclick="copyText()">📋</button></div></div>’+
+‘<textarea id="story-text" class="editable-box" oninput="updateMirror(this)">’+esc(text)+’</textarea>’+
+‘<div class="action-row"><button class="abtn" onclick="regenDay(\''+activeDay+'\')" style="color:'+d.color+';border-color:'+d.color+'">🔄 Autre (’+d.poolSize+’)</button><button class="abtn" onclick="saveLS();showToast(\'💾 Sauvé !\')" style="background:var(--success);color:#fff;border-color:var(--success)">💾 Sauver</button><button class="abtn" onclick="exportPDF()" style="background:#6A4C93;color:#fff;border-color:#6A4C93">📄 PDF semaine</button></div></div></div>’
 }
 
-function handleGenerate() {
-  const prod = document.getElementById('f-product').value.trim() || "mon programme";
-  const cta = document.getElementById('f-cta').value.trim() || "écris-moi 'GO' en DM";
-  
-  Object.keys(BIBLE).forEach(j => {
-    const data = BIBLE[j];
-    strategy[j].fullDraft = strategy[j].hook + fill(strategy[j].body, prod, cta);
-  });
-  
-  saveToLocalStorage();
-  switchTab('result');
+function updateMirror(ta){const m=document.getElementById(‘phone-mirror-text’);if(m)m.innerText=ta.value;if(strategy[activeDay])strategy[activeDay].fullDraft=ta.value}
+function handleBgUpload(input){if(input.files&&input.files[0]){const r=new FileReader();r.onload=e=>{strategy[activeDay].bgImage=e.target.result;renderResult()};r.readAsDataURL(input.files[0])}}
+function removeBg(){strategy[activeDay].bgImage=null;renderResult()}
+function setTxt(c,bg){strategy[activeDay].textColor=c;strategy[activeDay].textBg=bg;renderResult()}
+function copyText(){const t=document.getElementById(‘story-text’).value,b=document.getElementById(‘copy-btn’);navigator.clipboard.writeText(t).then(()=>{b.innerText=‘✓’;b.classList.add(‘copied’);setTimeout(()=>{b.innerText=‘📋’;b.classList.remove(‘copied’)},1500)})}
+
+function updatePepitesCount(){document.getElementById(‘pepites-count’).innerText=pepites.length}
+function togglePepite(){const t=document.getElementById(‘story-text’).value;const i=pepites.findIndex(p=>p.text===t);if(i>-1)pepites.splice(i,1);else pepites.unshift({text:t});updatePepitesCount();saveLS();renderResult()}
+function renderPepitesList(){const l=document.getElementById(‘pepites-list’);if(!pepites.length){l.innerHTML=’<div style="text-align:center;color:var(--muted);padding:30px">☆ Tes pépites apparaîtront ici.</div>’;return}l.innerHTML=pepites.map((p,i)=>’<div class="pepite-item"><p class="pepite-text">’+esc(p.text)+’</p><div class="pepite-actions"><button class="cb-btn" onclick="navigator.clipboard.writeText(pepites['+i+'].text).then(()=>showToast(\'📋 Copié !\'))">📋</button> <button class="cb-btn" onclick="pepites.splice('+i+',1);updatePepitesCount();saveLS();renderPepitesList()">🗑️</button></div></div>’).join(’’)}
+
+function exportPDF(){
+if(!strategy.lundi)return;saveLS();
+const z=document.getElementById(‘pdf-zone’);
+let h=’<h1 style="text-align:center;color:#222;margin-bottom:24px;font-size:20px;font-family:sans-serif">📱 Ma Semaine de Stories</h1>’;
+DAYS.forEach(d=>{
+if(!strategy[d.key])return;
+const s=strategy[d.key];
+h+=’<div style="margin-bottom:20px;border:1px solid #ddd;padding:16px;border-radius:8px;border-left:4px solid '+d.color+';page-break-inside:avoid;font-family:sans-serif"><div style="font-size:13px;font-weight:bold;color:'+d.color+';margin-bottom:10px;text-transform:uppercase">’+d.emoji+’ ‘+d.jour+’ — ‘+s.theme+’</div><div style="font-size:12px;line-height:1.7;white-space:pre-line;color:#333">’+esc(s.fullDraft)+’</div></div>’;
+});
+z.innerHTML=h;
+html2pdf().set({margin:10,filename:‘Stories_Semaine.pdf’,image:{type:‘jpeg’,quality:.98},html2canvas:{scale:2},jsPDF:{unit:‘mm’,format:‘a4’,orientation:‘portrait’}}).from(z).save().then(()=>showToast(‘📄 PDF exporté !’));
 }
 
-function setDay(j) { 
-  if (document.getElementById('story-text')) {
-    strategy[activeDay].fullDraft = document.getElementById('story-text').value;
-  }
-  activeDay = j; 
-  renderResult(); 
-}
-
-function saveInputs() {
-  localStorage.setItem('studio_productName', document.getElementById('f-product').value);
-  localStorage.setItem('studio_cta', document.getElementById('f-cta').value);
-}
-
-function saveToLocalStorage() {
-  if (document.getElementById('story-text')) strategy[activeDay].fullDraft = document.getElementById('story-text').value;
-  localStorage.setItem('studio_strategy', JSON.stringify(strategy));
-  localStorage.setItem('studio_pepites', JSON.stringify(pepites));
-  saveInputs();
-  showSaveStatus();
-}
-
-function showSaveStatus() {
-  const s = document.getElementById('save-status');
-  s.classList.add('visible');
-  setTimeout(() => s.classList.remove('visible'), 2000);
-}
-
-// --- RENDER DU STUDIO ---
-function renderResult() {
-  const p = document.getElementById('panel-result');
-  const d = strategy[activeDay];
-  const fullText = d.fullDraft;
-  const isStarred = pepites.some(p => p.text === fullText);
-
-  p.innerHTML = `
-    <div class="daytabs">
-      ${Object.keys(strategy).map(j => `<button class="dtab ${activeDay === j ? 'active' : ''}" onclick="setDay('${j}')">${j.charAt(0).toUpperCase() + j.slice(1)}</button>`).join('')}
-    </div>
-    
-    <div class="dayinfo"><span class="dayinfo-t" style="color:${d.color}">${d.theme}</span></div>
-    
-    <div class="clayout">
-      <div class="phonewrap">
-        <div id="phone-sim" class="phone" style="background-image: url('${d.bgImage || ''}');">
-          <div id="phone-text-container" class="phone-text-container" style="top: ${d.yPos}%; color: ${d.textColor}; background-color: ${d.textBg ? 'rgba(0,0,0,0.6)' : 'transparent'};" onmousedown="startDrag(event)" ontouchstart="startDrag(event)">
-            <p id="phone-mirror-text" class="phone-ct">${esc(fullText)}</p>
-          </div>
-        </div>
-        
-        <div class="phone-controls">
-          <div class="control-row">
-            <button class="cbtn" onclick="document.getElementById('bgUpload').click()">🖼️ Fond</button>
-            <input type="file" id="bgUpload" class="file-input" accept="image/*" onchange="handleBgUpload(this)">
-            ${d.bgImage ? `<button class="cbtn" onclick="removeBg()">🗑️</button>` : ''}
-          </div>
-          <div class="control-row">
-            <button class="cbtn ${d.textColor === '#ffffff' ? 'active' : ''}" onclick="setTextStyle('#ffffff', ${d.textBg})">⚪ Blanc</button>
-            <button class="cbtn ${d.textColor === '#000000' ? 'active' : ''}" onclick="setTextStyle('#000000', ${d.textBg})">⚫ Noir</button>
-            <button class="cbtn ${d.textBg ? 'active' : ''}" onclick="setTextStyle('${d.textColor}', !${d.textBg})">🅰️ Surligner</button>
-          </div>
-        </div>
-      </div>
-      
-      <div class="cpanel">
-        <div class="cbox-header">
-          <button class="cb-btn ${isStarred ? 'starred' : ''}" onclick="togglePepite()">${isStarred ? '⭐' : '☆'}</button>
-          <button class="cb-btn" id="copy-btn" onclick="copyText()">📋 Copier</button>
-        </div>
-        
-        <textarea id="story-text" class="editable-box" oninput="updateMirrorText(this)">${esc(fullText)}</textarea>
-        
-        <div class="action-row">
-          <button class="abtn" onclick="regenHookOnly('${activeDay}')" style="color:${d.color};">🪝 Changer Hook</button>
-          <button class="abtn" onclick="saveToLocalStorage()" style="background-color:var(--success); color:white;">💾 Sauvegarder</button>
-        </div>
-      </div>
-    </div>
-  `;
-}
-
-function updateMirrorText(textarea) {
-  document.getElementById('phone-mirror-text').innerText = textarea.value;
-  strategy[activeDay].fullDraft = textarea.value;
-}
-
-// Glisser-déposer sur le téléphone
-let isDragging = false, startY;
-function startDrag(e) {
-  isDragging = true;
-  const container = document.getElementById('phone-text-container');
-  startY = (e.pageY || e.touches[0].pageY) - container.offsetTop;
-  document.addEventListener('mousemove', drag);
-  document.addEventListener('mouseup', stopDrag);
-  document.addEventListener('touchmove', drag, { passive: false });
-  document.addEventListener('touchend', stopDrag);
-  e.preventDefault();
-}
-function drag(e) {
-  if (!isDragging) return;
-  const sim = document.getElementById('phone-sim'), container = document.getElementById('phone-text-container');
-  let newY = (e.pageY || e.touches[0].pageY) - startY;
-  const padding = 20, minY = padding + container.offsetHeight / 2, maxY = sim.offsetHeight - padding - container.offsetHeight / 2;
-  newY = Math.max(minY, Math.min(newY, maxY));
-  const yPercent = (newY / sim.offsetHeight) * 100;
-  container.style.top = yPercent + '%';
-  strategy[activeDay].yPos = yPercent;
-  if(e.type === 'touchmove') e.preventDefault();
-}
-function stopDrag() {
-  if(isDragging) { isDragging = false; document.removeEventListener('mousemove', drag); document.removeEventListener('mouseup', stopDrag); document.removeEventListener('touchmove', drag); document.removeEventListener('touchend', stopDrag); }
-}
-
-function handleBgUpload(input) {
-  if (input.files && input.files[0]) {
-    const reader = new FileReader();
-    reader.onload = function(e) { strategy[activeDay].bgImage = e.target.result; renderResult(); };
-    reader.readAsDataURL(input.files[0]);
-  }
-}
-function removeBg() { strategy[activeDay].bgImage = null; renderResult(); }
-function setTextStyle(color, hasBg) { strategy[activeDay].textColor = color; strategy[activeDay].textBg = hasBg; renderResult(); }
-
-function regenHookOnly(j) { 
-  const prod = document.getElementById('f-product').value || "mon programme";
-  const cta = document.getElementById('f-cta').value || "écris-moi 'GO' en DM";
-  strategy[j].hook = pick(HOOKS); 
-  strategy[j].fullDraft = strategy[j].hook + fill(strategy[j].body, prod, cta);
-  renderResult(); 
-}
-
-function copyText() {
-  const text = document.getElementById('story-text').value;
-  const btn = document.getElementById('copy-btn');
-  navigator.clipboard.writeText(text).then(() => {
-    btn.innerText = "✓ Copié !"; btn.classList.add('copied');
-    setTimeout(() => { btn.innerText = "📋 Copier"; btn.classList.remove('copied'); }, 1500);
-  });
-}
-
-// --- PÉPITES ---
-function updatePepitesCount() { document.getElementById('pepites-count').innerText = pepites.length; }
-function togglePepite() {
-  const fullText = document.getElementById('story-text').value;
-  const index = pepites.findIndex(p => p.text === fullText);
-  if (index > -1) { pepites.splice(index, 1); } else {
-    pepites.unshift({ text: fullText });
-  }
-  updatePepitesCount(); renderResult();
-}
-function renderPepitesList() {
-  const list = document.getElementById('pepites-list');
-  if (pepites.length === 0) { list.innerHTML = `<div style="text-align:center;color:var(--text-muted)">☆ Tes stories favorites s'afficheront ici.</div>`; return; }
-  list.innerHTML = pepites.map((p, index) => `
-    <div class="pepite-item">
-      <p class="pepite-text">${esc(p.text)}</p>
-      <div class="pepite-actions">
-        <button class="cb-btn" onclick="deletePepite(${index})">🗑️ Supprimer</button>
-      </div>
-    </div>
-  `).join('');
-}
-function deletePepite(index) { pepites.splice(index, 1); updatePepitesCount(); renderPepitesList(); }
-
-// Lancement au chargement
-window.onload = function() {
-  initStrategy();
-  if (localStorage.getItem('studio_strategy')) {
-    strategy = JSON.parse(localStorage.getItem('studio_strategy'));
-  }
-  if (localStorage.getItem('studio_pepites')) {
-    pepites = JSON.parse(localStorage.getItem('studio_pepites'));
-    updatePepitesCount();
-  }
-  if (localStorage.getItem('studio_productName')) document.getElementById('f-product').value = localStorage.getItem('studio_productName');
-  if (localStorage.getItem('studio_cta')) document.getElementById('f-cta').value = localStorage.getItem('studio_cta');
-  
-  switchTab('result'); // Lance directement l'onglet résultat
-};
+(function load(){
+if(localStorage.getItem(‘sm4_strategy’))try{strategy=JSON.parse(localStorage.getItem(‘sm4_strategy’))}catch(e){}
+if(localStorage.getItem(‘sm4_pepites’))try{pepites=JSON.parse(localStorage.getItem(‘sm4_pepites’));updatePepitesCount()}catch(e){}
+if(localStorage.getItem(‘sm4_product’))document.getElementById(‘f-product’).value=localStorage.getItem(‘sm4_product’);
+if(localStorage.getItem(‘sm4_cta’))document.getElementById(‘f-cta’).value=localStorage.getItem(‘sm4_cta’);
+})();
 </script>
 
 </body>
