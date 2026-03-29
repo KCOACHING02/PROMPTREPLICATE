@@ -1,415 +1,919 @@
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <title>Générateur Faceless Cinematic – Brille & Vibre</title>
-    <link rel="stylesheet" href="style.css">
-</head>
+import { useState, useEffect, useMemo, useCallback } from “react”;
 
-<body>
+/* ═══════════════════════════════════════════════════════════════
+MASSIVE COMBINATORIAL DATABASE
+Target: 800,000+ unique story combinations
 
-<div class="container">
+Architecture:
 
-    <h1>Générateur Faceless Cinematic Portrait</h1>
+- 6 frameworks × 7 day themes × N accroche variants × N charnière variants
+  × N preuve variants × N CTA variants × N moment variants × variable slots
 
-    <!-- Barre de progression -->
-    <div class="progress-container">
-        <div class="progress-bar" id="progressBar"></div>
-    </div>
+Each “slot” has 15-25+ templates. With 6 frameworks, 7 themes,
+and 5+ slots of 15-25 variants each:
+6 × 7 × 20 × 20 × 20 × 15 × 15 = 5,292,000 combinations minimum
+═══════════════════════════════════════════════════════════════ */
 
-    <!-- ÉTAPE 1 -->
-    <div class="step active" data-step="1">
-        <h2>1. Style artistique</h2>
-        <div class="options" data-category="style">
-            <div class="option">artistic</div>
-            <div class="option">cinematic</div>
-            <div class="option">editorial</div>
-            <div class="option">high-end</div>
-            <div class="option">black and white</div>
-            <div class="option">monochrome</div>
-            <div class="option">high-contrast black and white</div>
-            <div class="option">film-noir inspired</div>
-            <div class="option">vibrant cinematic colors</div>
-            <div class="option">soft pastel tones</div>
-            <div class="option">warm golden-hour palette</div>
-            <div class="option">cool desaturated tones</div>
-            <div class="option">rich editorial color grading</div>
-            <div class="option">teal and orange cinematic palette</div>
-            <div class="option">faceless aesthetic</div>
-            <div class="option">anonymous portrait style</div>
-            <div class="option">identity-concealed artistic style</div>
-            <div class="option">silhouette-driven composition</div>
-        </div>
-        <button class="btn" onclick="nextStep()">Suivant</button>
-    </div>
+const FRAMEWORKS = [
+{
+id: “charniere_4”,
+name: “Charnière 4 Slides”,
+icon: “🌉”,
+color: “#E8A838”,
+steps: [“Moment de vie”, “Charnière”, “Offre / Témoignage”, “Lien”],
+description: “Le pont entre ta vie et ton offre. La méthode la plus naturelle.”,
+},
+{
+id: “aida”,
+name: “AIDA”,
+icon: “🧲”,
+color: “#E05263”,
+steps: [“Attention”, “Intérêt”, “Désir”, “Action”],
+description: “Attention → Intérêt → Désir → Action. Le classique du copywriting.”,
+},
+{
+id: “pas”,
+name: “PAS”,
+icon: “💊”,
+color: “#3CBBB1”,
+steps: [“Problème”, “Agitation”, “Solution”],
+description: “Problème → Agitation → Solution. Court, percutant, efficace.”,
+},
+{
+id: “ppn”,
+name: “Preuve → Projection → Normalisation”,
+icon: “🔮”,
+color: “#9B5DE5”,
+steps: [“Preuve”, “Projection”, “Normalisation”],
+description: “Montre le résultat, projette ton audience, normalise le passage à l’action.”,
+},
+{
+id: “charniere_3”,
+name: “Charnière 3 Slides”,
+icon: “⚡”,
+color: “#FF8C42”,
+steps: [“Moment + Charnière”, “Offre”, “CTA”],
+description: “Version express de la charnière. Rapide et impactant.”,
+},
+{
+id: “story_5”,
+name: “5 Étapes Vente”,
+icon: “🎯”,
+color: “#06D6A0”,
+steps: [“Accroche”, “Problème”, “Solution”, “Preuve”, “CTA”],
+description: “Le tunnel de vente complet en 5 stories.”,
+},
+];
 
-    <!-- ÉTAPE 2 -->
-    <div class="step" data-step="2">
-        <h2>2. Tenue & éléments visibles</h2>
-        <div class="options" data-category="tenue">
-            <div class="option">wearing a hood partially covering the head</div>
-            <div class="option">wearing a cap hiding the upper face</div>
-            <div class="option">wearing a black cap embroidered with the words "Code Liberté"</div>
-            <div class="option">wearing dark clothing</div>
-            <div class="option">wearing a minimalist outfit</div>
-            <div class="option">wearing streetwear style</div>
-            <div class="option">wearing luxury-inspired clothing</div>
-            <div class="option">wearing black baseball cap</div>
-            <div class="option">wearing an oversized coat seen from behind</div>
-            <div class="option">wearing a scarf covering part of the face</div>
+const DAY_THEMES = [
+{ jour: “Lundi”, theme: “Mindset & Motivation”, emoji: “🔥”, angle: “Réveiller l’ambition en début de semaine” },
+{ jour: “Mardi”, theme: “Éducation & Valeur”, emoji: “📚”, angle: “Enseigner quelque chose d’utile et concret” },
+{ jour: “Mercredi”, theme: “Storytelling & Vécu”, emoji: “🎬”, angle: “Raconter un moment vrai de ton parcours” },
+{ jour: “Jeudi”, theme: “Objections & Croyances”, emoji: “🧱”, angle: “Casser une croyance limitante” },
+{ jour: “Vendredi”, theme: “Preuve & Résultats”, emoji: “🏆”, angle: “Montrer des résultats concrets” },
+{ jour: “Samedi”, theme: “Coulisses & Lifestyle”, emoji: “☀️”, angle: “Montrer ta vie, ton cadre, ton quotidien” },
+{ jour: “Dimanche”, theme: “Offre & Urgence”, emoji: “🚀”, angle: “Vente directe avec rareté” },
+];
 
-            <div class="option">oversized hoodie</div>
-            <div class="option">cropped hoodie</div>
-            <div class="option">bomber jacket</div>
-            <div class="option">oversized denim jacket</div>
-            <div class="option">black long sleeve top or sweater</div>
-            <div class="option">wide-leg trousers</div>
-            <div class="option">black crossbody bag</div>
-            <div class="option">layered streetwear outfit</div>
+// ──────────────────────────────────────────────
+// SLOT DATABASES (15-25+ variants each)
+// ──────────────────────────────────────────────
 
-            <div class="option">monochrome outfit</div>
-            <div class="option">long minimalist coat</div>
-            <div class="option">turtleneck sweater</div>
-            <div class="option">straight-cut trousers</div>
-            <div class="option">neutral-toned outfit</div>
+const DB = {
+moments_vie: [
+“Ce matin, café sur la terrasse. Le soleil est à peine levé.”,
+“Balade avec mon fils ce matin. Pas de réveil, pas de rush.”,
+“Je regarde mon téléphone. Notification : vente à 3h du matin.”,
+“Assis dans un café à {ville}. Mon laptop est fermé.”,
+“Aujourd’hui j’ai décidé de ne pas travailler. Et c’est un choix.”,
+“Message reçu d’un ancien collègue : « T’as de la chance. »”,
+“Je me suis réveillé sans alarme. Pour la 247ème fois consécutive.”,
+“Terrasse, thé à la menthe, vue sur la mer. Un mardi normal.”,
+“Mon fils m’a demandé : « Papa, pourquoi tu pars pas au bureau ? »”,
+“En plein milieu d’un resto, j’ai reçu 3 notifications de vente.”,
+“Aéroport. Billet one-way. Pas besoin de poser des congés.”,
+“Ce matin j’ai médité 20 minutes. Puis j’ai ouvert mon dashboard.”,
+“Week-end à la montagne. Mon business tourne sans moi.”,
+“Je suis en terrasse à Casablanca. Mon écran affiche +2 ventes.”,
+“Petit déjeuner avec ma famille. C’est un mercredi matin, 10h.”,
+“J’ai refusé une réunion. Pas parce que je suis occupé. Parce que je choisis.”,
+“Plage à 11h un jeudi. Les enfants jouent. Je check mes stats.”,
+“Un ami m’a dit : « Toi t’as trouvé la formule. » Non. Je l’ai construite.”,
+“Road trip imprévu. 4 jours. Zéro impact sur mon chiffre.”,
+“Ce soir, dîner en famille. Demain ? Pareil si je veux.”,
+“Marché du matin. Fruits frais. Aucune urgence nulle part.”,
+“J’ai passé 2h à lire aujourd’hui. Pas le week-end. Un lundi.”,
+“Notification Stripe à 6h47. Quelqu’un a acheté pendant que je dormais.”,
+“Je suis en train d’écrire ces stories depuis un hamac.”,
+“Mon ancienne vie : métro 7h15. Ma vie maintenant : thé à la menthe 9h.”,
+],
 
-            <div class="option">holding white Starbucks coffee cup</div>
-            <div class="option">tailored blazer</div>
-            <div class="option">satin blouse seen from behind</div>
-            <div class="option">high-waisted trousers</div>
-            <div class="option">long flowing skirt</div>
-            <div class="option">elegant scarf partially covering the face</div>
-            <div class="option">wearing black blazer and jeans</div>
-            <div class="option">black turtleneck and tailored pants</div>
-            <div class="option">beige oversized sweater</div>
-            <div class="option">minimalist elegant outfit</div>
+charnieres: [
+“Parce que ce business, je le gère d’où je veux.”,
+“C’est ça que j’ai construit. Et ça n’a rien de magique.”,
+“Ce genre de matin — je les choisis maintenant.”,
+“J’ai construit quelque chose qui tourne même quand je ne travaille pas.”,
+“La liberté c’est pas un concept. C’est mon mardi matin.”,
+“J’ai pas eu de la chance. J’ai appris un système.”,
+“Ce mode de vie, il se construit. Étape par étape.”,
+“Avant j’échangeais mon temps contre un salaire. Plus maintenant.”,
+“Mon business fonctionne pendant que je vis. Pas l’inverse.”,
+“C’est le résultat d’une décision prise il y a quelques mois.”,
+“J’ai remplacé la sécurité du salariat par la liberté du digital.”,
+“Ce que tu vois là, c’est pas de la chance. C’est un système.”,
+“Chaque matin comme celui-ci me rappelle pourquoi j’ai commencé.”,
+“Le jour où j’ai compris que je pouvais vendre en dormant, tout a changé.”,
+“Mon agenda ? C’est moi qui le remplis. Personne d’autre.”,
+“J’ai quitté le costume-cravate pour construire ma propre liberté.”,
+“Ce laptop, c’est mon bureau. Partout dans le monde.”,
+“La vraie richesse c’est de choisir comment tu passes tes journées.”,
+“Il y a un an, ce matin aurait été impossible.”,
+“Ce business m’a rendu un truc que le salariat m’avait pris : du temps.”,
+“Le système que j’ai mis en place fait le travail. Moi je vis.”,
+“Ce que tu vois c’est pas un rêve. C’est un plan exécuté.”,
+“J’ai construit un truc simple. Mais qui change tout.”,
+“Ce lifestyle c’est pas réservé aux autres. C’est accessible.”,
+“Mon ancien patron me payait pour mon temps. Maintenant mon temps m’appartient.”,
+],
 
-            <div class="option">relaxed denim jeans</div>
-            <div class="option">hand in pocket</div>
-            <div class="option">multi-pocket cargo jacket</div>
-            <div class="option">reflective details</div>
-            <div class="option">asymmetrical cuts</div>
-            <div class="option">hooded techwear cloak</div>
+accroches: [
+“STOP. Avant de scroller…”,
+“Tu lis ces stories depuis ton canapé ou depuis ton bureau ?”,
+“Si t’es encore au même point qu’il y a 6 mois, lis ça.”,
+“La vérité que personne ne te dit sur l’argent en ligne.”,
+“Tu savais que 97% des gens ne passeront jamais à l’action ?”,
+“Cette story va diviser mon audience. Tant mieux.”,
+“Je vais te dire un truc que tu n’as pas envie d’entendre.”,
+“Ouvre bien tes yeux. Ce que tu vas lire peut tout changer.”,
+“On m’a demandé mon secret. Le voici.”,
+“Si tu penses que c’est trop tard pour toi — reste.”,
+“Pose-toi une seule question : dans 1 an, où tu en seras ?”,
+“Ce matin j’ai reçu un message qui m’a fait sourire.”,
+“Je vais être direct avec toi. Ça va piquer.”,
+“3 erreurs que je vois tous les jours. Tu fais sûrement la 2ème.”,
+“J’ai mis 6 mois à comprendre ça. Tu peux le saisir en 60 secondes.”,
+“Arrête de scroller des motivations. Lis plutôt ça.”,
+“T’as déjà calculé combien te coûte chaque mois d’hésitation ?”,
+“La différence entre ceux qui réussissent et les autres ? C’est pas le talent.”,
+“Si quelqu’un t’avait montré ÇA il y a un an…”,
+“Regarde autour de toi. Combien de gens vivent vraiment la vie qu’ils veulent ?”,
+“Je te donne 30 secondes pour changer ta perspective.”,
+“Le plus gros mensonge qu’on t’a raconté sur l’entrepreneuriat.”,
+“Tu veux la vérité ? La voilà.”,
+“Première story = la plus importante. Ne swipe pas.”,
+“Si tu gagnes moins que ce que tu mérites — cette série est pour toi.”,
+],
 
-            <div class="option">simple cotton t-shirt</div>
-            <div class="option">knit sweater</div>
-            <div class="option">denim jeans</div>
-            <div class="option">light cardigan</div>
-            <div class="option">casual chic outfit</div>
-            <div class="option">tote bag or backpack</div>
+problemes: [
+“T’es coincé dans un job qui ne te ressemble plus.”,
+“Tu dépends d’un seul revenu. Et ça te stresse chaque fin de mois.”,
+“Tu scrolles des « méthodes » mais rien ne change concrètement.”,
+“Tu bosses 40h/semaine pour enrichir quelqu’un d’autre.”,
+“T’as des compétences. Mais personne ne t’a montré comment les monétiser.”,
+“Tu remets toujours à demain. Et demain ressemble à hier.”,
+“T’as essayé 3 trucs. Rien n’a marché. Tu commences à douter.”,
+“Tu regardes les autres réussir en ligne et tu te dis : « pourquoi pas moi ? »”,
+“Tu veux plus de liberté mais tu sais pas par où commencer.”,
+“T’es épuisé de la routine métro-boulot-dodo.”,
+“Tu lis des livres, tu suis des comptes inspi. Mais rien ne bouge.”,
+“Le pire ? C’est pas le manque d’idées. C’est le manque de direction.”,
+“Tu gagnes ta vie. Mais tu ne vis pas ta vie.”,
+“Tu sais que t’es capable de plus. Mais le système te retient.”,
+“T’as l’impression de tourner en rond depuis des mois.”,
+“Le salariat te donne la sécurité. Mais il te prend ta liberté.”,
+“Tu vois des gens moins qualifiés que toi gagner 3x plus en ligne.”,
+“Tu passes plus de temps à rêver ta vie qu’à la construire.”,
+“Chaque lundi matin, le même nœud au ventre.”,
+“Tu te dis « un jour ». Mais « un jour » n’arrive jamais.”,
+],
 
-            <div class="option">fitted sports jacket</div>
-            <div class="option">running hoodie</div>
-            <div class="option">yoga top seen from behind</div>
-            <div class="option">athletic leggings</div>
-            <div class="option">windbreaker</div>
+agitations: [
+“Et chaque mois qui passe, c’est un mois de perdu.”,
+“Le pire ? C’est que tu le sais. Et tu ne fais rien.”,
+“Imagine dans 5 ans. Même job. Même salaire. Même frustration.”,
+“Pendant que tu hésites, d’autres se lancent. Avec moins que toi.”,
+“L’inflation augmente. Ton salaire, non.”,
+“Tes enfants grandissent. Tu rates des moments pour un boulot qui te vide.”,
+“T’attends le « bon moment ». Il n’existe pas.”,
+“La sécurité du CDI ? Elle peut disparaître demain matin.”,
+“Chaque jour sans système en place, c’est de l’argent qui dort.”,
+“Tu te retrouves à 22h devant Netflix en te disant « demain je commence ».”,
+“La vraie question c’est pas « est-ce que ça marche ? » C’est « combien de temps tu vas encore attendre ? »”,
+“Tes compétences perdent de la valeur si tu ne les monétises pas.”,
+“Le confort du salariat, c’est la prison dorée.”,
+“Tu finances le rêve de quelqu’un d’autre 8h par jour.”,
+“Dans 1 an, tu regretteras de ne pas avoir commencé aujourd’hui.”,
+],
 
-            <div class="option">oversized shirt dress</div>
-            <div class="option">loose linen shirt</div>
-            <div class="option">woven hat hiding the face</div>
-            <div class="option">textured knitwear</div>
-            <div class="option">earth-toned outfit</div>
-        </div>
+solutions: [
+“{product} c’est le système étape par étape pour construire ta liberté.”,
+“J’ai créé {product} pour ceux qui veulent un PLAN, pas des promesses.”,
+“{product} : la méthode qui m’a permis de quitter le corporate.”,
+“Avec {product}, tu apprends à générer des revenus digitaux depuis n’importe où.”,
+“{product} — pas de théorie. Un plan d’action. Des résultats.”,
+“Ce que {product} t’apporte : clarté, structure, et tes premiers revenus.”,
+“{product} c’est exactement ce que j’aurais voulu avoir quand j’ai commencé.”,
+“La méthode {product} en 3 mots : Apprendre. Appliquer. Encaisser.”,
+“J’ai condensé dans {product} tout ce qui marche. Et éliminé tout le reste.”,
+“{product} est construit pour les francophones qui partent de zéro.”,
+“Un système simple, duplicable, qui fonctionne dans le monde francophone.”,
+“{product} c’est pas un énième cours. C’est une transformation.”,
+“Le programme {product} t’emmène du point A au point B. Sans détour.”,
+“Ce que tu apprends dans {product}, tu l’appliques dès la semaine 1.”,
+“J’ai mis tout mon parcours d’ex-DG dans {product}. Rien n’est théorique.”,
+“{product} = le raccourci que j’aurais aimé prendre il y a 3 ans.”,
+“Chaque module de {product} est un pas concret vers ta liberté financière.”,
+“Pas besoin d’être technique. {product} est fait pour les débutants motivés.”,
+“Le secret ? C’est pas un secret. C’est un système. Et il s’appelle {product}.”,
+“{product} t’apprend à vendre en ligne pendant que tu dors.”,
+],
 
-        <button class="btn-secondary" onclick="prevStep()">Retour</button>
-        <button class="btn" onclick="nextStep()">Suivant</button>
-    </div>
+preuves: [
+“Ex-Directeur Général. J’ai quitté le corporate pour construire ça.”,
+“En 6 mois, j’ai remplacé mon salaire de DG.”,
+“Des ventes à 3h du matin. Pendant que je dors.”,
+“+{n} personnes ont déjà rejoint la formation.”,
+“[Prénom] a fait ses premières ventes en 3 semaines.”,
+“Un ancien salarié comme toi. Il a généré {montant}€ en 60 jours.”,
+“J’ai géré des budgets de millions. Maintenant je gère ma liberté.”,
+“Message reçu hier : « J’ai fait ma première vente ! »”,
+“Mon parcours : DG → licencié → entrepreneur digital → libre.”,
+“Des résultats en 30 jours. Pas en 30 mois.”,
+“Quand j’étais DG, j’avais le salaire mais pas le temps. Maintenant j’ai les deux.”,
+“[Prénom] était sceptique. 2 mois après : revenus récurrents.”,
+“Je ne te vends pas du rêve. Je te montre mon écran.”,
+“Avant/après : costume-cravate → laptop + terrasse.”,
+“Des gens ordinaires, des résultats extraordinaires. C’est la méthode.”,
+“Ce n’est pas de la chance. C’est 6 mois de travail intelligent.”,
+“J’ai testé, échoué, recommencé. Pour que toi tu n’aies pas à le faire.”,
+“Les chiffres ne mentent pas. Et les miens sont publics.”,
+“Chaque semaine, des messages comme celui-ci dans ma boîte.”,
+“Mon histoire prouve que c’est possible. Ta décision prouve que tu le veux.”,
+],
 
-    <!-- ÉTAPE 3 -->
-    <div class="step" data-step="3">
-        <h2>3. Scène, geste, narration</h2>
-        <div class="options" data-category="scene">
-            <div class="option">She walks away from the camera, her silhouette softly illuminated</div>
-            <div class="option">She stands with her back to the viewer, holding a smartphone</div>
-            <div class="option">She looks toward the horizon, seen only from behind</div>
-            <div class="option">She is sitting with laptop on lap, seen from behind</div>
-            <div class="option">walking on city street</div>
-            <div class="option">working on laptop faceless shot</div>
-            <div class="option">She is framed from above, her face completely out of view</div>
-            <div class="option">She sits with her back turned, body language expressing emotion</div>
-            <div class="option">Woman crossing a busy NYC crosswalk, golden hour</div>
-            <div class="option">head down, face hidden by cap</div>
-            <div class="option">cap covering face</div>
-            <div class="option">sitting in modern chair, crossed legs</div>
-            <div class="option">standing confident, arms crossed</div>
-            <div class="option">walking with shopping bag</div>
-            <div class="option">hands in pocket, relaxed pose</div>
-        </div>
+projections: [
+“Imagine te réveiller demain sans alarme. Et que ce soit normal.”,
+“Dans 90 jours, tu pourrais recevoir ta première vente automatique.”,
+“Visualise : ton téléphone sonne. C’est une notification de paiement.”,
+“Imagine dire à ton boss : « Je pars. » Sans stress.”,
+“Dans 6 mois, tu pourrais lire ces stories depuis ta propre terrasse.”,
+“Et si dans 3 mois, c’est TOI qui postais ce genre de story ?”,
+“Imagine choisir tes horaires. Tes clients. Ton lieu de vie.”,
+“La prochaine success story que je partage — ça pourrait être la tienne.”,
+“Ton futur moi te remercie déjà d’avoir pris cette décision.”,
+“Tu pourrais être à 1 décision de tout changer.”,
+“Imagine ouvrir ton laptop demain avec un PLAN clair devant toi.”,
+“Dans 30 jours, tu pourrais avoir ton premier système en place.”,
+“Imagine ne plus jamais dire « j’ai pas les moyens ».”,
+“La liberté que tu vois chez les autres, elle est à portée de clic.”,
+“Et si le prochain message que je reçois venait de toi ?”,
+],
 
-        <button class="btn-secondary" onclick="prevStep()">Retour</button>
-        <button class="btn" onclick="nextStep()">Suivant</button>
-    </div>
+normalisations: [
+“C’est pas réservé aux génies. C’est pour ceux qui décident.”,
+“Des centaines de personnes l’ont fait. Avec moins de compétences que toi.”,
+“La seule différence entre toi et ceux qui réussissent ? Ils ont commencé.”,
+“T’as pas besoin d’être expert. Juste motivé.”,
+“C’est normal d’avoir peur. Fais-le quand même.”,
+“On a tous commencé à zéro. TOUS.”,
+“Si un ex-salarié sans réseau a pu le faire — toi aussi.”,
+“Pas besoin de budget. Pas besoin de diplôme. Juste une décision.”,
+“Le plus dur c’est de commencer. Après, le système fait le reste.”,
+“Tu n’as pas besoin de tout comprendre. Tu as besoin de suivre le plan.”,
+“Chaque expert a été débutant. La différence c’est qu’ils ont commencé.”,
+“C’est accessible. C’est faisable. C’est prouvé.”,
+“Arrête de croire que c’est compliqué. Le système est simple.”,
+“Les gens comme toi qui réussissent — ils ont juste dit oui.”,
+“T’es plus prêt(e) que tu ne le crois.”,
+],
 
-    <!-- ÉTAPE 4 -->
-    <div class="step" data-step="4">
-        <h2>4. Éclairage & Effets</h2>
+ctas: [
+“👉 Lien dans ma bio.”,
+“👉 Écris-moi « LIBERTÉ » en DM.”,
+“👉 Clique sur le lien. C’est maintenant.”,
+“👉 DM « INFO » et je t’envoie tout.”,
+“👉 Le lien est dans ma bio. Les places sont limitées.”,
+“👉 Tape « GO » en DM. Je t’explique tout.”,
+“👉 Rejoins-nous. Lien en bio.”,
+“👉 Dernières places. Lien dans la bio.”,
+“👉 Tu hésites encore ? Écris-moi. On en parle.”,
+“👉 La porte est ouverte. Mais pas pour toujours.”,
+“👉 {cta}”,
+“👉 Clique. Lis. Décide.”,
+“👉 Ton futur commence ici → lien en bio.”,
+“👉 Les résultats parlent. Le lien est en bio.”,
+“👉 DM « {product} » et c’est parti.”,
+],
 
-        <h3>Éclairage</h3>
-        <div class="options" data-category="lighting">
-            <div class="option">dramatic and sculptural lighting</div>
-            <div class="option">soft, cinematic lighting, warm tones</div>
-            <div class="option">high-contrast lighting</div>
-            <div class="option">refined chiaroscuro</div>
-            <div class="option">moody, low-key lighting</div>
-            <div class="option">backlighting creating a silhouette effect</div>
-            <div class="option">rim light outlining the body</div>
-            <div class="option">soft glow illuminating only the outline</div>
-        </div>
+temoignages: [
+“« J’étais sceptique. 3 semaines après, ma première vente. » — [Prénom]”,
+“« Grâce à la méthode, j’ai quitté mon CDI en 4 mois. » — [Prénom]”,
+“« J’avais zéro compétence technique. Le système est tellement clair. » — [Prénom]”,
+“« Mes premiers 500€ en ligne. Je n’y croyais pas. » — [Prénom]”,
+“« Ce qui m’a convaincu ? Les résultats des autres avant moi. » — [Prénom]”,
+“« J’ai enfin un plan clair. Plus d’hésitation. » — [Prénom]”,
+“« En 2 semaines j’avais tout mis en place. Incroyable. » — [Prénom]”,
+“« Mon seul regret : ne pas avoir commencé plus tôt. » — [Prénom]”,
+“« La charnière a changé ma façon de vendre en stories. » — [Prénom]”,
+“« Je gagne maintenant plus en 1 semaine qu’en 1 mois avant. » — [Prénom]”,
+“« Le programme est concret. Pas de blabla. » — [Prénom]”,
+“« J’ai compris en 1 semaine ce que j’avais raté en 2 ans. » — [Prénom]”,
+“« Merci pour ce système. Ça change la vie. » — [Prénom]”,
+“« Ma copine n’y croyait pas. Maintenant elle veut s’inscrire aussi. » — [Prénom]”,
+“« Je suis passé de 0 à 3 ventes par semaine. » — [Prénom]”,
+],
 
-        <h3>Effets</h3>
-        <div class="options" data-category="lightingEffect">
-            <div class="option">playing with deep blacks and delicate highlights</div>
-            <div class="option">subtle interplay of light and shadow</div>
-            <div class="option">studio lighting, clean shadows</div>
-            <div class="option">enhancing depth, mystery, and tension</div>
-            <div class="option">face hidden in shadow, silhouette defined</div>
-            <div class="option">backlit rim light effect</div>
-        </div>
+objections_casses: [
+“« J’ai pas le temps. » → Tu as le temps de scroller. Tu as le temps de commencer.”,
+“« C’est trop tard pour moi. » → J’ai commencé à +40 ans. Jamais trop tard.”,
+“« Je suis pas technique. » → Si tu sais utiliser Instagram, tu sais faire ça.”,
+“« Ça marche pas ces trucs. » → Ça marche pas pour ceux qui n’essaient pas.”,
+“« J’ai pas d’argent pour investir. » → Combien te coûte chaque mois sans agir ?”,
+“« Y’a trop de concurrence. » → Le marché francophone est énorme et sous-exploité.”,
+“« C’est une arnaque. » → Regarde les témoignages. Puis décide.”,
+“« Je sais pas par où commencer. » → C’est exactement pour ça que le programme existe.”,
+“« Et si ça marche pas pour moi ? » → Et si ça marchait ?”,
+“« Je vais y réfléchir. » → Réfléchir c’est bien. Agir c’est mieux.”,
+“« Mon entourage me dit que c’est risqué. » → Ton entourage, il a la vie que tu veux ?”,
+“« Il faut un diplôme pour ça ? » → Aucun. Juste de la motivation.”,
+“« J’ai déjà essayé et échoué. » → Tu n’as pas échoué. Tu n’avais pas le bon système.”,
+“« C’est pour les jeunes. » → C’est pour ceux qui veulent changer. Point.”,
+“« Je suis en Afrique, ça marche aussi ? » → 100%. Le digital n’a pas de frontières.”,
+],
 
-        <button class="btn-secondary" onclick="prevStep()">Retour</button>
-        <button class="btn" onclick="nextStep()">Suivant</button>
-    </div>
+lifestyle_hooks: [
+“Ce que tu vois là, c’est pas Instagram. C’est ma vraie vie.”,
+“Pas de filtre. Pas de mise en scène. Juste la réalité.”,
+“Les backstages de ma journée d’entrepreneur digital.”,
+“Un aperçu de ce que la liberté ressemble au quotidien.”,
+“On me demande souvent : « C’est vraiment ta vie de tous les jours ? »”,
+“Bienvenue dans mon bureau du jour.”,
+“Samedi matin. Voilà à quoi ça ressemble.”,
+“Ma routine ? Pas de routine. Et c’est le but.”,
+“Ce moment-là, je l’ai choisi. Pas subi.”,
+“Mon bureau change de vue chaque semaine.”,
+“Les coulisses de ce que les gens ne voient pas.”,
+“Ma journée type ? Il n’y en a pas. Et j’adore ça.”,
+“Ce que le digital m’a permis de construire.”,
+“Quand on me dit « t’as de la chance » — non. J’ai un système.”,
+“Voilà ce qui se passe quand tu crées ta propre liberté.”,
+],
 
-    <!-- ÉTAPE 5 -->
-    <div class="step" data-step="5">
-        <h2>5. Composition & Mise en avant</h2>
+urgences: [
+“⏰ Les inscriptions ferment ce soir.”,
+“🔥 Plus que {n} places disponibles.”,
+“⚠️ Le prix augmente demain.”,
+“⏳ Cette offre disparaît dans 24h.”,
+“🚨 Dernière chance à ce prix.”,
+“C’est maintenant ou dans 6 mois. Au même point.”,
+“Les portes ferment à minuit.”,
+“Tu peux repousser. Ou tu peux commencer.”,
+“Demain, cette story aura disparu. Et toi ?”,
+“Le meilleur moment c’était hier. Le deuxième meilleur moment c’est maintenant.”,
+“Chaque heure qui passe est une heure sans ton système en place.”,
+“Les places partent vite. Normal : les résultats sont réels.”,
+“Cette offre n’est pas éternelle. Ta motivation non plus.”,
+“Tu scrolles. Tu hésites. Pendant ce temps, d’autres s’inscrivent.”,
+“Le regret coûte plus cher que l’investissement.”,
+],
+};
 
-        <div class="options" data-category="composition">
-            <div class="option">The faceless, cinematic composition</div>
-            <div class="option">The silhouette-focused composition</div>
-            <div class="option">The back-view composition</div>
-            <div class="option">The atmospheric, film-inspired composition</div>
-            <div class="option">The tightly framed, editorial composition</div>
-            <div class="option">The top-down composition hiding the face</div>
-            <div class="option">The profile-turned-away composition</div>
-            <div class="option">The over-the-shoulder composition</div>
-        </div>
+// ──────────────────────────────────────────────
+// STORY GENERATORS PER FRAMEWORK
+// ──────────────────────────────────────────────
 
-        <div class="options" data-category="emphasis">
-            <div class="option">emphasizes atmosphere, texture, and mystery</div>
-            <div class="option">focuses on body language and emotional storytelling</div>
-            <div class="option">highlights contrast, depth, and visual tension</div>
-            <div class="option">centers on elegance, restraint, and visual impact</div>
-            <div class="option">reinforces anonymity and modern identity</div>
-            <div class="option">enhances the faceless aesthetic</div>
-        </div>
+const pick = (arr) => arr[Math.floor(Math.random() * arr.length)];
+const fillProduct = (str, cfg) =>
+str.replace(/{product}/g, cfg.productName)
+.replace(/{cta}/g, cfg.cta)
+.replace(/{ville}/g, cfg.ville || “Casablanca”)
+.replace(/{n}/g, String(Math.floor(Math.random() * 200) + 50))
+.replace(/{montant}/g, String(Math.floor(Math.random() * 3000) + 500));
 
-        <button class="btn-secondary" onclick="prevStep()">Retour</button>
-        <button class="btn" onclick="nextStep()">Suivant</button>
-    </div>
+function generateByFramework(fwId, cfg, dayTheme) {
+const f = fillProduct;
+const gen = {
+charniere_4: () => [
+f(pick(DB.moments_vie), cfg),
+f(pick(DB.charnieres), cfg),
+f(Math.random() > 0.5 ? pick(DB.temoignages) : pick(DB.solutions), cfg),
+f(pick(DB.ctas), cfg),
+],
+aida: () => [
+f(pick(DB.accroches), cfg),
+f(pick(DB.problemes) + “\n\n” + pick(DB.agitations), cfg),
+f(pick(DB.solutions) + “\n\n” + pick(DB.projections), cfg),
+f(pick(DB.urgences) + “\n\n” + pick(DB.ctas), cfg),
+],
+pas: () => [
+f(pick(DB.accroches) + “\n\n” + pick(DB.problemes), cfg),
+f(pick(DB.agitations) + “\n\n” + (dayTheme.theme === “Objections & Croyances” ? pick(DB.objections_casses) : pick(DB.agitations)), cfg),
+f(pick(DB.solutions) + “\n\n” + pick(DB.ctas), cfg),
+],
+ppn: () => [
+f(pick(DB.preuves) + “\n\n” + pick(DB.temoignages), cfg),
+f(pick(DB.projections) + “\n\n” + pick(DB.charnieres), cfg),
+f(pick(DB.normalisations) + “\n\n” + pick(DB.ctas), cfg),
+],
+charniere_3: () => [
+f(pick(DB.moments_vie) + “\n\n” + pick(DB.charnieres), cfg),
+f(pick(DB.solutions), cfg),
+f(pick(DB.urgences) + “\n\n” + pick(DB.ctas), cfg),
+],
+story_5: () => [
+f(pick(DB.accroches), cfg),
+f(pick(DB.problemes) + “\n\n” + pick(DB.agitations), cfg),
+f(pick(DB.solutions), cfg),
+f(pick(DB.preuves) + “\n\n” + pick(DB.temoignages), cfg),
+f(pick(DB.urgences) + “\n\n” + pick(DB.ctas), cfg),
+],
+};
+return gen[fwId]();
+}
 
-    <!-- ÉTAPE 6 -->
-    <div class="step" data-step="6">
-        <h2>6. Texture & Thèmes</h2>
+// ──────────────────────────────────────────────
+// COMBINATORICS CALCULATOR
+// ──────────────────────────────────────────────
+function computeCombinations() {
+const slotSizes = Object.values(DB).map((arr) => arr.length);
+const fwCount = FRAMEWORKS.length;
+const dayCount = DAY_THEMES.length;
+let combos = {
+charniere_4: DB.moments_vie.length * DB.charnieres.length * (DB.temoignages.length + DB.solutions.length) * DB.ctas.length,
+aida: DB.accroches.length * DB.problemes.length * DB.agitations.length * DB.solutions.length * DB.projections.length * DB.urgences.length * DB.ctas.length,
+pas: DB.accroches.length * DB.problemes.length * DB.agitations.length * DB.agitations.length * DB.solutions.length * DB.ctas.length,
+ppn: DB.preuves.length * DB.temoignages.length * DB.projections.length * DB.charnieres.length * DB.normalisations.length * DB.ctas.length,
+charniere_3: DB.moments_vie.length * DB.charnieres.length * DB.solutions.length * DB.urgences.length * DB.ctas.length,
+story_5: DB.accroches.length * DB.problemes.length * DB.agitations.length * DB.solutions.length * DB.preuves.length * DB.temoignages.length * DB.urgences.length * DB.ctas.length,
+};
+const total = Object.values(combos).reduce((a, b) => a + b, 0);
+return { combos, total };
+}
 
-        <div class="options" data-category="texture">
-            <div class="option">Contrasting monochrome tones</div>
-            <div class="option">Fine, detailed textures</div>
-            <div class="option">Smooth tonal transitions</div>
-            <div class="option">Rich blacks, crisp highlights</div>
-            <div class="option">Soft, diffused textures</div>
-            <div class="option">Film-like grain</div>
-            <div class="option">High-end glossy finish</div>
-        </div>
+// ──────────────────────────────────────────────
+// PHONE PREVIEW COMPONENT
+// ──────────────────────────────────────────────
+function PhonePreview({ slides, framework, activeSlide, setActiveSlide }) {
+const fw = FRAMEWORKS.find((f) => f.id === framework);
+const slide = slides[activeSlide] || “”;
+return (
+<div style={{ width: 232, minWidth: 232, flexShrink: 0 }}>
+<div
+style={{
+width: “100%”,
+height: 412,
+background: `linear-gradient(170deg, ${fw.color}12 0%, #0c0c10 35%, ${fw.color}06 100%)`,
+borderRadius: 30,
+border: “2.5px solid #1e1e24”,
+padding: “40px 14px 20px”,
+position: “relative”,
+overflow: “hidden”,
+boxSizing: “border-box”,
+}}
+>
+{/* Notch */}
+<div style={{ position: “absolute”, top: 11, left: “50%”, transform: “translateX(-50%)”, width: 48, height: 5, background: “#252528”, borderRadius: 10 }} />
+{/* Progress bars */}
+<div style={{ display: “flex”, gap: 3, marginBottom: 14 }}>
+{slides.map((_, i) => (
+<div
+key={i}
+onClick={() => setActiveSlide(i)}
+style={{
+flex: 1, height: 2.5, borderRadius: 2, cursor: “pointer”,
+background: i <= activeSlide ? fw.color : “#2a2a30”,
+transition: “background 0.3s”,
+}}
+/>
+))}
+</div>
+{/* Profile */}
+<div style={{ display: “flex”, alignItems: “center”, gap: 8, marginBottom: 16 }}>
+<div style={{ width: 30, height: 30, borderRadius: “50%”, background: `linear-gradient(135deg, ${fw.color}, ${fw.color}66)`, display: “flex”, alignItems: “center”, justifyContent: “center”, fontSize: 11, fontWeight: 900, color: “#fff” }}>BV</div>
+<span style={{ color: “#ddd”, fontSize: 11.5, fontWeight: 600 }}>brille.vibre</span>
+</div>
+{/* Slide label */}
+<div style={{ fontSize: 9, fontWeight: 700, letterSpacing: 2, color: fw.color, marginBottom: 8, fontFamily: “‘Crimson Pro’, serif”, textTransform: “uppercase” }}>
+{fw.steps[activeSlide]}
+</div>
+{/* Content */}
+<div style={{ color: “#e8e8e8”, fontSize: 12, lineHeight: 1.6, whiteSpace: “pre-wrap”, overflow: “auto”, maxHeight: 260, paddingRight: 4 }}>
+{slide}
+</div>
+</div>
+{/* Slide navigation */}
+<div style={{ display: “flex”, gap: 4, justifyContent: “center”, marginTop: 10 }}>
+{slides.map((_, i) => (
+<button
+key={i}
+onClick={() => setActiveSlide(i)}
+style={{
+width: activeSlide === i ? 24 : 8, height: 8, borderRadius: 4, border: “none”,
+background: activeSlide === i ? fw.color : “#2a2a30”,
+cursor: “pointer”, transition: “all 0.3s”,
+}}
+/>
+))}
+</div>
+</div>
+);
+}
 
-        <div class="options" data-category="themes">
-            <div class="option">underscore anonymity, mystery, and emotional storytelling</div>
-            <div class="option">underscore introspection, elegance, and quiet strength</div>
-            <div class="option">underscore mystery, control, and technological presence</div>
-            <div class="option">underscore confidence, sophistication, and modern identity</div>
-            <div class="option">underscore digital minimalism and faceless aesthetics</div>
-            <div class="option">underscore solitude, atmosphere, and cinematic tension</div>
-        </div>
+// ──────────────────────────────────────────────
+// MAIN APP
+// ──────────────────────────────────────────────
+const DEFAULT_CFG = {
+productName: “Code Liberté”,
+targetAudience: “Francophones et diaspora voulant l’indépendance financière”,
+mainProblem: “Coincés dans le salariat, dépendants d’un seul revenu”,
+uniquePromise: “Un système étape par étape pour créer des revenus digitaux depuis n’importe où”,
+cta: “DM « LIBERTÉ »”,
+personalStory: “Ex-DG d’entreprise, j’ai quitté le corporate pour construire ma liberté”,
+price: “”,
+ville: “Casablanca”,
+};
 
-        <button class="btn-secondary" onclick="prevStep()">Retour</button>
-        <button class="btn" onclick="nextStep()">Suivant</button>
-    </div>
+export default function App() {
+const [cfg, setCfg] = useState(DEFAULT_CFG);
+const [selectedFw, setSelectedFw] = useState(“charniere_4”);
+const [activeDay, setActiveDay] = useState(0);
+const [strategy, setStrategy] = useState(null);
+const [activeSlide, setActiveSlide] = useState(0);
+const [view, setView] = useState(“config”);
+const [copied, setCopied] = useState(false);
 
-    <!-- ÉTAPE 7 -->
-    <div class="step" data-step="7">
-        <h2>7. Environnement / Landscape</h2>
+useEffect(() => {
+const link = document.createElement(“link”);
+link.href = “https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@400;500;600;700;800;900&family=Outfit:wght@300;400;500;600;700;800;900&display=swap”;
+link.rel = “stylesheet”;
+document.head.appendChild(link);
+}, []);
 
-        <div class="options" data-category="landscape">
-            <div class="option">urban rooftop at sunset</div>
-            <div class="option">NYC crosswalk, skyscrapers, golden hour</div>
-            <div class="option">rainy city alley with reflections</div>
-            <div class="option">minimalist modern architecture</div>
-            <div class="option">subway platform with moody lighting</div>
-            <div class="option">industrial warehouse</div>
-            <div class="option">glass building reflections</div>
-            <div class="option">empty parking lot at night</div>
-            <div class="option">futuristic cyberpunk street</div>
+const combos = useMemo(() => computeCombinations(), []);
 
-            <div class="option">minimalist white studio background</div>
-            <div class="option">modern office with city view</div>
-            <div class="option">urban street, soft bokeh</div>
-            <div class="option">lakeside at golden hour</div>
-            <div class="option">desert dunes</div>
-            <div class="option">bright modern interior</div>
-            <div class="option">cliffside overlooking the ocean</div>
-            <div class="option">waterfall environment</div>
-            <div class="option">open field with tall grass</div>
+const generate = useCallback(() => {
+const strat = DAY_THEMES.map((dt) => ({
+…dt,
+slides: generateByFramework(selectedFw, cfg, dt),
+}));
+setStrategy(strat);
+setView(“result”);
+setActiveDay(0);
+setActiveSlide(0);
+}, [selectedFw, cfg]);
 
-            <div class="option">beach at sunrise</div>
-            <div class="option">rocky coastline</div>
-            <div class="option">pier with moody atmosphere</div>
-            <div class="option">calm lake reflections</div>
-            <div class="option">foggy harbor silhouettes</div>
+const regenDay = (dayIdx) => {
+if (!strategy) return;
+setStrategy((prev) =>
+prev.map((d, i) =>
+i === dayIdx ? { …d, slides: generateByFramework(selectedFw, cfg, DAY_THEMES[dayIdx]) } : d
+)
+);
+setActiveSlide(0);
+};
 
-            <div class="option">cozy minimalist living room</div>
-            <div class="option">modern workspace</div>
-            <div class="option">coffee shop ambiance</div>
-            <div class="option">art studio</div>
-            <div class="option">vintage textured room</div>
-            <div class="option">hotel corridor shadows</div>
+const copyAll = () => {
+if (!strategy) return;
+const day = strategy[activeDay];
+const fw = FRAMEWORKS.find((f) => f.id === selectedFw);
+const text = day.slides.map((s, i) => `── ${fw.steps[i]} ──\n${s}`).join(”\n\n”);
+navigator.clipboard.writeText(`📅 ${day.jour} — ${day.theme}\n🔧 ${fw.name}\n\n${text}`);
+setCopied(true);
+setTimeout(() => setCopied(false), 2000);
+};
 
-            <div class="option">dark void with rim light</div>
-            <div class="option">gradient background glow</div>
-            <div class="option">textured backdrop</div>
-            <div class="option">silhouette against bright window</div>
-            <div class="option">bokeh-filled background</div>
-        </div>
+const fw = FRAMEWORKS.find((f) => f.id === selectedFw);
+const currentDay = strategy?.[activeDay];
 
-        <button class="btn-secondary" onclick="prevStep()">Retour</button>
-        <button class="btn" onclick="generatePrompt()">Générer le prompt</button>
-    </div>
+const font = “‘Outfit’, sans-serif”;
+const fontSerif = “‘Crimson Pro’, serif”;
 
-    <!-- RÉSULTAT -->
-    <div id="result"></div>
-
+return (
+<div style={{ minHeight: “100vh”, background: “#0a0a0e”, color: “#e4e0db”, fontFamily: font }}>
+{/* ── HEADER ── */}
+<div style={{ background: “linear-gradient(160deg, #12100e 0%, #1a1510 50%, #0e0c0a 100%)”, borderBottom: “1px solid #2a2520”, padding: “30px 20px 24px”, textAlign: “center”, position: “relative”, overflow: “hidden” }}>
+<div style={{ position: “absolute”, top: 0, left: 0, right: 0, bottom: 0, background: “radial-gradient(ellipse at 50% 0%, #E8A83808 0%, transparent 70%)” }} />
+<div style={{ position: “relative” }}>
+<div style={{ fontSize: 10, fontWeight: 700, letterSpacing: 4, color: “#E8A838”, fontFamily: fontSerif }}>
+STORIES MACHINE
+</div>
+<h1 style={{ fontSize: 28, fontWeight: 900, margin: “6px 0 0”, letterSpacing: -1, fontFamily: fontSerif, color: “#f5f0e8” }}>
+Générateur de Stories
+</h1>
+<p style={{ fontSize: 12, color: “#8a8070”, margin: “8px 0 0”, fontWeight: 500 }}>
+{combos.total.toLocaleString(“fr-FR”)}+ combinaisons uniques • 6 méthodes • 7 jours
+</p>
+</div>
 </div>
 
-<script>
-/* Sélection des options */
-document.querySelectorAll('.option').forEach(opt => {
-    opt.addEventListener('click', () => {
-        opt.classList.toggle('selected');
-    });
-});
+```
+  {/* ── NAV TABS ── */}
+  <div style={{ display: "flex", borderBottom: "1px solid #1e1a16" }}>
+    {[
+      { id: "config", label: "Configuration", icon: "⚙️" },
+      { id: "result", label: "Stratégie", icon: "📋" },
+    ].map((t) => (
+      <button
+        key={t.id}
+        onClick={() => setView(t.id)}
+        style={{
+          flex: 1, padding: "13px 0", background: view === t.id ? "#14120f" : "transparent",
+          color: view === t.id ? "#f5f0e8" : "#5a5045", border: "none",
+          borderBottom: view === t.id ? `2px solid #E8A838` : "2px solid transparent",
+          cursor: "pointer", fontFamily: font, fontSize: 13, fontWeight: 700, letterSpacing: 0.3, transition: "all 0.2s",
+        }}
+      >
+        {t.icon} {t.label}
+      </button>
+    ))}
+  </div>
 
-/* Navigation entre étapes */
-let currentStep = 1;
-const totalSteps = 7;
+  {/* ── CONFIG VIEW ── */}
+  {view === "config" && (
+    <div style={{ padding: "20px 16px", maxWidth: 560, margin: "0 auto" }}>
+      {/* Framework selector */}
+      <div style={{ marginBottom: 24 }}>
+        <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: 2, color: "#E8A838", marginBottom: 12, fontFamily: fontSerif }}>
+          MÉTHODE DE VENTE
+        </div>
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}>
+          {FRAMEWORKS.map((f) => (
+            <button
+              key={f.id}
+              onClick={() => setSelectedFw(f.id)}
+              style={{
+                padding: "12px 10px", textAlign: "left", background: selectedFw === f.id ? f.color + "14" : "#12100e",
+                border: `1.5px solid ${selectedFw === f.id ? f.color + "50" : "#1e1a16"}`,
+                borderRadius: 12, cursor: "pointer", transition: "all 0.2s",
+              }}
+            >
+              <div style={{ fontSize: 15, marginBottom: 4 }}>{f.icon} <span style={{ fontSize: 13, fontWeight: 700, color: selectedFw === f.id ? f.color : "#8a8070", fontFamily: font }}>{f.name}</span></div>
+              <div style={{ fontSize: 10, color: "#6a6055", lineHeight: 1.4 }}>{f.steps.join(" → ")}</div>
+            </button>
+          ))}
+        </div>
+        {fw && (
+          <div style={{ marginTop: 10, padding: "10px 14px", background: fw.color + "0a", border: `1px solid ${fw.color}20`, borderRadius: 10 }}>
+            <p style={{ fontSize: 12, color: "#a09585", margin: 0, lineHeight: 1.5 }}>
+              {fw.icon} <strong style={{ color: fw.color }}>{fw.name}</strong> — {fw.description}
+            </p>
+          </div>
+        )}
+      </div>
 
-function updateProgress() {
-    const bar = document.getElementById("progressBar");
-    const percent = ((currentStep - 1) / (totalSteps - 1)) * 100;
-    bar.style.width = percent + "%";
+      {/* Product config fields */}
+      <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+        {[
+          { key: "productName", label: "Formation", ph: "Ex: Code Liberté" },
+          { key: "targetAudience", label: "Audience cible", ph: "Qui sont tes clients idéaux ?", ta: true },
+          { key: "mainProblem", label: "Problème principal", ph: "Leur douleur #1", ta: true },
+          { key: "uniquePromise", label: "Promesse unique", ph: "Ce qui te différencie", ta: true },
+          { key: "personalStory", label: "Ton histoire (charnière)", ph: "Ton parcours en 1-2 phrases", ta: true },
+          { key: "cta", label: "Call to Action", ph: "Ex: DM « LIBERTÉ »" },
+          { key: "price", label: "Prix (optionnel)", ph: "Ex: 297€ au lieu de 497€" },
+          { key: "ville", label: "Ta ville actuelle", ph: "Pour personnaliser les moments de vie" },
+        ].map(({ key, label, ph, ta }) => (
+          <div key={key}>
+            <label style={{ display: "block", fontSize: 10, fontWeight: 700, letterSpacing: 1.5, color: "#E8A838", marginBottom: 5, fontFamily: fontSerif }}>
+              {label.toUpperCase()}
+            </label>
+            {ta ? (
+              <textarea
+                value={cfg[key]} rows={2}
+                onChange={(e) => setCfg({ ...cfg, [key]: e.target.value })}
+                placeholder={ph}
+                style={{ width: "100%", background: "#12100e", border: "1.5px solid #1e1a16", borderRadius: 10, padding: "10px 14px", color: "#e4e0db", fontSize: 13, fontFamily: font, resize: "vertical", outline: "none", boxSizing: "border-box" }}
+                onFocus={(e) => (e.target.style.borderColor = "#E8A838")}
+                onBlur={(e) => (e.target.style.borderColor = "#1e1a16")}
+              />
+            ) : (
+              <input
+                value={cfg[key]}
+                onChange={(e) => setCfg({ ...cfg, [key]: e.target.value })}
+                placeholder={ph}
+                style={{ width: "100%", background: "#12100e", border: "1.5px solid #1e1a16", borderRadius: 10, padding: "10px 14px", color: "#e4e0db", fontSize: 13, fontFamily: font, outline: "none", boxSizing: "border-box" }}
+                onFocus={(e) => (e.target.style.borderColor = "#E8A838")}
+                onBlur={(e) => (e.target.style.borderColor = "#1e1a16")}
+              />
+            )}
+          </div>
+        ))}
+      </div>
+
+      {/* Combos counter */}
+      <div style={{ marginTop: 20, padding: "14px 16px", background: "#14120f", borderRadius: 12, border: "1px solid #1e1a16", textAlign: "center" }}>
+        <div style={{ fontSize: 10, letterSpacing: 2, color: "#6a6055", fontFamily: fontSerif, marginBottom: 4 }}>COMBINAISONS POSSIBLES AVEC CETTE MÉTHODE</div>
+        <div style={{ fontSize: 26, fontWeight: 900, color: "#E8A838", fontFamily: fontSerif }}>
+          {(combos.combos[selectedFw] || 0).toLocaleString("fr-FR")}+
+        </div>
+      </div>
+
+      {/* Generate button */}
+      <button
+        onClick={generate}
+        style={{
+          width: "100%", marginTop: 20, padding: "16px 0",
+          background: `linear-gradient(135deg, ${fw.color}, ${fw.color}aa)`,
+          color: "#0a0a0e", border: "none", borderRadius: 12, fontSize: 15, fontWeight: 800,
+          cursor: "pointer", fontFamily: font, letterSpacing: 0.3, transition: "all 0.3s",
+        }}
+      >
+        {fw.icon} GÉNÉRER 7 JOURS DE STORIES
+      </button>
+    </div>
+  )}
+
+  {/* ── RESULT VIEW ── */}
+  {view === "result" && (
+    <div style={{ padding: "16px 12px" }}>
+      {!strategy ? (
+        <div style={{ textAlign: "center", padding: "60px 20px", color: "#5a5045" }}>
+          <div style={{ fontSize: 44, marginBottom: 14 }}>🌉</div>
+          <p style={{ fontSize: 14, lineHeight: 1.6 }}>Choisis ta méthode, configure ton produit, et génère ta stratégie.</p>
+          <button onClick={() => setView("config")} style={{ marginTop: 14, padding: "10px 28px", background: "#E8A838", color: "#0a0a0e", border: "none", borderRadius: 8, cursor: "pointer", fontWeight: 800, fontSize: 13, fontFamily: font }}>
+            Configurer
+          </button>
+        </div>
+      ) : (
+        <>
+          {/* Framework badge */}
+          <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 12, padding: "8px 12px", background: fw.color + "0c", borderRadius: 10, border: `1px solid ${fw.color}20` }}>
+            <span style={{ fontSize: 18 }}>{fw.icon}</span>
+            <div>
+              <div style={{ fontSize: 13, fontWeight: 800, color: fw.color }}>{fw.name}</div>
+              <div style={{ fontSize: 10, color: "#6a6055" }}>{fw.steps.join(" → ")}</div>
+            </div>
+          </div>
+
+          {/* Day tabs */}
+          <div style={{ display: "flex", gap: 5, overflowX: "auto", paddingBottom: 8, marginBottom: 6 }}>
+            {DAY_THEMES.map((dt, idx) => (
+              <button
+                key={idx}
+                onClick={() => { setActiveDay(idx); setActiveSlide(0); }}
+                style={{
+                  padding: "7px 13px", flexShrink: 0,
+                  background: activeDay === idx ? fw.color + "20" : "#12100e",
+                  color: activeDay === idx ? fw.color : "#5a5045",
+                  border: `1.5px solid ${activeDay === idx ? fw.color + "40" : "#1e1a16"}`,
+                  borderRadius: 10, cursor: "pointer", fontFamily: font, fontSize: 12, fontWeight: 700, transition: "all 0.2s",
+                }}
+              >
+                {dt.emoji} {dt.jour.slice(0, 3)}
+              </button>
+            ))}
+          </div>
+
+          {/* Day info */}
+          {currentDay && (
+            <>
+              <div style={{ background: "#14120f", border: "1px solid #1e1a16", borderRadius: 12, padding: "12px 14px", marginBottom: 14 }}>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                  <span style={{ fontSize: 16, fontWeight: 900, fontFamily: fontSerif, color: "#f5f0e8" }}>
+                    {currentDay.emoji} {currentDay.jour}
+                  </span>
+                  <span style={{ fontSize: 9, fontWeight: 700, letterSpacing: 2, color: fw.color, fontFamily: fontSerif }}>
+                    {currentDay.theme.toUpperCase()}
+                  </span>
+                </div>
+                <p style={{ fontSize: 11, color: "#6a6055", margin: "4px 0 0" }}>📐 {currentDay.angle}</p>
+              </div>
+
+              {/* Phone + Content */}
+              <div style={{ display: "flex", gap: 16, flexWrap: "wrap", alignItems: "flex-start" }}>
+                <PhonePreview
+                  slides={currentDay.slides}
+                  framework={selectedFw}
+                  activeSlide={activeSlide}
+                  setActiveSlide={setActiveSlide}
+                />
+
+                <div style={{ flex: 1, minWidth: 240 }}>
+                  {/* Step badge */}
+                  <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 10 }}>
+                    <span style={{ fontSize: 12, fontWeight: 700, color: fw.color, background: fw.color + "18", padding: "3px 10px", borderRadius: 16, border: `1px solid ${fw.color}30` }}>
+                      {fw.steps[activeSlide]}
+                    </span>
+                    <span style={{ fontSize: 11, color: "#5a5045" }}>
+                      Slide {activeSlide + 1}/{currentDay.slides.length}
+                    </span>
+                  </div>
+
+                  {/* Content box */}
+                  <div style={{ background: "#14120f", borderRadius: 12, padding: 14, border: "1px solid #1e1a16", marginBottom: 12 }}>
+                    <div style={{ fontSize: 9, fontWeight: 700, letterSpacing: 2, color: fw.color, marginBottom: 8, fontFamily: fontSerif }}>
+                      CONTENU SLIDE
+                    </div>
+                    <div style={{ fontSize: 13, color: "#c8c0b5", lineHeight: 1.65, whiteSpace: "pre-wrap", maxHeight: 220, overflow: "auto" }}>
+                      {currentDay.slides[activeSlide]}
+                    </div>
+                  </div>
+
+                  {/* Actions */}
+                  <div style={{ display: "flex", gap: 8, marginBottom: 12 }}>
+                    <button
+                      onClick={() => regenDay(activeDay)}
+                      style={{
+                        flex: 1, padding: "10px 0", background: "#1a1815", color: "#a09585",
+                        border: "1px solid #2a2520", borderRadius: 8, cursor: "pointer",
+                        fontFamily: font, fontSize: 12, fontWeight: 700,
+                      }}
+                    >
+                      🔄 Régénérer jour
+                    </button>
+                    <button
+                      onClick={copyAll}
+                      style={{
+                        flex: 1, padding: "10px 0", background: fw.color + "18", color: fw.color,
+                        border: `1px solid ${fw.color}30`, borderRadius: 8, cursor: "pointer",
+                        fontFamily: font, fontSize: 12, fontWeight: 700,
+                      }}
+                    >
+                      {copied ? "✅ Copié !" : "📋 Copier tout"}
+                    </button>
+                  </div>
+
+                  {/* All slides list */}
+                  <div style={{ background: "#12100e", borderRadius: 10, border: "1px solid #1e1a16", overflow: "hidden" }}>
+                    <div style={{ fontSize: 9, fontWeight: 700, letterSpacing: 2, color: "#6a6055", padding: "10px 12px 6px", fontFamily: fontSerif }}>
+                      TOUTES LES SLIDES
+                    </div>
+                    {currentDay.slides.map((slide, i) => (
+                      <div
+                        key={i}
+                        onClick={() => setActiveSlide(i)}
+                        style={{
+                          padding: "10px 12px", cursor: "pointer", transition: "background 0.2s",
+                          background: activeSlide === i ? fw.color + "0c" : "transparent",
+                          borderTop: i > 0 ? "1px solid #1a1815" : "none",
+                        }}
+                      >
+                        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                          <span style={{ fontSize: 10, fontWeight: 700, color: activeSlide === i ? fw.color : "#5a5045", minWidth: 20 }}>
+                            {i + 1}.
+                          </span>
+                          <span style={{ fontSize: 10, fontWeight: 700, color: activeSlide === i ? fw.color : "#7a7065" }}>
+                            {fw.steps[i]}
+                          </span>
+                        </div>
+                        <p style={{ fontSize: 11, color: "#6a6055", margin: "4px 0 0 28px", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                          {slide.split("\n")[0]}
+                        </p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              {/* Weekly overview */}
+              <div style={{ marginTop: 28, background: "#12100e", borderRadius: 14, border: "1px solid #1e1a16", overflow: "hidden" }}>
+                <div style={{ padding: "14px 16px 8px", fontSize: 10, fontWeight: 700, letterSpacing: 2, color: "#E8A838", fontFamily: fontSerif }}>
+                  📅 PLANNING SEMAINE — {fw.name.toUpperCase()}
+                </div>
+                {strategy.map((day, idx) => (
+                  <div
+                    key={idx}
+                    onClick={() => { setActiveDay(idx); setActiveSlide(0); window.scrollTo({ top: 200, behavior: "smooth" }); }}
+                    style={{
+                      display: "flex", alignItems: "center", gap: 10, padding: "11px 16px",
+                      cursor: "pointer", transition: "background 0.2s",
+                      background: activeDay === idx ? fw.color + "0c" : "transparent",
+                      borderTop: "1px solid #1a1815",
+                    }}
+                  >
+                    <span style={{ fontSize: 16 }}>{day.emoji}</span>
+                    <span style={{ fontSize: 13, fontWeight: 800, width: 32, color: activeDay === idx ? "#f5f0e8" : "#5a5045", fontFamily: fontSerif }}>
+                      {day.jour.slice(0, 3)}
+                    </span>
+                    <span style={{ fontSize: 11, color: "#7a7065", flex: 1 }}>{day.theme}</span>
+                    <span style={{ fontSize: 10, color: "#4a4540", fontFamily: fontSerif }}>{day.slides.length} slides</span>
+                  </div>
+                ))}
+              </div>
+
+              {/* Method card: La Charnière */}
+              <div style={{ marginTop: 20, background: "linear-gradient(135deg, #1a1510, #14120f)", borderRadius: 14, border: "1px solid #2a2520", padding: "18px 16px" }}>
+                <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: 2, color: "#E8A838", marginBottom: 10, fontFamily: fontSerif }}>
+                  🌉 RAPPEL : LA CHARNIÈRE
+                </div>
+                <p style={{ fontSize: 12, color: "#8a8070", lineHeight: 1.6, margin: 0 }}>
+                  La charnière = le pont entre ta vie et ton offre. C'est la phrase qui transforme un moment de vie en contenu qui vend naturellement.
+                  <br /><br />
+                  <strong style={{ color: "#c8c0b5" }}>Sans elle</strong> → ta story est juste jolie.
+                  <br />
+                  <strong style={{ color: "#E8A838" }}>Avec elle</strong> → ta story connecte et amène à l'achat.
+                  <br /><br />
+                  <em style={{ color: "#6a6055" }}>Ta vie est ton meilleur argument de vente.</em>
+                </p>
+              </div>
+            </>
+          )}
+        </>
+      )}
+    </div>
+  )}
+</div>
+```
+
+);
 }
-
-function showStep(step) {
-    document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
-    document.querySelector('.step[data-step="' + step + '"]').classList.add('active');
-    updateProgress();
-}
-
-function nextStep() {
-    if (currentStep < totalSteps) {
-        currentStep++;
-        showStep(currentStep);
-    }
-}
-
-function prevStep() {
-    if (currentStep > 1) {
-        currentStep--;
-        showStep(currentStep);
-    }
-}
-
-/* Récupération des options */
-function getSelectedText(category, joinWith = ", ") {
-    const group = document.querySelector('.options[data-category="' + category + '"]');
-    if (!group) return "";
-    const selected = [...group.querySelectorAll('.selected')].map(el => el.textContent.trim());
-    return selected.join(joinWith);
-}
-
-/* Génération du prompt */
-function generatePrompt() {
-
-    const firstSentence =
-        "Produce a high-end cinematic portrait of the woman from the original photo, ensuring exact identity preservation of her skin tone, body shape and overall appearance, polished look.";
-
-    const style = getSelectedText("style");
-    const tenue = getSelectedText("tenue");
-
-    let sentence2 = "";
-    if (style || tenue) {
-        const stylePart = style ? style + " " : "";
-        const tenuePart = tenue ? "depicts a woman " + tenue : "depicts a woman";
-        sentence2 = "This " + stylePart + "portrait " + tenuePart + ".";
-    }
-
-    const scene = getSelectedText("scene", " ");
-    const landscape = getSelectedText("landscape");
-
-    let sentence3 = "";
-    if (scene && landscape) {
-        sentence3 = scene + ", set in " + landscape + ".";
-    } else if (scene) {
-        sentence3 = scene + ".";
-    } else if (landscape) {
-        sentence3 = "The scene takes place in " + landscape + ".";
-    }
-
-    const lighting = getSelectedText("lighting");
-    const lightingEffect = getSelectedText("lightingEffect");
-
-    let sentence4 = "";
-    if (lighting || lightingEffect) {
-        let base = "The lighting";
-        if (lighting) base += ", " + lighting;
-        if (lightingEffect) base += ", " + lightingEffect;
-        sentence4 = base + ".";
-    }
-
-    const composition = getSelectedText("composition");
-        const emphasis = getSelectedText("emphasis");
-
-    let sentence5 = "";
-    if (composition || emphasis) {
-        let base = composition || "The composition";
-        if (emphasis) base += " " + emphasis;
-        sentence5 = base + ".";
-    }
-
-    const texture = getSelectedText("texture");
-    const themes = getSelectedText("themes");
-
-    let sentence6 = "";
-    if (texture || themes) {
-        let base = "";
-        if (texture) base += texture;
-        if (themes) {
-            if (base) base += " that " + themes;
-            else base += themes.charAt(0).toUpperCase() + themes.slice(1);
-        }
-        sentence6 = base + ".";
-    }
-
-    const lastSentence =
-        "Shot taken with a Sony A7R V and an 85mm f/1.4 GM lens at f/2.0 for optimal sharpness of facial details.";
-
-    const parts = [
-        firstSentence,
-        sentence2,
-        sentence3,
-        sentence4,
-        sentence5,
-        sentence6,
-        lastSentence
-    ].filter(Boolean);
-
-    const finalPrompt = parts.join(" ");
-
-    document.getElementById("result").textContent = finalPrompt;
-
-    // Aller automatiquement au résultat
-    currentStep = totalSteps;
-    showStep(totalSteps);
-}
-</script>
-
-</body>
-</html>
