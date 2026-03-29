@@ -6,6 +6,7 @@
 // ---- State ----
 let currentStep = 1;
 const totalSteps = 6;
+let currentMode = "free"; // "free" or "ai"
 
 // ---- Init ----
 document.addEventListener("DOMContentLoaded", () => {
@@ -95,6 +96,36 @@ function getInputValue(id) {
 function toggleApiKey() {
     const input = document.getElementById("apiKey");
     input.type = input.type === "password" ? "text" : "password";
+}
+
+// ---- Mode Toggle ----
+function switchMode(mode) {
+    currentMode = mode;
+    document.querySelectorAll(".mode-btn").forEach(function(btn) {
+        btn.classList.toggle("active", btn.dataset.mode === mode);
+    });
+    document.getElementById("freeModePanel").style.display = mode === "free" ? "block" : "none";
+    document.getElementById("aiModePanel").style.display = mode === "ai" ? "block" : "none";
+}
+
+// ---- Collect User Inputs ----
+function collectInputs() {
+    return {
+        product: getInputValue("productName") || "votre produit",
+        description: getInputValue("productDesc") || "",
+        price: getInputValue("productPrice") || "",
+        category: getSelectedText("productCategory") || "produit",
+        audience: getInputValue("targetAudience") || "votre audience",
+        painPoint: getSelectedText("painPoint") || "un probleme courant",
+        desire: getSelectedText("desire") || "la reussite",
+        platform: getSelectedText("platform") || "Instagram Stories",
+        slideCount: parseInt(getSelectedText("slideCount")) || 5,
+        tone: getSelectedText("tone") || "Inspirant & motivant",
+        storytelling: getSelectedText("storytelling") || "Transformation personnelle",
+        language: getSelectedText("language") || "Francais",
+        objective: getSelectedText("objective") || "Generer des ventes",
+        cta: getSelectedText("cta") || getInputValue("ctaCustom") || "Passe a l'action maintenant"
+    };
 }
 
 // ---- Summary ----
@@ -290,7 +321,34 @@ function showTab(tab) {
 
 // ---- Generate ----
 async function generateAIDA() {
-    const apiKey = getInputValue("apiKey");
+    var btn = document.getElementById("generateBtn");
+
+    if (currentMode === "free") {
+        // Free mode - use template engine
+        btn.disabled = true;
+        btn.textContent = "Generation en cours...";
+
+        var resultSection = document.getElementById("resultSection");
+        resultSection.style.display = "block";
+        document.getElementById("loadingIndicator").style.display = "none";
+        document.getElementById("aidaTabs").style.display = "none";
+        document.getElementById("resultContent").innerHTML = "";
+
+        var inputs = collectInputs();
+        var parsed = generateFreeAIDA(inputs);
+
+        renderResult(parsed);
+        document.getElementById("aidaTabs").style.display = "flex";
+        resultSection.scrollIntoView({ behavior: "smooth" });
+
+        btn.disabled = false;
+        btn.textContent = "Generer ma Story AIDA";
+        showToast("Story AIDA generee (mode gratuit) !");
+        return;
+    }
+
+    // AI mode
+    var apiKey = getInputValue("apiKey");
     if (!apiKey) {
         showToast("Veuillez entrer votre cle API Anthropic");
         return;
@@ -299,12 +357,11 @@ async function generateAIDA() {
     // Save API key
     localStorage.setItem("aida_api_key", apiKey);
 
-    const btn = document.getElementById("generateBtn");
     btn.disabled = true;
     btn.textContent = "Generation en cours...";
 
     // Show result section with loading
-    const resultSection = document.getElementById("resultSection");
+    var resultSection = document.getElementById("resultSection");
     resultSection.style.display = "block";
     document.getElementById("loadingIndicator").style.display = "block";
     document.getElementById("aidaTabs").style.display = "none";
@@ -313,12 +370,12 @@ async function generateAIDA() {
     resultSection.scrollIntoView({ behavior: "smooth" });
 
     try {
-        const prompt = buildPrompt();
-        const model = getModelId();
-        const response = await callClaudeAPI(apiKey, prompt, model);
+        var prompt = buildPrompt();
+        var model = getModelId();
+        var response = await callClaudeAPI(apiKey, prompt, model);
 
         // Parse and render
-        const parsed = parseAIDAResponse(response);
+        var parsed = parseAIDAResponse(response);
 
         // Store raw response for copy
         resultSection.dataset.rawResponse = response;

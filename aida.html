@@ -298,29 +298,53 @@
         </div>
     </div>
 
-    <!-- ETAPE 6 : API Key & Generation -->
+    <!-- ETAPE 6 : Mode & Generation -->
     <div class="step" data-step="6">
         <div class="step-header">
             <span class="step-number">6</span>
-            <h2>Generation avec Claude AI</h2>
+            <h2>Generation</h2>
         </div>
-        <p class="step-desc">Entrez votre cle API Anthropic pour generer le contenu. Votre cle reste stockee localement.</p>
 
-        <div class="form-group">
-            <label for="apiKey">Cle API Anthropic</label>
-            <div class="api-key-wrapper">
-                <input type="password" id="apiKey" placeholder="sk-ant-...">
-                <button class="btn-icon" onclick="toggleApiKey()" title="Afficher / masquer">&#128065;</button>
+        <!-- Mode Toggle -->
+        <div class="mode-toggle">
+            <button class="mode-btn active" data-mode="free" onclick="switchMode('free')">
+                <span class="mode-icon">&#9889;</span>
+                <span class="mode-title">Mode Gratuit</span>
+                <span class="mode-detail">506M+ combinaisons, instantane, sans cle API</span>
+            </button>
+            <button class="mode-btn" data-mode="ai" onclick="switchMode('ai')">
+                <span class="mode-icon">&#129302;</span>
+                <span class="mode-title">Mode IA (Claude)</span>
+                <span class="mode-detail">Contenu unique genere par IA, necessite cle API</span>
+            </button>
+        </div>
+
+        <!-- Free mode info -->
+        <div id="freeModePanel" class="mode-panel">
+            <div class="free-mode-info">
+                <p><strong>150 hooks</strong> x <strong>150 interets</strong> x <strong>150 desirs</strong> x <strong>150 actions</strong> = plus de <strong>506 millions</strong> de stories uniques</p>
+                <p class="hint">Aucune cle API requise. Generation instantanee.</p>
             </div>
-            <small class="hint">Votre cle est sauvegardee localement dans votre navigateur uniquement.</small>
         </div>
 
-        <div class="form-group">
-            <label>Modele Claude</label>
-            <div class="options single-select" data-category="model">
-                <div class="option selected">Claude Sonnet 4</div>
-                <div class="option">Claude Haiku 3.5</div>
-                <div class="option">Claude Opus 4</div>
+        <!-- AI mode panel -->
+        <div id="aiModePanel" class="mode-panel" style="display: none;">
+            <div class="form-group">
+                <label for="apiKey">Cle API Anthropic</label>
+                <div class="api-key-wrapper">
+                    <input type="password" id="apiKey" placeholder="sk-ant-...">
+                    <button class="btn-icon" onclick="toggleApiKey()" title="Afficher / masquer">&#128065;</button>
+                </div>
+                <small class="hint">Votre cle est sauvegardee localement dans votre navigateur uniquement.</small>
+            </div>
+
+            <div class="form-group">
+                <label>Modele Claude</label>
+                <div class="options single-select" data-category="model">
+                    <div class="option selected">Claude Sonnet 4</div>
+                    <div class="option">Claude Haiku 3.5</div>
+                    <div class="option">Claude Opus 4</div>
+                </div>
             </div>
         </div>
 
@@ -371,6 +395,7 @@
 
 </div>
 
+<script src="aida-templates.js"></script>
 <script src="aida.js"></script>
 
 </body>
