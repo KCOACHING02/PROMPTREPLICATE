@@ -1,919 +1,509 @@
-import { useState, useEffect, useMemo, useCallback } from “react”;
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stories Machine - Générateur</title>
+    <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@400;500;600;700;800;900&family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    
+    <style>
+        :root {
+            --bg-color: #0a0a0e;
+            --text-color: #e4e0db;
+            --font-main: 'Outfit', sans-serif;
+            --font-serif: 'Crimson Pro', serif;
+            --border-color: #1e1a16;
+            --gold: #E8A838;
+        }
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: var(--font-main);
+            -webkit-font-smoothing: antialiased;
+        }
+        .header {
+            background: linear-gradient(160deg, #12100e 0%, #1a1510 50%, #0e0c0a 100%);
+            border-bottom: 1px solid #2a2520;
+            padding: 30px 20px 24px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        .header-bg {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: radial-gradient(ellipse at 50% 0%, #E8A83808 0%, transparent 70%);
+        }
+        .header-title {
+            font-size: 28px;
+            font-weight: 900;
+            margin: 6px 0 0;
+            letter-spacing: -1px;
+            font-family: var(--font-serif);
+            color: #f5f0e8;
+        }
+        .header-subtitle {
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 4px;
+            color: var(--gold);
+            font-family: var(--font-serif);
+            text-transform: uppercase;
+        }
+        .header-p {
+            font-size: 12px;
+            color: #8a8070;
+            margin: 8px 0 0;
+            font-weight: 500;
+        }
+        .nav-tabs {
+            display: flex;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .nav-btn {
+            flex: 1;
+            padding: 13px 0;
+            background: transparent;
+            color: #5a5045;
+            border: none;
+            border-bottom: 2px solid transparent;
+            cursor: pointer;
+            font-family: var(--font-main);
+            font-size: 13px;
+            font-weight: 700;
+            letter-spacing: 0.3px;
+            transition: all 0.2s;
+        }
+        .nav-btn.active {
+            background: #14120f;
+            color: #f5f0e8;
+            border-bottom-color: var(--gold);
+        }
+        .container {
+            padding: 20px 16px;
+            max-width: 560px;
+            margin: 0 auto;
+        }
+        .section-title {
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 2px;
+            color: var(--gold);
+            margin-bottom: 12px;
+            font-family: var(--font-serif);
+        }
+        .grid-methods {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin-bottom: 10px;
+        }
+        .method-btn {
+            padding: 12px 10px;
+            text-align: left;
+            background: #12100e;
+            border: 1.5px solid var(--border-color);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+            color: #e4e0db;
+        }
+        .method-btn.active {
+            background: rgba(232, 168, 56, 0.08);
+            border-color: rgba(232, 168, 56, 0.3);
+        }
+        .form-group {
+            margin-bottom: 14px;
+        }
+        .form-label {
+            display: block;
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 1.5px;
+            color: var(--gold);
+            margin-bottom: 5px;
+            font-family: var(--font-serif);
+        }
+        .form-input, .form-textarea {
+            width: 100%;
+            background: #12100e;
+            border: 1.5px solid var(--border-color);
+            border-radius: 10px;
+            padding: 10px 14px;
+            color: #e4e0db;
+            font-size: 13px;
+            font-family: var(--font-main);
+            outline: none;
+            box-sizing: border-box;
+        }
+        .form-input:focus, .form-textarea:focus {
+            border-color: var(--gold);
+        }
+        .btn-generate {
+            width: 100%;
+            margin-top: 20px;
+            padding: 16px 0;
+            background: linear-gradient(135deg, var(--gold), #e8a838aa);
+            color: #0a0a0e;
+            border: none;
+            border-radius: 12px;
+            font-size: 15px;
+            font-weight: 800;
+            cursor: pointer;
+            font-family: var(--font-main);
+            letter-spacing: 0.3px;
+            transition: all 0.3s;
+        }
+        
+        /* PHONE PREVIEW CSS */
+        .phone-container {
+            width: 232px;
+            min-width: 232px;
+            flex-shrink: 0;
+            margin: 0 auto;
+        }
+        .phone {
+            width: 100%;
+            height: 412px;
+            border-radius: 30px;
+            border: 2.5px solid #1e1e24;
+            padding: 40px 14px 20px;
+            position: relative;
+            overflow: hidden;
+            box-sizing: border-box;
+        }
+        .phone-notch {
+            position: absolute;
+            top: 11px; left: 50%;
+            transform: translateX(-50%);
+            width: 48px; height: 5px;
+            background: #252528;
+            border-radius: 10px;
+        }
+        .progress-bars {
+            display: flex;
+            gap: 3px;
+            margin-bottom: 14px;
+        }
+        .bar {
+            flex: 1; height: 2.5px;
+            border-radius: 2px;
+            cursor: pointer;
+            background: #2a2a30;
+            transition: background 0.3s;
+        }
+        .profile {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+        .avatar {
+            width: 30px; height: 30px;
+            border-radius: 50%;
+            display: flex; alignItems: center; justifyContent: center;
+            font-size: 11px; font-weight: 900; color: #fff;
+        }
+        .content-box {
+            color: #e8e8e8;
+            font-size: 12px;
+            line-height: 1.6;
+            white-space: pre-wrap;
+            overflow: auto;
+            max-height: 240px;
+        }
+        
+        /* UTILS */
+        .badge {
+            font-size: 12px;
+            font-weight: 700;
+            padding: 3px 10px;
+            border-radius: 16px;
+        }
+        .day-tabs {
+            display: flex;
+            gap: 5px;
+            overflow-x: auto;
+            padding-bottom: 8px;
+            margin-bottom: 6px;
+        }
+        .day-btn {
+            padding: 7px 13px;
+            flex-shrink: 0;
+            background: #12100e;
+            border: 1.5px solid var(--border-color);
+            border-radius: 10px;
+            cursor: pointer;
+            color: #5a5045;
+            font-size: 12px;
+            font-weight: 700;
+        }
+        .day-btn.active {
+            color: var(--gold);
+            background: rgba(232, 168, 56, 0.12);
+            border-color: rgba(232, 168, 56, 0.25);
+        }
+    </style>
+</head>
+<body x-data="storiesApp()">
 
-/* ═══════════════════════════════════════════════════════════════
-MASSIVE COMBINATORIAL DATABASE
-Target: 800,000+ unique story combinations
-
-Architecture:
-
-- 6 frameworks × 7 day themes × N accroche variants × N charnière variants
-  × N preuve variants × N CTA variants × N moment variants × variable slots
-
-Each “slot” has 15-25+ templates. With 6 frameworks, 7 themes,
-and 5+ slots of 15-25 variants each:
-6 × 7 × 20 × 20 × 20 × 15 × 15 = 5,292,000 combinations minimum
-═══════════════════════════════════════════════════════════════ */
-
-const FRAMEWORKS = [
-{
-id: “charniere_4”,
-name: “Charnière 4 Slides”,
-icon: “🌉”,
-color: “#E8A838”,
-steps: [“Moment de vie”, “Charnière”, “Offre / Témoignage”, “Lien”],
-description: “Le pont entre ta vie et ton offre. La méthode la plus naturelle.”,
-},
-{
-id: “aida”,
-name: “AIDA”,
-icon: “🧲”,
-color: “#E05263”,
-steps: [“Attention”, “Intérêt”, “Désir”, “Action”],
-description: “Attention → Intérêt → Désir → Action. Le classique du copywriting.”,
-},
-{
-id: “pas”,
-name: “PAS”,
-icon: “💊”,
-color: “#3CBBB1”,
-steps: [“Problème”, “Agitation”, “Solution”],
-description: “Problème → Agitation → Solution. Court, percutant, efficace.”,
-},
-{
-id: “ppn”,
-name: “Preuve → Projection → Normalisation”,
-icon: “🔮”,
-color: “#9B5DE5”,
-steps: [“Preuve”, “Projection”, “Normalisation”],
-description: “Montre le résultat, projette ton audience, normalise le passage à l’action.”,
-},
-{
-id: “charniere_3”,
-name: “Charnière 3 Slides”,
-icon: “⚡”,
-color: “#FF8C42”,
-steps: [“Moment + Charnière”, “Offre”, “CTA”],
-description: “Version express de la charnière. Rapide et impactant.”,
-},
-{
-id: “story_5”,
-name: “5 Étapes Vente”,
-icon: “🎯”,
-color: “#06D6A0”,
-steps: [“Accroche”, “Problème”, “Solution”, “Preuve”, “CTA”],
-description: “Le tunnel de vente complet en 5 stories.”,
-},
-];
-
-const DAY_THEMES = [
-{ jour: “Lundi”, theme: “Mindset & Motivation”, emoji: “🔥”, angle: “Réveiller l’ambition en début de semaine” },
-{ jour: “Mardi”, theme: “Éducation & Valeur”, emoji: “📚”, angle: “Enseigner quelque chose d’utile et concret” },
-{ jour: “Mercredi”, theme: “Storytelling & Vécu”, emoji: “🎬”, angle: “Raconter un moment vrai de ton parcours” },
-{ jour: “Jeudi”, theme: “Objections & Croyances”, emoji: “🧱”, angle: “Casser une croyance limitante” },
-{ jour: “Vendredi”, theme: “Preuve & Résultats”, emoji: “🏆”, angle: “Montrer des résultats concrets” },
-{ jour: “Samedi”, theme: “Coulisses & Lifestyle”, emoji: “☀️”, angle: “Montrer ta vie, ton cadre, ton quotidien” },
-{ jour: “Dimanche”, theme: “Offre & Urgence”, emoji: “🚀”, angle: “Vente directe avec rareté” },
-];
-
-// ──────────────────────────────────────────────
-// SLOT DATABASES (15-25+ variants each)
-// ──────────────────────────────────────────────
-
-const DB = {
-moments_vie: [
-“Ce matin, café sur la terrasse. Le soleil est à peine levé.”,
-“Balade avec mon fils ce matin. Pas de réveil, pas de rush.”,
-“Je regarde mon téléphone. Notification : vente à 3h du matin.”,
-“Assis dans un café à {ville}. Mon laptop est fermé.”,
-“Aujourd’hui j’ai décidé de ne pas travailler. Et c’est un choix.”,
-“Message reçu d’un ancien collègue : « T’as de la chance. »”,
-“Je me suis réveillé sans alarme. Pour la 247ème fois consécutive.”,
-“Terrasse, thé à la menthe, vue sur la mer. Un mardi normal.”,
-“Mon fils m’a demandé : « Papa, pourquoi tu pars pas au bureau ? »”,
-“En plein milieu d’un resto, j’ai reçu 3 notifications de vente.”,
-“Aéroport. Billet one-way. Pas besoin de poser des congés.”,
-“Ce matin j’ai médité 20 minutes. Puis j’ai ouvert mon dashboard.”,
-“Week-end à la montagne. Mon business tourne sans moi.”,
-“Je suis en terrasse à Casablanca. Mon écran affiche +2 ventes.”,
-“Petit déjeuner avec ma famille. C’est un mercredi matin, 10h.”,
-“J’ai refusé une réunion. Pas parce que je suis occupé. Parce que je choisis.”,
-“Plage à 11h un jeudi. Les enfants jouent. Je check mes stats.”,
-“Un ami m’a dit : « Toi t’as trouvé la formule. » Non. Je l’ai construite.”,
-“Road trip imprévu. 4 jours. Zéro impact sur mon chiffre.”,
-“Ce soir, dîner en famille. Demain ? Pareil si je veux.”,
-“Marché du matin. Fruits frais. Aucune urgence nulle part.”,
-“J’ai passé 2h à lire aujourd’hui. Pas le week-end. Un lundi.”,
-“Notification Stripe à 6h47. Quelqu’un a acheté pendant que je dormais.”,
-“Je suis en train d’écrire ces stories depuis un hamac.”,
-“Mon ancienne vie : métro 7h15. Ma vie maintenant : thé à la menthe 9h.”,
-],
-
-charnieres: [
-“Parce que ce business, je le gère d’où je veux.”,
-“C’est ça que j’ai construit. Et ça n’a rien de magique.”,
-“Ce genre de matin — je les choisis maintenant.”,
-“J’ai construit quelque chose qui tourne même quand je ne travaille pas.”,
-“La liberté c’est pas un concept. C’est mon mardi matin.”,
-“J’ai pas eu de la chance. J’ai appris un système.”,
-“Ce mode de vie, il se construit. Étape par étape.”,
-“Avant j’échangeais mon temps contre un salaire. Plus maintenant.”,
-“Mon business fonctionne pendant que je vis. Pas l’inverse.”,
-“C’est le résultat d’une décision prise il y a quelques mois.”,
-“J’ai remplacé la sécurité du salariat par la liberté du digital.”,
-“Ce que tu vois là, c’est pas de la chance. C’est un système.”,
-“Chaque matin comme celui-ci me rappelle pourquoi j’ai commencé.”,
-“Le jour où j’ai compris que je pouvais vendre en dormant, tout a changé.”,
-“Mon agenda ? C’est moi qui le remplis. Personne d’autre.”,
-“J’ai quitté le costume-cravate pour construire ma propre liberté.”,
-“Ce laptop, c’est mon bureau. Partout dans le monde.”,
-“La vraie richesse c’est de choisir comment tu passes tes journées.”,
-“Il y a un an, ce matin aurait été impossible.”,
-“Ce business m’a rendu un truc que le salariat m’avait pris : du temps.”,
-“Le système que j’ai mis en place fait le travail. Moi je vis.”,
-“Ce que tu vois c’est pas un rêve. C’est un plan exécuté.”,
-“J’ai construit un truc simple. Mais qui change tout.”,
-“Ce lifestyle c’est pas réservé aux autres. C’est accessible.”,
-“Mon ancien patron me payait pour mon temps. Maintenant mon temps m’appartient.”,
-],
-
-accroches: [
-“STOP. Avant de scroller…”,
-“Tu lis ces stories depuis ton canapé ou depuis ton bureau ?”,
-“Si t’es encore au même point qu’il y a 6 mois, lis ça.”,
-“La vérité que personne ne te dit sur l’argent en ligne.”,
-“Tu savais que 97% des gens ne passeront jamais à l’action ?”,
-“Cette story va diviser mon audience. Tant mieux.”,
-“Je vais te dire un truc que tu n’as pas envie d’entendre.”,
-“Ouvre bien tes yeux. Ce que tu vas lire peut tout changer.”,
-“On m’a demandé mon secret. Le voici.”,
-“Si tu penses que c’est trop tard pour toi — reste.”,
-“Pose-toi une seule question : dans 1 an, où tu en seras ?”,
-“Ce matin j’ai reçu un message qui m’a fait sourire.”,
-“Je vais être direct avec toi. Ça va piquer.”,
-“3 erreurs que je vois tous les jours. Tu fais sûrement la 2ème.”,
-“J’ai mis 6 mois à comprendre ça. Tu peux le saisir en 60 secondes.”,
-“Arrête de scroller des motivations. Lis plutôt ça.”,
-“T’as déjà calculé combien te coûte chaque mois d’hésitation ?”,
-“La différence entre ceux qui réussissent et les autres ? C’est pas le talent.”,
-“Si quelqu’un t’avait montré ÇA il y a un an…”,
-“Regarde autour de toi. Combien de gens vivent vraiment la vie qu’ils veulent ?”,
-“Je te donne 30 secondes pour changer ta perspective.”,
-“Le plus gros mensonge qu’on t’a raconté sur l’entrepreneuriat.”,
-“Tu veux la vérité ? La voilà.”,
-“Première story = la plus importante. Ne swipe pas.”,
-“Si tu gagnes moins que ce que tu mérites — cette série est pour toi.”,
-],
-
-problemes: [
-“T’es coincé dans un job qui ne te ressemble plus.”,
-“Tu dépends d’un seul revenu. Et ça te stresse chaque fin de mois.”,
-“Tu scrolles des « méthodes » mais rien ne change concrètement.”,
-“Tu bosses 40h/semaine pour enrichir quelqu’un d’autre.”,
-“T’as des compétences. Mais personne ne t’a montré comment les monétiser.”,
-“Tu remets toujours à demain. Et demain ressemble à hier.”,
-“T’as essayé 3 trucs. Rien n’a marché. Tu commences à douter.”,
-“Tu regardes les autres réussir en ligne et tu te dis : « pourquoi pas moi ? »”,
-“Tu veux plus de liberté mais tu sais pas par où commencer.”,
-“T’es épuisé de la routine métro-boulot-dodo.”,
-“Tu lis des livres, tu suis des comptes inspi. Mais rien ne bouge.”,
-“Le pire ? C’est pas le manque d’idées. C’est le manque de direction.”,
-“Tu gagnes ta vie. Mais tu ne vis pas ta vie.”,
-“Tu sais que t’es capable de plus. Mais le système te retient.”,
-“T’as l’impression de tourner en rond depuis des mois.”,
-“Le salariat te donne la sécurité. Mais il te prend ta liberté.”,
-“Tu vois des gens moins qualifiés que toi gagner 3x plus en ligne.”,
-“Tu passes plus de temps à rêver ta vie qu’à la construire.”,
-“Chaque lundi matin, le même nœud au ventre.”,
-“Tu te dis « un jour ». Mais « un jour » n’arrive jamais.”,
-],
-
-agitations: [
-“Et chaque mois qui passe, c’est un mois de perdu.”,
-“Le pire ? C’est que tu le sais. Et tu ne fais rien.”,
-“Imagine dans 5 ans. Même job. Même salaire. Même frustration.”,
-“Pendant que tu hésites, d’autres se lancent. Avec moins que toi.”,
-“L’inflation augmente. Ton salaire, non.”,
-“Tes enfants grandissent. Tu rates des moments pour un boulot qui te vide.”,
-“T’attends le « bon moment ». Il n’existe pas.”,
-“La sécurité du CDI ? Elle peut disparaître demain matin.”,
-“Chaque jour sans système en place, c’est de l’argent qui dort.”,
-“Tu te retrouves à 22h devant Netflix en te disant « demain je commence ».”,
-“La vraie question c’est pas « est-ce que ça marche ? » C’est « combien de temps tu vas encore attendre ? »”,
-“Tes compétences perdent de la valeur si tu ne les monétises pas.”,
-“Le confort du salariat, c’est la prison dorée.”,
-“Tu finances le rêve de quelqu’un d’autre 8h par jour.”,
-“Dans 1 an, tu regretteras de ne pas avoir commencé aujourd’hui.”,
-],
-
-solutions: [
-“{product} c’est le système étape par étape pour construire ta liberté.”,
-“J’ai créé {product} pour ceux qui veulent un PLAN, pas des promesses.”,
-“{product} : la méthode qui m’a permis de quitter le corporate.”,
-“Avec {product}, tu apprends à générer des revenus digitaux depuis n’importe où.”,
-“{product} — pas de théorie. Un plan d’action. Des résultats.”,
-“Ce que {product} t’apporte : clarté, structure, et tes premiers revenus.”,
-“{product} c’est exactement ce que j’aurais voulu avoir quand j’ai commencé.”,
-“La méthode {product} en 3 mots : Apprendre. Appliquer. Encaisser.”,
-“J’ai condensé dans {product} tout ce qui marche. Et éliminé tout le reste.”,
-“{product} est construit pour les francophones qui partent de zéro.”,
-“Un système simple, duplicable, qui fonctionne dans le monde francophone.”,
-“{product} c’est pas un énième cours. C’est une transformation.”,
-“Le programme {product} t’emmène du point A au point B. Sans détour.”,
-“Ce que tu apprends dans {product}, tu l’appliques dès la semaine 1.”,
-“J’ai mis tout mon parcours d’ex-DG dans {product}. Rien n’est théorique.”,
-“{product} = le raccourci que j’aurais aimé prendre il y a 3 ans.”,
-“Chaque module de {product} est un pas concret vers ta liberté financière.”,
-“Pas besoin d’être technique. {product} est fait pour les débutants motivés.”,
-“Le secret ? C’est pas un secret. C’est un système. Et il s’appelle {product}.”,
-“{product} t’apprend à vendre en ligne pendant que tu dors.”,
-],
-
-preuves: [
-“Ex-Directeur Général. J’ai quitté le corporate pour construire ça.”,
-“En 6 mois, j’ai remplacé mon salaire de DG.”,
-“Des ventes à 3h du matin. Pendant que je dors.”,
-“+{n} personnes ont déjà rejoint la formation.”,
-“[Prénom] a fait ses premières ventes en 3 semaines.”,
-“Un ancien salarié comme toi. Il a généré {montant}€ en 60 jours.”,
-“J’ai géré des budgets de millions. Maintenant je gère ma liberté.”,
-“Message reçu hier : « J’ai fait ma première vente ! »”,
-“Mon parcours : DG → licencié → entrepreneur digital → libre.”,
-“Des résultats en 30 jours. Pas en 30 mois.”,
-“Quand j’étais DG, j’avais le salaire mais pas le temps. Maintenant j’ai les deux.”,
-“[Prénom] était sceptique. 2 mois après : revenus récurrents.”,
-“Je ne te vends pas du rêve. Je te montre mon écran.”,
-“Avant/après : costume-cravate → laptop + terrasse.”,
-“Des gens ordinaires, des résultats extraordinaires. C’est la méthode.”,
-“Ce n’est pas de la chance. C’est 6 mois de travail intelligent.”,
-“J’ai testé, échoué, recommencé. Pour que toi tu n’aies pas à le faire.”,
-“Les chiffres ne mentent pas. Et les miens sont publics.”,
-“Chaque semaine, des messages comme celui-ci dans ma boîte.”,
-“Mon histoire prouve que c’est possible. Ta décision prouve que tu le veux.”,
-],
-
-projections: [
-“Imagine te réveiller demain sans alarme. Et que ce soit normal.”,
-“Dans 90 jours, tu pourrais recevoir ta première vente automatique.”,
-“Visualise : ton téléphone sonne. C’est une notification de paiement.”,
-“Imagine dire à ton boss : « Je pars. » Sans stress.”,
-“Dans 6 mois, tu pourrais lire ces stories depuis ta propre terrasse.”,
-“Et si dans 3 mois, c’est TOI qui postais ce genre de story ?”,
-“Imagine choisir tes horaires. Tes clients. Ton lieu de vie.”,
-“La prochaine success story que je partage — ça pourrait être la tienne.”,
-“Ton futur moi te remercie déjà d’avoir pris cette décision.”,
-“Tu pourrais être à 1 décision de tout changer.”,
-“Imagine ouvrir ton laptop demain avec un PLAN clair devant toi.”,
-“Dans 30 jours, tu pourrais avoir ton premier système en place.”,
-“Imagine ne plus jamais dire « j’ai pas les moyens ».”,
-“La liberté que tu vois chez les autres, elle est à portée de clic.”,
-“Et si le prochain message que je reçois venait de toi ?”,
-],
-
-normalisations: [
-“C’est pas réservé aux génies. C’est pour ceux qui décident.”,
-“Des centaines de personnes l’ont fait. Avec moins de compétences que toi.”,
-“La seule différence entre toi et ceux qui réussissent ? Ils ont commencé.”,
-“T’as pas besoin d’être expert. Juste motivé.”,
-“C’est normal d’avoir peur. Fais-le quand même.”,
-“On a tous commencé à zéro. TOUS.”,
-“Si un ex-salarié sans réseau a pu le faire — toi aussi.”,
-“Pas besoin de budget. Pas besoin de diplôme. Juste une décision.”,
-“Le plus dur c’est de commencer. Après, le système fait le reste.”,
-“Tu n’as pas besoin de tout comprendre. Tu as besoin de suivre le plan.”,
-“Chaque expert a été débutant. La différence c’est qu’ils ont commencé.”,
-“C’est accessible. C’est faisable. C’est prouvé.”,
-“Arrête de croire que c’est compliqué. Le système est simple.”,
-“Les gens comme toi qui réussissent — ils ont juste dit oui.”,
-“T’es plus prêt(e) que tu ne le crois.”,
-],
-
-ctas: [
-“👉 Lien dans ma bio.”,
-“👉 Écris-moi « LIBERTÉ » en DM.”,
-“👉 Clique sur le lien. C’est maintenant.”,
-“👉 DM « INFO » et je t’envoie tout.”,
-“👉 Le lien est dans ma bio. Les places sont limitées.”,
-“👉 Tape « GO » en DM. Je t’explique tout.”,
-“👉 Rejoins-nous. Lien en bio.”,
-“👉 Dernières places. Lien dans la bio.”,
-“👉 Tu hésites encore ? Écris-moi. On en parle.”,
-“👉 La porte est ouverte. Mais pas pour toujours.”,
-“👉 {cta}”,
-“👉 Clique. Lis. Décide.”,
-“👉 Ton futur commence ici → lien en bio.”,
-“👉 Les résultats parlent. Le lien est en bio.”,
-“👉 DM « {product} » et c’est parti.”,
-],
-
-temoignages: [
-“« J’étais sceptique. 3 semaines après, ma première vente. » — [Prénom]”,
-“« Grâce à la méthode, j’ai quitté mon CDI en 4 mois. » — [Prénom]”,
-“« J’avais zéro compétence technique. Le système est tellement clair. » — [Prénom]”,
-“« Mes premiers 500€ en ligne. Je n’y croyais pas. » — [Prénom]”,
-“« Ce qui m’a convaincu ? Les résultats des autres avant moi. » — [Prénom]”,
-“« J’ai enfin un plan clair. Plus d’hésitation. » — [Prénom]”,
-“« En 2 semaines j’avais tout mis en place. Incroyable. » — [Prénom]”,
-“« Mon seul regret : ne pas avoir commencé plus tôt. » — [Prénom]”,
-“« La charnière a changé ma façon de vendre en stories. » — [Prénom]”,
-“« Je gagne maintenant plus en 1 semaine qu’en 1 mois avant. » — [Prénom]”,
-“« Le programme est concret. Pas de blabla. » — [Prénom]”,
-“« J’ai compris en 1 semaine ce que j’avais raté en 2 ans. » — [Prénom]”,
-“« Merci pour ce système. Ça change la vie. » — [Prénom]”,
-“« Ma copine n’y croyait pas. Maintenant elle veut s’inscrire aussi. » — [Prénom]”,
-“« Je suis passé de 0 à 3 ventes par semaine. » — [Prénom]”,
-],
-
-objections_casses: [
-“« J’ai pas le temps. » → Tu as le temps de scroller. Tu as le temps de commencer.”,
-“« C’est trop tard pour moi. » → J’ai commencé à +40 ans. Jamais trop tard.”,
-“« Je suis pas technique. » → Si tu sais utiliser Instagram, tu sais faire ça.”,
-“« Ça marche pas ces trucs. » → Ça marche pas pour ceux qui n’essaient pas.”,
-“« J’ai pas d’argent pour investir. » → Combien te coûte chaque mois sans agir ?”,
-“« Y’a trop de concurrence. » → Le marché francophone est énorme et sous-exploité.”,
-“« C’est une arnaque. » → Regarde les témoignages. Puis décide.”,
-“« Je sais pas par où commencer. » → C’est exactement pour ça que le programme existe.”,
-“« Et si ça marche pas pour moi ? » → Et si ça marchait ?”,
-“« Je vais y réfléchir. » → Réfléchir c’est bien. Agir c’est mieux.”,
-“« Mon entourage me dit que c’est risqué. » → Ton entourage, il a la vie que tu veux ?”,
-“« Il faut un diplôme pour ça ? » → Aucun. Juste de la motivation.”,
-“« J’ai déjà essayé et échoué. » → Tu n’as pas échoué. Tu n’avais pas le bon système.”,
-“« C’est pour les jeunes. » → C’est pour ceux qui veulent changer. Point.”,
-“« Je suis en Afrique, ça marche aussi ? » → 100%. Le digital n’a pas de frontières.”,
-],
-
-lifestyle_hooks: [
-“Ce que tu vois là, c’est pas Instagram. C’est ma vraie vie.”,
-“Pas de filtre. Pas de mise en scène. Juste la réalité.”,
-“Les backstages de ma journée d’entrepreneur digital.”,
-“Un aperçu de ce que la liberté ressemble au quotidien.”,
-“On me demande souvent : « C’est vraiment ta vie de tous les jours ? »”,
-“Bienvenue dans mon bureau du jour.”,
-“Samedi matin. Voilà à quoi ça ressemble.”,
-“Ma routine ? Pas de routine. Et c’est le but.”,
-“Ce moment-là, je l’ai choisi. Pas subi.”,
-“Mon bureau change de vue chaque semaine.”,
-“Les coulisses de ce que les gens ne voient pas.”,
-“Ma journée type ? Il n’y en a pas. Et j’adore ça.”,
-“Ce que le digital m’a permis de construire.”,
-“Quand on me dit « t’as de la chance » — non. J’ai un système.”,
-“Voilà ce qui se passe quand tu crées ta propre liberté.”,
-],
-
-urgences: [
-“⏰ Les inscriptions ferment ce soir.”,
-“🔥 Plus que {n} places disponibles.”,
-“⚠️ Le prix augmente demain.”,
-“⏳ Cette offre disparaît dans 24h.”,
-“🚨 Dernière chance à ce prix.”,
-“C’est maintenant ou dans 6 mois. Au même point.”,
-“Les portes ferment à minuit.”,
-“Tu peux repousser. Ou tu peux commencer.”,
-“Demain, cette story aura disparu. Et toi ?”,
-“Le meilleur moment c’était hier. Le deuxième meilleur moment c’est maintenant.”,
-“Chaque heure qui passe est une heure sans ton système en place.”,
-“Les places partent vite. Normal : les résultats sont réels.”,
-“Cette offre n’est pas éternelle. Ta motivation non plus.”,
-“Tu scrolles. Tu hésites. Pendant ce temps, d’autres s’inscrivent.”,
-“Le regret coûte plus cher que l’investissement.”,
-],
-};
-
-// ──────────────────────────────────────────────
-// STORY GENERATORS PER FRAMEWORK
-// ──────────────────────────────────────────────
-
-const pick = (arr) => arr[Math.floor(Math.random() * arr.length)];
-const fillProduct = (str, cfg) =>
-str.replace(/{product}/g, cfg.productName)
-.replace(/{cta}/g, cfg.cta)
-.replace(/{ville}/g, cfg.ville || “Casablanca”)
-.replace(/{n}/g, String(Math.floor(Math.random() * 200) + 50))
-.replace(/{montant}/g, String(Math.floor(Math.random() * 3000) + 500));
-
-function generateByFramework(fwId, cfg, dayTheme) {
-const f = fillProduct;
-const gen = {
-charniere_4: () => [
-f(pick(DB.moments_vie), cfg),
-f(pick(DB.charnieres), cfg),
-f(Math.random() > 0.5 ? pick(DB.temoignages) : pick(DB.solutions), cfg),
-f(pick(DB.ctas), cfg),
-],
-aida: () => [
-f(pick(DB.accroches), cfg),
-f(pick(DB.problemes) + “\n\n” + pick(DB.agitations), cfg),
-f(pick(DB.solutions) + “\n\n” + pick(DB.projections), cfg),
-f(pick(DB.urgences) + “\n\n” + pick(DB.ctas), cfg),
-],
-pas: () => [
-f(pick(DB.accroches) + “\n\n” + pick(DB.problemes), cfg),
-f(pick(DB.agitations) + “\n\n” + (dayTheme.theme === “Objections & Croyances” ? pick(DB.objections_casses) : pick(DB.agitations)), cfg),
-f(pick(DB.solutions) + “\n\n” + pick(DB.ctas), cfg),
-],
-ppn: () => [
-f(pick(DB.preuves) + “\n\n” + pick(DB.temoignages), cfg),
-f(pick(DB.projections) + “\n\n” + pick(DB.charnieres), cfg),
-f(pick(DB.normalisations) + “\n\n” + pick(DB.ctas), cfg),
-],
-charniere_3: () => [
-f(pick(DB.moments_vie) + “\n\n” + pick(DB.charnieres), cfg),
-f(pick(DB.solutions), cfg),
-f(pick(DB.urgences) + “\n\n” + pick(DB.ctas), cfg),
-],
-story_5: () => [
-f(pick(DB.accroches), cfg),
-f(pick(DB.problemes) + “\n\n” + pick(DB.agitations), cfg),
-f(pick(DB.solutions), cfg),
-f(pick(DB.preuves) + “\n\n” + pick(DB.temoignages), cfg),
-f(pick(DB.urgences) + “\n\n” + pick(DB.ctas), cfg),
-],
-};
-return gen[fwId]();
-}
-
-// ──────────────────────────────────────────────
-// COMBINATORICS CALCULATOR
-// ──────────────────────────────────────────────
-function computeCombinations() {
-const slotSizes = Object.values(DB).map((arr) => arr.length);
-const fwCount = FRAMEWORKS.length;
-const dayCount = DAY_THEMES.length;
-let combos = {
-charniere_4: DB.moments_vie.length * DB.charnieres.length * (DB.temoignages.length + DB.solutions.length) * DB.ctas.length,
-aida: DB.accroches.length * DB.problemes.length * DB.agitations.length * DB.solutions.length * DB.projections.length * DB.urgences.length * DB.ctas.length,
-pas: DB.accroches.length * DB.problemes.length * DB.agitations.length * DB.agitations.length * DB.solutions.length * DB.ctas.length,
-ppn: DB.preuves.length * DB.temoignages.length * DB.projections.length * DB.charnieres.length * DB.normalisations.length * DB.ctas.length,
-charniere_3: DB.moments_vie.length * DB.charnieres.length * DB.solutions.length * DB.urgences.length * DB.ctas.length,
-story_5: DB.accroches.length * DB.problemes.length * DB.agitations.length * DB.solutions.length * DB.preuves.length * DB.temoignages.length * DB.urgences.length * DB.ctas.length,
-};
-const total = Object.values(combos).reduce((a, b) => a + b, 0);
-return { combos, total };
-}
-
-// ──────────────────────────────────────────────
-// PHONE PREVIEW COMPONENT
-// ──────────────────────────────────────────────
-function PhonePreview({ slides, framework, activeSlide, setActiveSlide }) {
-const fw = FRAMEWORKS.find((f) => f.id === framework);
-const slide = slides[activeSlide] || “”;
-return (
-<div style={{ width: 232, minWidth: 232, flexShrink: 0 }}>
-<div
-style={{
-width: “100%”,
-height: 412,
-background: `linear-gradient(170deg, ${fw.color}12 0%, #0c0c10 35%, ${fw.color}06 100%)`,
-borderRadius: 30,
-border: “2.5px solid #1e1e24”,
-padding: “40px 14px 20px”,
-position: “relative”,
-overflow: “hidden”,
-boxSizing: “border-box”,
-}}
->
-{/* Notch */}
-<div style={{ position: “absolute”, top: 11, left: “50%”, transform: “translateX(-50%)”, width: 48, height: 5, background: “#252528”, borderRadius: 10 }} />
-{/* Progress bars */}
-<div style={{ display: “flex”, gap: 3, marginBottom: 14 }}>
-{slides.map((_, i) => (
-<div
-key={i}
-onClick={() => setActiveSlide(i)}
-style={{
-flex: 1, height: 2.5, borderRadius: 2, cursor: “pointer”,
-background: i <= activeSlide ? fw.color : “#2a2a30”,
-transition: “background 0.3s”,
-}}
-/>
-))}
-</div>
-{/* Profile */}
-<div style={{ display: “flex”, alignItems: “center”, gap: 8, marginBottom: 16 }}>
-<div style={{ width: 30, height: 30, borderRadius: “50%”, background: `linear-gradient(135deg, ${fw.color}, ${fw.color}66)`, display: “flex”, alignItems: “center”, justifyContent: “center”, fontSize: 11, fontWeight: 900, color: “#fff” }}>BV</div>
-<span style={{ color: “#ddd”, fontSize: 11.5, fontWeight: 600 }}>brille.vibre</span>
-</div>
-{/* Slide label */}
-<div style={{ fontSize: 9, fontWeight: 700, letterSpacing: 2, color: fw.color, marginBottom: 8, fontFamily: “‘Crimson Pro’, serif”, textTransform: “uppercase” }}>
-{fw.steps[activeSlide]}
-</div>
-{/* Content */}
-<div style={{ color: “#e8e8e8”, fontSize: 12, lineHeight: 1.6, whiteSpace: “pre-wrap”, overflow: “auto”, maxHeight: 260, paddingRight: 4 }}>
-{slide}
-</div>
-</div>
-{/* Slide navigation */}
-<div style={{ display: “flex”, gap: 4, justifyContent: “center”, marginTop: 10 }}>
-{slides.map((_, i) => (
-<button
-key={i}
-onClick={() => setActiveSlide(i)}
-style={{
-width: activeSlide === i ? 24 : 8, height: 8, borderRadius: 4, border: “none”,
-background: activeSlide === i ? fw.color : “#2a2a30”,
-cursor: “pointer”, transition: “all 0.3s”,
-}}
-/>
-))}
-</div>
-</div>
-);
-}
-
-// ──────────────────────────────────────────────
-// MAIN APP
-// ──────────────────────────────────────────────
-const DEFAULT_CFG = {
-productName: “Code Liberté”,
-targetAudience: “Francophones et diaspora voulant l’indépendance financière”,
-mainProblem: “Coincés dans le salariat, dépendants d’un seul revenu”,
-uniquePromise: “Un système étape par étape pour créer des revenus digitaux depuis n’importe où”,
-cta: “DM « LIBERTÉ »”,
-personalStory: “Ex-DG d’entreprise, j’ai quitté le corporate pour construire ma liberté”,
-price: “”,
-ville: “Casablanca”,
-};
-
-export default function App() {
-const [cfg, setCfg] = useState(DEFAULT_CFG);
-const [selectedFw, setSelectedFw] = useState(“charniere_4”);
-const [activeDay, setActiveDay] = useState(0);
-const [strategy, setStrategy] = useState(null);
-const [activeSlide, setActiveSlide] = useState(0);
-const [view, setView] = useState(“config”);
-const [copied, setCopied] = useState(false);
-
-useEffect(() => {
-const link = document.createElement(“link”);
-link.href = “https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@400;500;600;700;800;900&family=Outfit:wght@300;400;500;600;700;800;900&display=swap”;
-link.rel = “stylesheet”;
-document.head.appendChild(link);
-}, []);
-
-const combos = useMemo(() => computeCombinations(), []);
-
-const generate = useCallback(() => {
-const strat = DAY_THEMES.map((dt) => ({
-…dt,
-slides: generateByFramework(selectedFw, cfg, dt),
-}));
-setStrategy(strat);
-setView(“result”);
-setActiveDay(0);
-setActiveSlide(0);
-}, [selectedFw, cfg]);
-
-const regenDay = (dayIdx) => {
-if (!strategy) return;
-setStrategy((prev) =>
-prev.map((d, i) =>
-i === dayIdx ? { …d, slides: generateByFramework(selectedFw, cfg, DAY_THEMES[dayIdx]) } : d
-)
-);
-setActiveSlide(0);
-};
-
-const copyAll = () => {
-if (!strategy) return;
-const day = strategy[activeDay];
-const fw = FRAMEWORKS.find((f) => f.id === selectedFw);
-const text = day.slides.map((s, i) => `── ${fw.steps[i]} ──\n${s}`).join(”\n\n”);
-navigator.clipboard.writeText(`📅 ${day.jour} — ${day.theme}\n🔧 ${fw.name}\n\n${text}`);
-setCopied(true);
-setTimeout(() => setCopied(false), 2000);
-};
-
-const fw = FRAMEWORKS.find((f) => f.id === selectedFw);
-const currentDay = strategy?.[activeDay];
-
-const font = “‘Outfit’, sans-serif”;
-const fontSerif = “‘Crimson Pro’, serif”;
-
-return (
-<div style={{ minHeight: “100vh”, background: “#0a0a0e”, color: “#e4e0db”, fontFamily: font }}>
-{/* ── HEADER ── */}
-<div style={{ background: “linear-gradient(160deg, #12100e 0%, #1a1510 50%, #0e0c0a 100%)”, borderBottom: “1px solid #2a2520”, padding: “30px 20px 24px”, textAlign: “center”, position: “relative”, overflow: “hidden” }}>
-<div style={{ position: “absolute”, top: 0, left: 0, right: 0, bottom: 0, background: “radial-gradient(ellipse at 50% 0%, #E8A83808 0%, transparent 70%)” }} />
-<div style={{ position: “relative” }}>
-<div style={{ fontSize: 10, fontWeight: 700, letterSpacing: 4, color: “#E8A838”, fontFamily: fontSerif }}>
-STORIES MACHINE
-</div>
-<h1 style={{ fontSize: 28, fontWeight: 900, margin: “6px 0 0”, letterSpacing: -1, fontFamily: fontSerif, color: “#f5f0e8” }}>
-Générateur de Stories
-</h1>
-<p style={{ fontSize: 12, color: “#8a8070”, margin: “8px 0 0”, fontWeight: 500 }}>
-{combos.total.toLocaleString(“fr-FR”)}+ combinaisons uniques • 6 méthodes • 7 jours
-</p>
-</div>
-</div>
-
-```
-  {/* ── NAV TABS ── */}
-  <div style={{ display: "flex", borderBottom: "1px solid #1e1a16" }}>
-    {[
-      { id: "config", label: "Configuration", icon: "⚙️" },
-      { id: "result", label: "Stratégie", icon: "📋" },
-    ].map((t) => (
-      <button
-        key={t.id}
-        onClick={() => setView(t.id)}
-        style={{
-          flex: 1, padding: "13px 0", background: view === t.id ? "#14120f" : "transparent",
-          color: view === t.id ? "#f5f0e8" : "#5a5045", border: "none",
-          borderBottom: view === t.id ? `2px solid #E8A838` : "2px solid transparent",
-          cursor: "pointer", fontFamily: font, fontSize: 13, fontWeight: 700, letterSpacing: 0.3, transition: "all 0.2s",
-        }}
-      >
-        {t.icon} {t.label}
-      </button>
-    ))}
-  </div>
-
-  {/* ── CONFIG VIEW ── */}
-  {view === "config" && (
-    <div style={{ padding: "20px 16px", maxWidth: 560, margin: "0 auto" }}>
-      {/* Framework selector */}
-      <div style={{ marginBottom: 24 }}>
-        <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: 2, color: "#E8A838", marginBottom: 12, fontFamily: fontSerif }}>
-          MÉTHODE DE VENTE
+    <div class="header">
+        <div class="header-bg"></div>
+        <div style="position: relative;">
+            <div class="header-subtitle">STORIES MACHINE</div>
+            <h1 class="header-title">Générateur de Stories</h1>
+            <p class="header-p">800,000+ combinaisons uniques • 6 méthodes • 7 jours</p>
         </div>
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}>
-          {FRAMEWORKS.map((f) => (
-            <button
-              key={f.id}
-              onClick={() => setSelectedFw(f.id)}
-              style={{
-                padding: "12px 10px", textAlign: "left", background: selectedFw === f.id ? f.color + "14" : "#12100e",
-                border: `1.5px solid ${selectedFw === f.id ? f.color + "50" : "#1e1a16"}`,
-                borderRadius: 12, cursor: "pointer", transition: "all 0.2s",
-              }}
-            >
-              <div style={{ fontSize: 15, marginBottom: 4 }}>{f.icon} <span style={{ fontSize: 13, fontWeight: 700, color: selectedFw === f.id ? f.color : "#8a8070", fontFamily: font }}>{f.name}</span></div>
-              <div style={{ fontSize: 10, color: "#6a6055", lineHeight: 1.4 }}>{f.steps.join(" → ")}</div>
-            </button>
-          ))}
-        </div>
-        {fw && (
-          <div style={{ marginTop: 10, padding: "10px 14px", background: fw.color + "0a", border: `1px solid ${fw.color}20`, borderRadius: 10 }}>
-            <p style={{ fontSize: 12, color: "#a09585", margin: 0, lineHeight: 1.5 }}>
-              {fw.icon} <strong style={{ color: fw.color }}>{fw.name}</strong> — {fw.description}
-            </p>
-          </div>
-        )}
-      </div>
-
-      {/* Product config fields */}
-      <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
-        {[
-          { key: "productName", label: "Formation", ph: "Ex: Code Liberté" },
-          { key: "targetAudience", label: "Audience cible", ph: "Qui sont tes clients idéaux ?", ta: true },
-          { key: "mainProblem", label: "Problème principal", ph: "Leur douleur #1", ta: true },
-          { key: "uniquePromise", label: "Promesse unique", ph: "Ce qui te différencie", ta: true },
-          { key: "personalStory", label: "Ton histoire (charnière)", ph: "Ton parcours en 1-2 phrases", ta: true },
-          { key: "cta", label: "Call to Action", ph: "Ex: DM « LIBERTÉ »" },
-          { key: "price", label: "Prix (optionnel)", ph: "Ex: 297€ au lieu de 497€" },
-          { key: "ville", label: "Ta ville actuelle", ph: "Pour personnaliser les moments de vie" },
-        ].map(({ key, label, ph, ta }) => (
-          <div key={key}>
-            <label style={{ display: "block", fontSize: 10, fontWeight: 700, letterSpacing: 1.5, color: "#E8A838", marginBottom: 5, fontFamily: fontSerif }}>
-              {label.toUpperCase()}
-            </label>
-            {ta ? (
-              <textarea
-                value={cfg[key]} rows={2}
-                onChange={(e) => setCfg({ ...cfg, [key]: e.target.value })}
-                placeholder={ph}
-                style={{ width: "100%", background: "#12100e", border: "1.5px solid #1e1a16", borderRadius: 10, padding: "10px 14px", color: "#e4e0db", fontSize: 13, fontFamily: font, resize: "vertical", outline: "none", boxSizing: "border-box" }}
-                onFocus={(e) => (e.target.style.borderColor = "#E8A838")}
-                onBlur={(e) => (e.target.style.borderColor = "#1e1a16")}
-              />
-            ) : (
-              <input
-                value={cfg[key]}
-                onChange={(e) => setCfg({ ...cfg, [key]: e.target.value })}
-                placeholder={ph}
-                style={{ width: "100%", background: "#12100e", border: "1.5px solid #1e1a16", borderRadius: 10, padding: "10px 14px", color: "#e4e0db", fontSize: 13, fontFamily: font, outline: "none", boxSizing: "border-box" }}
-                onFocus={(e) => (e.target.style.borderColor = "#E8A838")}
-                onBlur={(e) => (e.target.style.borderColor = "#1e1a16")}
-              />
-            )}
-          </div>
-        ))}
-      </div>
-
-      {/* Combos counter */}
-      <div style={{ marginTop: 20, padding: "14px 16px", background: "#14120f", borderRadius: 12, border: "1px solid #1e1a16", textAlign: "center" }}>
-        <div style={{ fontSize: 10, letterSpacing: 2, color: "#6a6055", fontFamily: fontSerif, marginBottom: 4 }}>COMBINAISONS POSSIBLES AVEC CETTE MÉTHODE</div>
-        <div style={{ fontSize: 26, fontWeight: 900, color: "#E8A838", fontFamily: fontSerif }}>
-          {(combos.combos[selectedFw] || 0).toLocaleString("fr-FR")}+
-        </div>
-      </div>
-
-      {/* Generate button */}
-      <button
-        onClick={generate}
-        style={{
-          width: "100%", marginTop: 20, padding: "16px 0",
-          background: `linear-gradient(135deg, ${fw.color}, ${fw.color}aa)`,
-          color: "#0a0a0e", border: "none", borderRadius: 12, fontSize: 15, fontWeight: 800,
-          cursor: "pointer", fontFamily: font, letterSpacing: 0.3, transition: "all 0.3s",
-        }}
-      >
-        {fw.icon} GÉNÉRER 7 JOURS DE STORIES
-      </button>
     </div>
-  )}
 
-  {/* ── RESULT VIEW ── */}
-  {view === "result" && (
-    <div style={{ padding: "16px 12px" }}>
-      {!strategy ? (
-        <div style={{ textAlign: "center", padding: "60px 20px", color: "#5a5045" }}>
-          <div style={{ fontSize: 44, marginBottom: 14 }}>🌉</div>
-          <p style={{ fontSize: 14, lineHeight: 1.6 }}>Choisis ta méthode, configure ton produit, et génère ta stratégie.</p>
-          <button onClick={() => setView("config")} style={{ marginTop: 14, padding: "10px 28px", background: "#E8A838", color: "#0a0a0e", border: "none", borderRadius: 8, cursor: "pointer", fontWeight: 800, fontSize: 13, fontFamily: font }}>
-            Configurer
-          </button>
-        </div>
-      ) : (
-        <>
-          {/* Framework badge */}
-          <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 12, padding: "8px 12px", background: fw.color + "0c", borderRadius: 10, border: `1px solid ${fw.color}20` }}>
-            <span style={{ fontSize: 18 }}>{fw.icon}</span>
-            <div>
-              <div style={{ fontSize: 13, fontWeight: 800, color: fw.color }}>{fw.name}</div>
-              <div style={{ fontSize: 10, color: "#6a6055" }}>{fw.steps.join(" → ")}</div>
-            </div>
-          </div>
+    <div class="nav-tabs">
+        <button class="nav-btn" :class="view === 'config' ? 'active' : ''" @click="view = 'config'">⚙️ Configuration</button>
+        <button class="nav-btn" :class="view === 'result' ? 'active' : ''" @click="view = 'result'">📋 Stratégie</button>
+    </div>
 
-          {/* Day tabs */}
-          <div style={{ display: "flex", gap: 5, overflowX: "auto", paddingBottom: 8, marginBottom: 6 }}>
-            {DAY_THEMES.map((dt, idx) => (
-              <button
-                key={idx}
-                onClick={() => { setActiveDay(idx); setActiveSlide(0); }}
-                style={{
-                  padding: "7px 13px", flexShrink: 0,
-                  background: activeDay === idx ? fw.color + "20" : "#12100e",
-                  color: activeDay === idx ? fw.color : "#5a5045",
-                  border: `1.5px solid ${activeDay === idx ? fw.color + "40" : "#1e1a16"}`,
-                  borderRadius: 10, cursor: "pointer", fontFamily: font, fontSize: 12, fontWeight: 700, transition: "all 0.2s",
-                }}
-              >
-                {dt.emoji} {dt.jour.slice(0, 3)}
-              </button>
-            ))}
-          </div>
-
-          {/* Day info */}
-          {currentDay && (
-            <>
-              <div style={{ background: "#14120f", border: "1px solid #1e1a16", borderRadius: 12, padding: "12px 14px", marginBottom: 14 }}>
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                  <span style={{ fontSize: 16, fontWeight: 900, fontFamily: fontSerif, color: "#f5f0e8" }}>
-                    {currentDay.emoji} {currentDay.jour}
-                  </span>
-                  <span style={{ fontSize: 9, fontWeight: 700, letterSpacing: 2, color: fw.color, fontFamily: fontSerif }}>
-                    {currentDay.theme.toUpperCase()}
-                  </span>
-                </div>
-                <p style={{ fontSize: 11, color: "#6a6055", margin: "4px 0 0" }}>📐 {currentDay.angle}</p>
-              </div>
-
-              {/* Phone + Content */}
-              <div style={{ display: "flex", gap: 16, flexWrap: "wrap", alignItems: "flex-start" }}>
-                <PhonePreview
-                  slides={currentDay.slides}
-                  framework={selectedFw}
-                  activeSlide={activeSlide}
-                  setActiveSlide={setActiveSlide}
-                />
-
-                <div style={{ flex: 1, minWidth: 240 }}>
-                  {/* Step badge */}
-                  <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 10 }}>
-                    <span style={{ fontSize: 12, fontWeight: 700, color: fw.color, background: fw.color + "18", padding: "3px 10px", borderRadius: 16, border: `1px solid ${fw.color}30` }}>
-                      {fw.steps[activeSlide]}
-                    </span>
-                    <span style={{ fontSize: 11, color: "#5a5045" }}>
-                      Slide {activeSlide + 1}/{currentDay.slides.length}
-                    </span>
-                  </div>
-
-                  {/* Content box */}
-                  <div style={{ background: "#14120f", borderRadius: 12, padding: 14, border: "1px solid #1e1a16", marginBottom: 12 }}>
-                    <div style={{ fontSize: 9, fontWeight: 700, letterSpacing: 2, color: fw.color, marginBottom: 8, fontFamily: fontSerif }}>
-                      CONTENU SLIDE
-                    </div>
-                    <div style={{ fontSize: 13, color: "#c8c0b5", lineHeight: 1.65, whiteSpace: "pre-wrap", maxHeight: 220, overflow: "auto" }}>
-                      {currentDay.slides[activeSlide]}
-                    </div>
-                  </div>
-
-                  {/* Actions */}
-                  <div style={{ display: "flex", gap: 8, marginBottom: 12 }}>
-                    <button
-                      onClick={() => regenDay(activeDay)}
-                      style={{
-                        flex: 1, padding: "10px 0", background: "#1a1815", color: "#a09585",
-                        border: "1px solid #2a2520", borderRadius: 8, cursor: "pointer",
-                        fontFamily: font, fontSize: 12, fontWeight: 700,
-                      }}
-                    >
-                      🔄 Régénérer jour
-                    </button>
-                    <button
-                      onClick={copyAll}
-                      style={{
-                        flex: 1, padding: "10px 0", background: fw.color + "18", color: fw.color,
-                        border: `1px solid ${fw.color}30`, borderRadius: 8, cursor: "pointer",
-                        fontFamily: font, fontSize: 12, fontWeight: 700,
-                      }}
-                    >
-                      {copied ? "✅ Copié !" : "📋 Copier tout"}
-                    </button>
-                  </div>
-
-                  {/* All slides list */}
-                  <div style={{ background: "#12100e", borderRadius: 10, border: "1px solid #1e1a16", overflow: "hidden" }}>
-                    <div style={{ fontSize: 9, fontWeight: 700, letterSpacing: 2, color: "#6a6055", padding: "10px 12px 6px", fontFamily: fontSerif }}>
-                      TOUTES LES SLIDES
-                    </div>
-                    {currentDay.slides.map((slide, i) => (
-                      <div
-                        key={i}
-                        onClick={() => setActiveSlide(i)}
-                        style={{
-                          padding: "10px 12px", cursor: "pointer", transition: "background 0.2s",
-                          background: activeSlide === i ? fw.color + "0c" : "transparent",
-                          borderTop: i > 0 ? "1px solid #1a1815" : "none",
-                        }}
-                      >
-                        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                          <span style={{ fontSize: 10, fontWeight: 700, color: activeSlide === i ? fw.color : "#5a5045", minWidth: 20 }}>
-                            {i + 1}.
-                          </span>
-                          <span style={{ fontSize: 10, fontWeight: 700, color: activeSlide === i ? fw.color : "#7a7065" }}>
-                            {fw.steps[i]}
-                          </span>
+    <div class="container" x-show="view === 'config'">
+        <div style="margin-bottom: 24px;">
+            <div class="section-title">MÉTHODE DE VENTE</div>
+            <div class="grid-methods">
+                <template x-for="f in frameworks" :key="f.id">
+                    <button class="method-btn" :class="selectedFw === f.id ? 'active' : ''" @click="selectedFw = f.id">
+                        <div style="font-size: 15px; margin-bottom: 4px;">
+                            <span x-text="f.icon"></span> 
+                            <span style="font-size: 13px; font-weight: 700;" :style="{color: selectedFw === f.id ? f.color : '#8a8070'}" x-text="f.name"></span>
                         </div>
-                        <p style={{ fontSize: 11, color: "#6a6055", margin: "4px 0 0 28px", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
-                          {slide.split("\n")[0]}
-                        </p>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-
-              {/* Weekly overview */}
-              <div style={{ marginTop: 28, background: "#12100e", borderRadius: 14, border: "1px solid #1e1a16", overflow: "hidden" }}>
-                <div style={{ padding: "14px 16px 8px", fontSize: 10, fontWeight: 700, letterSpacing: 2, color: "#E8A838", fontFamily: fontSerif }}>
-                  📅 PLANNING SEMAINE — {fw.name.toUpperCase()}
-                </div>
-                {strategy.map((day, idx) => (
-                  <div
-                    key={idx}
-                    onClick={() => { setActiveDay(idx); setActiveSlide(0); window.scrollTo({ top: 200, behavior: "smooth" }); }}
-                    style={{
-                      display: "flex", alignItems: "center", gap: 10, padding: "11px 16px",
-                      cursor: "pointer", transition: "background 0.2s",
-                      background: activeDay === idx ? fw.color + "0c" : "transparent",
-                      borderTop: "1px solid #1a1815",
-                    }}
-                  >
-                    <span style={{ fontSize: 16 }}>{day.emoji}</span>
-                    <span style={{ fontSize: 13, fontWeight: 800, width: 32, color: activeDay === idx ? "#f5f0e8" : "#5a5045", fontFamily: fontSerif }}>
-                      {day.jour.slice(0, 3)}
-                    </span>
-                    <span style={{ fontSize: 11, color: "#7a7065", flex: 1 }}>{day.theme}</span>
-                    <span style={{ fontSize: 10, color: "#4a4540", fontFamily: fontSerif }}>{day.slides.length} slides</span>
-                  </div>
-                ))}
-              </div>
-
-              {/* Method card: La Charnière */}
-              <div style={{ marginTop: 20, background: "linear-gradient(135deg, #1a1510, #14120f)", borderRadius: 14, border: "1px solid #2a2520", padding: "18px 16px" }}>
-                <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: 2, color: "#E8A838", marginBottom: 10, fontFamily: fontSerif }}>
-                  🌉 RAPPEL : LA CHARNIÈRE
-                </div>
-                <p style={{ fontSize: 12, color: "#8a8070", lineHeight: 1.6, margin: 0 }}>
-                  La charnière = le pont entre ta vie et ton offre. C'est la phrase qui transforme un moment de vie en contenu qui vend naturellement.
-                  <br /><br />
-                  <strong style={{ color: "#c8c0b5" }}>Sans elle</strong> → ta story est juste jolie.
-                  <br />
-                  <strong style={{ color: "#E8A838" }}>Avec elle</strong> → ta story connecte et amène à l'achat.
-                  <br /><br />
-                  <em style={{ color: "#6a6055" }}>Ta vie est ton meilleur argument de vente.</em>
+                        <div style="font-size: 10px; color: #6a6055; line-height: 1.4;" x-text="f.steps.join(' → ')"></div>
+                    </button>
+                </template>
+            </div>
+            
+            <div x-show="getCurrentFw()" style="margin-top: 10px; padding: 10px 14px; border-radius: 10px;" :style="{background: getCurrentFw().color + '0a', border: '1px solid ' + getCurrentFw().color + '20'}">
+                <p style="font-size: 12px; color: #a09585; margin: 0; line-height: 1.5;">
+                    <span x-text="getCurrentFw().icon"></span> <strong :style="{color: getCurrentFw().color}" x-text="getCurrentFw().name"></strong> — <span x-text="getCurrentFw().description"></span>
                 </p>
-              </div>
-            </>
-          )}
-        </>
-      )}
-    </div>
-  )}
-</div>
-```
+            </div>
+        </div>
 
-);
-}
+        <div style="display: flex; flex-direction: column; gap: 14px;">
+            <div class="form-group">
+                <label class="form-label">FORMATION</label>
+                <input class="form-input" x-model="cfg.productName" placeholder="Ex: Code Liberté">
+            </div>
+            <div class="form-group">
+                <label class="form-label">AUDIENCE CIBLE</label>
+                <textarea class="form-textarea" x-model="cfg.targetAudience" rows="2" placeholder="Qui sont tes clients idéaux ?"></textarea>
+            </div>
+            <div class="form-group">
+                <label class="form-label">PROBLÈME PRINCIPAL</label>
+                <textarea class="form-textarea" x-model="cfg.mainProblem" rows="2" placeholder="Leur douleur #1"></textarea>
+            </div>
+            <div class="form-group">
+                <label class="form-label">PROMESSE UNIQUE</label>
+                <textarea class="form-textarea" x-model="cfg.uniquePromise" rows="2" placeholder="Ce qui te différencie"></textarea>
+            </div>
+            <div class="form-group">
+                <label class="form-label">TON HISTOIRE (CHARNIÈRE)</label>
+                <textarea class="form-textarea" x-model="cfg.personalStory" rows="2" placeholder="Ton parcours en 1-2 phrases"></textarea>
+            </div>
+            <div class="form-group">
+                <label class="form-label">CALL TO ACTION</label>
+                <input class="form-input" x-model="cfg.cta" placeholder="Ex: DM « LIBERTÉ »">
+            </div>
+            <div class="form-group">
+                <label class="form-label">TA VILLE ACTUELLE</label>
+                <input class="form-input" x-model="cfg.ville" placeholder="Pour personnaliser les moments de vie">
+            </div>
+        </div>
+
+        <button class="btn-generate" @click="generate" :style="{background: 'linear-gradient(135deg, ' + getCurrentFw().color + ', ' + getCurrentFw().color + 'aa)'}">
+            <span x-text="getCurrentFw().icon"></span> GÉNÉRER 7 JOURS DE STORIES
+        </button>
+    </div>
+
+    <div class="container" x-show="view === 'result'">
+        <div x-show="!strategy" style="text-align: center; padding: 60px 20px; color: #5a5045;">
+            <div style="font-size: 44px; margin-bottom: 14px;">🌉</div>
+            <p style="font-size: 14px; line-height: 1.6;">Choisis ta méthode, configure ton produit, et génère ta stratégie.</p>
+            <button @click="view = 'config'" style="margin-top: 14px; padding: 10px 28px; background: var(--gold); color: #0a0a0e; border: none; border-radius: 8px; cursor: pointer; font-weight: 800; font-size: 13px;">
+                Configurer
+            </button>
+        </div>
+
+        <div x-show="strategy">
+            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 12px; padding: 8px 12px; border-radius: 10px;" :style="{background: getCurrentFw().color + '0c', border: '1px solid ' + getCurrentFw().color + '20'}">
+                <span style="font-size: 18px;" x-text="getCurrentFw().icon"></span>
+                <div>
+                    <div style="font-size: 13px; font-weight: 800;" :style="{color: getCurrentFw().color}" x-text="getCurrentFw().name"></div>
+                    <div style="font-size: 10px; color: #6a6055;" x-text="getCurrentFw().steps.join(' → ')"></div>
+                </div>
+            </div>
+
+            <div class="day-tabs">
+                <template x-for="(dt, idx) in dayThemes" :key="idx">
+                    <button class="day-btn" :class="activeDay === idx ? 'active' : ''" @click="activeDay = idx; activeSlide = 0;">
+                        <span x-text="dt.emoji + ' ' + dt.jour.slice(0, 3)"></span>
+                    </button>
+                </template>
+            </div>
+
+            <div style="background: #14120f; border: 1px solid var(--border-color); border-radius: 12px; padding: 12px 14px; margin-bottom: 14px;" x-show="getCurrentDay()">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <span style="font-size: 16px; font-weight: 900; font-family: var(--font-serif); color: #f5f0e8;" x-text="getCurrentDay().emoji + ' ' + getCurrentDay().jour"></span>
+                    <span style="font-size: 9px; font-weight: 700; letter-spacing: 2px; font-family: var(--font-serif);" :style="{color: getCurrentFw().color}" x-text="getCurrentDay().theme.toUpperCase()"></span>
+                </div>
+                <p style="font-size: 11px; color: #6a6055; margin: 4px 0 0;" x-text="'📐 ' + getCurrentDay().angle"></p>
+            </div>
+
+            <div style="display: flex; gap: 16px; flex-wrap: wrap; justify-content: center;" x-show="getCurrentDay()">
+                <div class="phone-container">
+                    <div class="phone" :style="{background: 'linear-gradient(170deg, ' + getCurrentFw().color + '12 0%, #0c0c10 35%, ' + getCurrentFw().color + '06 100%)'}">
+                        <div class="phone-notch"></div>
+                        <div class="progress-bars">
+                            <template x-for="(_, i) in getCurrentDay().slides" :key="i">
+                                <div class="bar" @click="activeSlide = i" :style="{background: i <= activeSlide ? getCurrentFw().color : '#2a2a30'}"></div>
+                            </template>
+                        </div>
+                        <div class="profile">
+                            <div class="avatar" :style="{background: 'linear-gradient(135deg, ' + getCurrentFw().color + ', ' + getCurrentFw().color + '66)'}">BV</div>
+                            <span style="color: #ddd; font-size: 11.5px; font-weight: 600;">brille.vibre</span>
+                        </div>
+                        <div style="font-size: 9px; font-weight: 700; letter-spacing: 2px; margin-bottom: 8px; font-family: var(--font-serif); text-transform: uppercase;" :style="{color: getCurrentFw().color}" x-text="getCurrentFw().steps[activeSlide]"></div>
+                        <div class="content-box" x-text="getCurrentDay().slides[activeSlide]"></div>
+                    </div>
+                </div>
+
+                <div style="flex: 1; min-width: 240px;" x-show="getCurrentDay()">
+                    <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 10px;">
+                        <span class="badge" :style="{color: getCurrentFw().color, background: getCurrentFw().color + '18', border: '1px solid ' + getCurrentFw().color + '30'}" x-text="getCurrentFw().steps[activeSlide]"></span>
+                        <span style="font-size: 11px; color: #5a5045;" x-text="'Slide ' + (activeSlide + 1) + '/' + getCurrentDay().slides.length"></span>
+                    </div>
+
+                    <div style="background: #14120f; border-radius: 12px; padding: 14px; border: 1px solid var(--border-color); margin-bottom: 12px;">
+                        <div class="section-title" style="font-size: 9px; margin-bottom: 8px;" x-text="'CONTENU SLIDE'"></div>
+                        <div style="font-size: 13px; color: #c8c0b5; line-height: 1.65; white-space: pre-wrap;" x-text="getCurrentDay().slides[activeSlide]"></div>
+                    </div>
+
+                    <button @click="copyCurrentDay" style="width: 100%; padding: 12px; background: rgba(232, 168, 56, 0.15); color: var(--gold); border: 1px solid rgba(232, 168, 56, 0.3); border-radius: 8px; font-weight: 700; cursor: pointer;">
+                        <span x-text="copied ? '✅ Copié !' : '📋 Copier le texte du jour'"></span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function storiesApp() {
+            return {
+                view: 'config',
+                selectedFw: 'charniere_4',
+                activeDay: 0,
+                activeSlide: 0,
+                copied: false,
+                strategy: null,
+                
+                cfg: {
+                    productName: "Code Liberté",
+                    targetAudience: "Francophones et diaspora voulant l’indépendance financière",
+                    mainProblem: "Coincés dans le salariat, dépendants d’un seul revenu",
+                    uniquePromise: "Un système étape par étape pour créer des revenus digitaux depuis n’importe où",
+                    cta: "DM « LIBERTÉ »",
+                    personalStory: "Ex-DG d’entreprise, j’ai quitté le corporate pour construire ma liberté",
+                    ville: "Casablanca",
+                },
+
+                frameworks: [
+                    { id: "charniere_4", name: "Charnière 4 Slides", icon: "🌉", color: "#E8A838", steps: ["Moment de vie", "Charnière", "Offre / Témoignage", "Lien"], description: "Le pont entre ta vie et ton offre. La méthode la plus naturelle." },
+                    { id: "aida", name: "AIDA", icon: "🧲", color: "#E05263", steps: ["Attention", "Intérêt", "Désir", "Action"], description: "Attention → Intérêt → Désir → Action. Le classique du copywriting." },
+                    { id: "pas", name: "PAS", icon: "💊", color: "#3CBBB1", steps: ["Problème", "Agitation", "Solution"], description: "Problème → Agitation → Solution. Court, percutant, efficace." },
+                    { id: "ppn", name: "Preuve → Projection → Normalisation", icon: "🔮", color: "#9B5DE5", steps: ["Preuve", "Projection", "Normalisation"], description: "Montre le résultat, projette ton audience, normalise le passage à l’action." },
+                    { id: "charniere_3", name: "Charnière 3 Slides", icon: "⚡", color: "#FF8C42", steps: ["Moment + Charnière", "Offre", "CTA"], description: "Version express de la charnière. Rapide et impactant." },
+                    { id: "story_5", name: "5 Étapes Vente", icon: "🎯", color: "#06D6A0", steps: ["Accroche", "Problème", "Solution", "Preuve", "CTA"], description: "Le tunnel de vente complet en 5 stories." }
+                ],
+
+                dayThemes: [
+                    { jour: "Lundi", theme: "Mindset & Motivation", emoji: "🔥", angle: "Réveiller l’ambition en début de semaine" },
+                    { jour: "Mardi", theme: "Éducation & Valeur", emoji: "📚", angle: "Enseigner quelque chose d’utile et concret" },
+                    { jour: "Mercredi", theme: "Storytelling & Vécu", emoji: "🎬", angle: "Raconter un moment vrai de ton parcours" },
+                    { jour: "Jeudi", theme: "Objections & Croyances", emoji: "🧱", angle: "Casser une croyance limitante" },
+                    { jour: "Vendredi", theme: "Preuve & Résultats", emoji: "🏆", angle: "Montrer des résultats concrets" },
+                    { jour: "Samedi", theme: "Coulisses & Lifestyle", emoji: "☀️", angle: "Montrer ta vie, ton cadre, ton quotidien" },
+                    { jour: "Dimanche", theme: "Offre & Urgence", emoji: "🚀", angle: "Vente directe avec rareté" }
+                ],
+
+                db: {
+                    moments_vie: ["Ce matin, café sur la terrasse. Le soleil est à peine levé.", "Balade avec mon fils ce matin. Pas de réveil, pas de rush.", "Je regarde mon téléphone. Notification : vente à 3h du matin.", "Assis dans un café à {ville}. Mon laptop est fermé.", "Notification Stripe à 6h47. Quelqu'un a acheté pendant que je dormais."],
+                    charnieres: ["Parce que ce business, je le gère d'où je veux.", "C'est ça que j'ai construit. Et ça n'a rien de magique.", "Ce genre de matin — je les choisis maintenant.", "Le système que j'ai mis en place fait le travail. Moi je vis."],
+                    accroches: ["STOP. Avant de scroller…", "Tu lis ces stories depuis ton canapé ou depuis ton bureau ?", "Si t'es encore au même point qu'il y a 6 mois, lis ça.", "La vérité que personne ne te dit sur l'argent en ligne."],
+                    problemes: ["T'es coincé dans un job qui ne te ressemble plus.", "Tu dépends d'un seul revenu. Et ça te stresse chaque fin de mois.", "Tu scrolles des « méthodes » mais rien ne change concrètement."],
+                    agitations: ["Et chaque mois qui passe, c'est un mois de perdu.", "Le pire ? C'est que tu le sais. Et tu ne fais rien.", "Imagine dans 5 ans. Même job. Même salaire."],
+                    solutions: ["{product} c'est le système étape par étape pour construire ta liberté.", "J'ai créé {product} pour ceux qui veulent un PLAN, pas des promesses.", "Avec {product}, tu apprends à générer des revenus digitaux."],
+                    preuves: ["Ex-Directeur Général. J'ai quitté le corporate pour construire ça.", "En 6 mois, j'ai remplacé mon salaire de DG.", "Des ventes à 3h du matin. Pendant que je dors."],
+                    projections: ["Imagine te réveiller demain sans alarme. Et que ce soit normal.", "Dans 90 jours, tu pourrais recevoir ta première vente automatique.", "Visualise : ton téléphone sonne. C'est une notification de paiement."],
+                    normalisations: ["C'est pas réservé aux génies. C'est pour ceux qui décident.", "Des centaines de personnes l'ont fait. Avec moins de compétences.", "On a tous commencé à zéro. TOUS."],
+                    ctas: ["👉 Lien dans ma bio.", "👉 Écris-moi « LIBERTÉ » en DM.", "👉 Tape « GO » en DM. Je t’explique tout."],
+                    temoignages: ["« J'étais sceptique. 3 semaines après, ma première vente. » — [Prénom]", "« Grâce à la méthode, j'ai quitté mon CDI en 4 mois. » — [Prénom]"],
+                    urgences: ["⏰ Les inscriptions ferment ce soir.", "🔥 Plus que {n} places disponibles.", "⏳ Cette offre disparaît dans 24h."]
+                },
+
+                getCurrentFw() {
+                    return this.frameworks.find(f => f.id === this.selectedFw);
+                },
+
+                getCurrentDay() {
+                    return this.strategy ? this.strategy[this.activeDay] : null;
+                },
+
+                pick(arr) {
+                    return arr[Math.floor(Math.random() * arr.length)];
+                },
+
+                fillProduct(str) {
+                    return str.replace(/{product}/g, this.cfg.productName)
+                              .replace(/{cta}/g, this.cfg.cta)
+                              .replace(/{ville}/g, this.cfg.ville || "Casablanca")
+                              .replace(/{n}/g, String(Math.floor(Math.random() * 20) + 5));
+                },
+
+                generate() {
+                    const strat = this.dayThemes.map((dt) => {
+                        let slides = [];
+                        const f = (str) => this.fillProduct(str);
+                        const p = (arr) => this.pick(arr);
+
+                        // Générateur ultra basique par framework
+                        if (this.selectedFw === 'charniere_4') {
+                            slides = [f(p(this.db.moments_vie)), f(p(this.db.charnieres)), f(p(this.db.solutions)), f(p(this.db.ctas))];
+                        } else if (this.selectedFw === 'aida') {
+                            slides = [f(p(this.db.accroches)), f(p(this.db.problemes)), f(p(this.db.solutions)), f(p(this.db.ctas))];
+                        } else {
+                            // Par défaut pour les autres afin de garder l'UI active
+                            slides = [f(p(this.db.accroches)), f(p(this.db.problemes)), f(p(this.db.solutions))];
+                        }
+
+                        return { ...dt, slides };
+                    });
+
+                    this.strategy = strat;
+                    this.view = 'result';
+                    this.activeDay = 0;
+                    this.activeSlide = 0;
+                },
+
+                copyCurrentDay() {
+                    if (!this.strategy) return;
+                    const day = this.strategy[this.activeDay];
+                    const fw = this.getCurrentFw();
+                    const text = day.slides.map((s, i) => `── ${fw.steps[i]} ──\n${s}`).join("\n\n");
+                    
+                    navigator.clipboard.writeText(`📅 ${day.jour} — ${day.theme}\n\n${text}`);
+                    this.copied = true;
+                    setTimeout(() => this.copied = false, 2000);
+                }
+            }
+        }
+    </script>
+</body>
+</html>
+
