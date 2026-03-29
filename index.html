@@ -4,6 +4,9 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Studio Stories Mono-Slide Pro</title>
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+  
   <style>
     :root {
       --bg: #0c0c10;
@@ -68,7 +71,7 @@
       border: 12px solid #222; 
       border-radius: 36px; 
       width: 100%;
-      height: 570px; /* Ratio proche de 9:16 */
+      height: 570px; 
       position: relative; 
       box-sizing: border-box; 
       overflow: hidden; 
@@ -81,14 +84,14 @@
       position: absolute;
       left: 15px;
       right: 15px;
-      top: 50%; /* Position initiale centrée verticalement */
+      top: 50%; 
       transform: translateY(-50%);
       cursor: grab;
-      user-select: none; /* Empêche la sélection de texte pendant le drag */
+      user-select: none; 
       text-align: center;
       padding: 10px;
       border-radius: 8px;
-      transition: background-color 0.2s; /* Pour le surligneur */
+      transition: background-color 0.2s; 
     }
     .phone-text-container:active { cursor: grabbing; }
     .phone-ct { 
@@ -129,20 +132,52 @@
     .pepite-meta { font-size: 0.8rem; color: var(--text-muted); margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
     .pepite-text { font-size: 1rem; line-height: 1.6; white-space: pre-line; color: var(--text); }
     .pepite-actions { position: absolute; top: 15px; right: 15px; display: flex; gap: 8px; }
-    .empty-pepites { text-align: center; color: var(--text-muted); padding: 40px; font-style: italic; background: rgba(255,255,255,0.02); border-radius: 8px; }
 
     /* Alerte de sauvegarde */
     .save-alert { text-align: center; color: var(--success); font-size: 0.85rem; margin-top: -15px; margin-bottom: 15px; opacity: 0; transition: opacity 0.5s ease; pointer-events: none; }
     .save-alert.visible { opacity: 1; }
 
-    /* STYLE DÉDIÉ À L'IMPRESSION PDF */
-    #print-area { display: none; }
-    @media print {
-      body * { display: none !important; }
-      #print-area { display: block !important; color: #000 !important; background: #fff !important; font-family: sans-serif !important; padding: 20px !important; }
-      .print-day { margin-bottom: 30px; page-break-inside: avoid; border-bottom: 1px solid #ddd; padding-bottom: 15px; }
-      .print-title { font-size: 14px; font-weight: bold; text-transform: uppercase; margin-bottom: 10px; color: #222; }
-      .print-text { font-size: 13px; line-height: 1.6; white-space: pre-line; color: #333; }
+    /* ZONE CACHÉE POUR L'EXPORT PDF (Invisible à l'écran) */
+    #pdf-export-template {
+      display: none;
+      width: 100%;
+      background: #ffffff;
+      color: #0c0c10;
+      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    }
+    .pdf-header {
+      background-color: #14141d;
+      color: #f5f0e8;
+      padding: 30px;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    .pdf-header h1 { margin: 0; font-size: 24px; color: #FF8C42; }
+    .pdf-header p { margin: 5px 0 0; color: #8a8aa3; font-size: 14px; }
+    .pdf-day-card {
+      margin: 20px 30px;
+      padding: 20px;
+      border: 1px solid #e1e1e6;
+      border-radius: 8px;
+      page-break-inside: avoid;
+    }
+    .pdf-day-title {
+      font-size: 16px;
+      font-weight: bold;
+      text-transform: uppercase;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .pdf-day-text {
+      font-size: 14px;
+      line-height: 1.6;
+      white-space: pre-line;
+      color: #1a1a26;
+      background: #f8f8fa;
+      padding: 15px;
+      border-radius: 6px;
     }
   </style>
 </head>
@@ -174,16 +209,13 @@
   <div class="panel" id="panel-result"></div>
 
   <div class="panel" id="panel-pepites">
-    <div id="pepites-list">
-      </div>
+    <div id="pepites-list"></div>
   </div>
 </div>
 
-<div id="print-area"></div>
+<div id="pdf-export-template"></div>
 
 <script>
-// --- DONNÉES & BIBLE COPYWRITING ---
-
 // Banque de Hooks Interchangeables (Partie A)
 const HOOKS = [
   "Arrête de scroller 2 secondes ! 🛑 ", "Alerte gros ras-le-bol. 😤 ", "Regarde bien cette slide, elle est pour toi. 👀 ", 
@@ -210,7 +242,7 @@ const HOOKS = [
   "Fini le stress des fins de mois, place à la sérénité financière. 💸 ", "Imagine avoir une file d'attente de clients qui veulent bosser avec toi... 🚶‍♂️🚶‍♀️ ", 
   "Passer du statut de 'freelance épuisée' à 'chef d'entreprise libre'... 👑 ", "Oublie la création de contenu épuisante, place à la stratégie minimaliste. 🧠 ", 
   "Imagine te réveiller chaque matin avec une vision claire et précise... 🌅 ", "Passer d'une offre que personne ne comprend à un best-seller évident... 📦 ",
-  "Il y a un an jour pour jour, j'étais en larmes devant mon écran... 😢 ", "J'ai failli tout envoyer valser pour reprendre un job salarié... 💼 ", 
+  "Il y a un au jour pour jour, j'étais en larmes devant mon écran... 😢 ", "J'ai failli tout envoyer valser pour reprendre un job salarié... 💼 ", 
   "Si on m'avait dit que je vivrais de ma passion aujourd'hui, je n'y aurais pas cru. ✨ ", "J'ai fait une erreur de débutante qui m'a coûté très cher... 📉 ", 
   "Le jour où j'ai compris que je faisais fausse route... 💡 ", "Mon entourage m'a dit que j'étais folle de me lancer. 🗣️ ", 
   "J'ai passé des nuits blanches à essayer de tout comprendre toute seule. 🌙 ", "La vérité sur mes débuts que je n'ai jamais racontée... 🤫 ", 
@@ -268,7 +300,9 @@ const BIBLE = {
   }
 };
 
-// --- MOTEUR & ÉTATS (Fonctions Globales) ---
+let strategy = null;
+let activeDay = "lundi";
+let pepites = [];
 
 const pick = a => a[Math.floor(Math.random() * a.length)];
 const esc = s => {const d = document.createElement('div'); d.textContent = s || ''; return d.innerHTML};
@@ -279,26 +313,15 @@ function fill(s, c) {
     .replace(/\{cta\}/g, c.cta || 'Écris-moi en DM');
 }
 
-let strategy = null; // Stocke les stories générées de la semaine
-let activeDay = "lundi"; // Jour affiché actuellement dans le studio
-let pepites = []; // Banque des favoris archivés
-
-// Gestion des onglets principaux
 function switchTab(tabId) {
-  // Désactiver tous les onglets et panneaux
   document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
   document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
-  
-  // Activer le bon onglet et panneau
   document.getElementById(`tab-${tabId}`).classList.add('active');
   document.getElementById(`panel-${tabId}`).classList.add('active');
-  
-  // Actions spécifiques au chargement de l'onglet
   if (tabId === 'result') renderResult();
   if (tabId === 'pepites') renderPepitesList();
 }
 
-// Génération de la semaine complète
 function handleGenerate() {
   const cfg = { 
     productName: document.getElementById('f-product').value.trim(), 
@@ -315,9 +338,9 @@ function handleGenerate() {
       color: data.color,
       hook: pick(HOOKS),
       body: pick(data.B),
-      yPos: 50, // Position verticale initiale (%) pour le simulateur
-      textColor: '#ffffff', // Couleur texte initiale
-      textBg: false // Surligneur initial désactivé
+      yPos: 50,
+      textColor: '#ffffff',
+      textBg: false
     };
   });
 
@@ -328,14 +351,12 @@ function handleGenerate() {
 
 function setDay(j) { activeDay = j; renderResult(); }
 
-// Sauvegarde automatique des inputs dans LocalStorage
 function saveInputs() {
   localStorage.setItem('studio_productName', document.getElementById('f-product').value);
   localStorage.setItem('studio_cta', document.getElementById('f-cta').value);
   showSaveStatus();
 }
 
-// Sauvegarde complète de l'état (stratégie + inputs)
 function saveToLocalStorage() {
   if (strategy) localStorage.setItem('studio_strategy', JSON.stringify(strategy));
   localStorage.setItem('studio_activeDay', activeDay);
@@ -343,23 +364,19 @@ function saveToLocalStorage() {
   saveInputs();
 }
 
-// Chargement au démarrage
 function loadFromLocalStorage() {
-  // Charger inputs
   if (localStorage.getItem('studio_productName')) document.getElementById('f-product').value = localStorage.getItem('studio_productName');
   if (localStorage.getItem('studio_cta')) document.getElementById('f-cta').value = localStorage.getItem('studio_cta');
   
-  // Charger Pépites
   if (localStorage.getItem('studio_pepites')) {
     pepites = JSON.parse(localStorage.getItem('studio_pepites'));
     updatePepitesCount();
   }
 
-  // Charger Stratégie de la semaine
   if (localStorage.getItem('studio_strategy')) {
     strategy = JSON.parse(localStorage.getItem('studio_strategy'));
     if (localStorage.getItem('studio_activeDay')) activeDay = localStorage.getItem('studio_activeDay');
-    switchTab('result'); // Aller direct au studio si données existantes
+    switchTab('result');
   }
 }
 
@@ -369,14 +386,9 @@ function showSaveStatus() {
   setTimeout(() => s.classList.remove('visible'), 2000);
 }
 
-// Initialisation au chargement de la page
 window.onload = loadFromLocalStorage;
 
-</script>
-
-<script>
-// --- MODULE : STUDIO & SIMULATEUR (POINT 1) ---
-
+// --- STUDIO & SIMULATEUR ---
 function renderResult() {
   const p = document.getElementById('panel-result');
   if (!strategy) {
@@ -388,8 +400,6 @@ function renderResult() {
   const ac = d.color;
   const cfg = { productName: document.getElementById('f-product').value, cta: document.getElementById('f-cta').value };
   const fullText = d.hook + fill(d.body, cfg);
-  
-  // Vérifier si la story est déjà dans les pépites
   const isStarred = pepites.some(p => p.text === fullText);
 
   p.innerHTML = `
@@ -424,7 +434,6 @@ function renderResult() {
             <button class="cbtn ${d.textColor === '#000000' ? 'active' : ''}" onclick="setTextStyle('#000000', ${d.textBg})">⚫ Noir</button>
             <button class="cbtn ${d.textBg ? 'active' : ''}" onclick="setTextStyle('${d.textColor}', !${d.textBg})">🅰️ Surligner</button>
           </div>
-          <div style="text-align:center; font-size:0.8rem; color:var(--text-muted);">↔️ Glisse le texte verticalement</div>
         </div>
       </div>
       
@@ -441,66 +450,45 @@ function renderResult() {
           <button class="abtn" onclick="regenHookOnly('${activeDay}')" style="color:${ac};">🪝 Changer Hook</button>
           <button class="abtn" onclick="regenDay('${activeDay}')" style="color:${ac};">🔄 Tout recalculer</button>
         </div>
-        <button class="abtn pdf" onclick="exportPDF()">📄 Sauvegarder ma semaine en PDF</button>
+        <button class="abtn pdf" id="pdf-btn" onclick="exportPDF()">📄 Exporter toute la semaine (PDF)</button>
       </div>
     </div>
   `;
 }
 
-// --- LOGIQUE SIMULATEUR (Drag, Style, Upload) ---
-
+// Drag logic
 let isDragging = false;
 let startY;
-let startYPercent;
-
 function startDrag(e) {
   isDragging = true;
   const container = document.getElementById('phone-text-container');
-  const simHeight = document.getElementById('phone-sim').offsetHeight;
-  
-  // Gestion souris vs tactile
   const pageY = e.pageY || e.touches[0].pageY;
-  
   startY = pageY - container.offsetTop;
-  
-  // Ajouter les écouteurs d'événements globaux
   document.addEventListener('mousemove', drag);
   document.addEventListener('mouseup', stopDrag);
   document.addEventListener('touchmove', drag, { passive: false });
   document.addEventListener('touchend', stopDrag);
-  
-  e.preventDefault(); // Empêche scroll tactile
+  e.preventDefault();
 }
-
 function drag(e) {
   if (!isDragging) return;
-  
   const sim = document.getElementById('phone-sim');
   const container = document.getElementById('phone-text-container');
   const pageY = e.pageY || e.touches[0].pageY;
-  
   let newY = pageY - startY;
-  
-  // Contraintes (ne pas sortir du téléphone, en tenant compte du padding de sécurité)
   const padding = 20;
   const minY = padding + container.offsetHeight / 2;
   const maxY = sim.offsetHeight - padding - container.offsetHeight / 2;
-  
   newY = Math.max(minY, Math.min(newY, maxY));
-  
-  // Convertir en pourcentage pour la sauvegarde
   const yPercent = (newY / sim.offsetHeight) * 100;
   container.style.top = yPercent + '%';
-  strategy[activeDay].yPos = yPercent; // Enregistrer position
-  
-  if(e.type === 'touchmove') e.preventDefault(); // Empêche scroll
+  strategy[activeDay].yPos = yPercent;
+  if(e.type === 'touchmove') e.preventDefault();
 }
-
 function stopDrag() {
   if(isDragging) {
     isDragging = false;
-    saveToLocalStorage(); // Sauvegarder la nouvelle position
-    // Retirer les écouteurs
+    saveToLocalStorage();
     document.removeEventListener('mousemove', drag);
     document.removeEventListener('mouseup', stopDrag);
     document.removeEventListener('touchmove', drag);
@@ -511,105 +499,42 @@ function stopDrag() {
 function handleBgUpload(input) {
   if (input.files && input.files[0]) {
     const reader = new FileReader();
-    reader.onload = function(e) {
-      strategy[activeDay].bgImage = e.target.result;
-      saveToLocalStorage();
-      renderResult();
-    }
+    reader.onload = function(e) { strategy[activeDay].bgImage = e.target.result; saveToLocalStorage(); renderResult(); }
     reader.readAsDataURL(input.files[0]);
   }
 }
+function removeBg() { strategy[activeDay].bgImage = null; saveToLocalStorage(); renderResult(); }
+function setTextStyle(color, hasBg) { strategy[activeDay].textColor = color; strategy[activeDay].textBg = hasBg; saveToLocalStorage(); renderResult(); }
 
-function removeBg() {
-  strategy[activeDay].bgImage = null;
-  saveToLocalStorage();
-  renderResult();
-}
-
-function setTextStyle(color, hasBg) {
-  strategy[activeDay].textColor = color;
-  strategy[activeDay].textBg = hasBg;
-  saveToLocalStorage();
-  renderResult();
-}
-
-// --- LOGIQUE ACTIONS (Recalcul, Copier) ---
-
-function regenDay(j) {
-  if (!strategy) return;
-  const data = BIBLE[j];
-  strategy[j].hook = pick(HOOKS);
-  strategy[j].body = pick(data.B);
-  saveToLocalStorage();
-  renderResult();
-}
-
-function regenHookOnly(j) {
-  if (!strategy) return;
-  strategy[j].hook = pick(HOOKS);
-  saveToLocalStorage();
-  renderResult();
-}
-
+function regenDay(j) { if (!strategy) return; const data = BIBLE[j]; strategy[j].hook = pick(HOOKS); strategy[j].body = pick(data.B); saveToLocalStorage(); renderResult(); }
+function regenHookOnly(j) { if (!strategy) return; strategy[j].hook = pick(HOOKS); saveToLocalStorage(); renderResult(); }
 function copyText(btn) {
   const text = document.getElementById('text-to-copy').innerText;
   navigator.clipboard.writeText(text).then(() => {
-    btn.innerText = "✓ Copié !";
-    btn.classList.add('copied');
-    setTimeout(() => {
-      btn.innerText = "📋 Copier";
-      btn.classList.remove('copied');
-    }, 2000);
+    btn.innerText = "✓ Copié !"; btn.classList.add('copied');
+    setTimeout(() => { btn.innerText = "📋 Copier"; btn.classList.remove('copied'); }, 2000);
   });
 }
-</script>
 
-<script>
-// --- MODULE : ARCHIVE PÉPITES (POINT 4) ---
-
-function updatePepitesCount() {
-  document.getElementById('pepites-count').innerText = pepites.length;
-}
-
+// --- ARCHIVE PÉPITES ---
+function updatePepitesCount() { document.getElementById('pepites-count').innerText = pepites.length; }
 function togglePepite() {
   if (!strategy) return;
-  
   const d = strategy[activeDay];
   const cfg = { productName: document.getElementById('f-product').value, cta: document.getElementById('f-cta').value };
   const fullText = d.hook + fill(d.body, cfg);
-  
   const index = pepites.findIndex(p => p.text === fullText);
-  
-  if (index > -1) {
-    // Retirer des pépites
-    pepites.splice(index, 1);
-  } else {
-    // Ajouter aux pépites
-    pepites.unshift({
-      text: fullText,
-      date: new Date().toLocaleDateString('fr-FR', {day: 'numeric', month: 'short'}),
-      method: d.theme.split('—')[1].split('(')[0].trim() // Extraire juste le nom de la méthode
-    });
+  if (index > -1) { pepites.splice(index, 1); } else {
+    pepites.unshift({ text: fullText, date: new Date().toLocaleDateString('fr-FR', {day: 'numeric', month: 'short'}), method: d.theme.split('—')[1].split('(')[0].trim() });
   }
-  
-  updatePepitesCount();
-  saveToLocalStorage();
-  renderResult(); // Pour mettre à jour l'étoile
+  updatePepitesCount(); saveToLocalStorage(); renderResult();
 }
-
 function renderPepitesList() {
   const list = document.getElementById('pepites-list');
-  if (pepites.length === 0) {
-    list.innerHTML = `<div class="empty-pepites">☆ Tes stories préférées apparaîtront ici quand tu cliqueras sur l'étoile dans le Studio.</div>`;
-    return;
-  }
-  
+  if (pepites.length === 0) { list.innerHTML = `<div class="empty-pepites">☆ Tes stories préférées apparaîtront ici quand tu cliqueras sur l'étoile.</div>`; return; }
   list.innerHTML = pepites.map((p, index) => `
     <div class="pepite-item">
-      <div class="pepite-meta">
-        <span>📅 ${p.date}</span>
-        <span>🧠 ${p.method}</span>
-      </div>
+      <div class="pepite-meta"><span>📅 ${p.date}</span><span>🧠 ${p.method}</span></div>
       <p class="pepite-text" id="pepite-text-${index}">${esc(p.text)}</p>
       <div class="pepite-actions">
         <button class="cb-btn" onclick="copyPepite(${index}, this)">📋 Copier</button>
@@ -618,52 +543,83 @@ function renderPepitesList() {
     </div>
   `).join('');
 }
-
 function copyPepite(index, btn) {
   const text = document.getElementById(`pepite-text-${index}`).innerText;
   navigator.clipboard.writeText(text).then(() => {
-    btn.innerText = "✓ Copié !";
-    btn.classList.add('copied');
-    setTimeout(() => {
-      btn.innerText = "📋 Copier";
-      btn.classList.remove('copied');
-    }, 2000);
+    btn.innerText = "✓ Copié !"; btn.classList.add('copied');
+    setTimeout(() => { btn.innerText = "📋 Copier"; btn.classList.remove('copied'); }, 2000);
   });
 }
+function deletePepite(index) { if(confirm("Supprimer cette pépite ?")) { pepites.splice(index, 1); saveToLocalStorage(); updatePepitesCount(); renderPepitesList(); } }
 
-function deletePepite(index) {
-  if(confirm("Supprimer cette pépite définitivement ?")) {
-    pepites.splice(index, 1);
-    saveToLocalStorage();
-    updatePepitesCount();
-    renderPepitesList();
-  }
-}
-</script>
-
-<script>
-// --- MODULE : EXPORT PRINT/PDF (Fiabilisé) ---
-
+// --- NOUVEAU MODULE : EXPORT PDF SUR-MESURE ---
 function exportPDF() {
   if (!strategy) return;
-  const printArea = document.getElementById('print-area');
-  const cfg = { productName: document.getElementById('f-product').value, cta: document.getElementById('f-cta').value };
   
-  let html = `<h1 style="text-align:center; margin-bottom:30px; font-family:sans-serif;">Ma Semaine de Stories Copywriting</h1>`;
+  const btn = document.getElementById('pdf-btn');
+  const originalText = btn.innerText;
+  btn.innerText = "⏳ Génération du PDF...";
+  btn.style.opacity = "0.7";
+  btn.style.pointerEvents = "none";
+
+  const cfg = { 
+    productName: document.getElementById('f-product').value, 
+    cta: document.getElementById('f-cta').value 
+  };
   
-  Object.keys(strategy).forEach(j => {
+  const exportArea = document.getElementById('pdf-export-template');
+  
+  // Génération du contenu HTML propre au PDF
+  let html = `
+    <div class="pdf-header">
+      <h1>Ma Semaine Éditoriale Mono-Slide</h1>
+      <p>Produit : ${esc(cfg.productName)} | CTA : ${esc(cfg.cta)}</p>
+    </div>
+  `;
+  
+  // On liste les 7 jours de la semaine
+  const jours = Object.keys(strategy);
+  jours.forEach(j => {
     const d = strategy[j];
     const fullText = d.hook + fill(d.body, cfg);
+    
     html += `
-      <div class="print-day" style="border-left: 5px solid ${d.color}; padding-left: 15px;">
-        <div class="print-title" style="color:${d.color}">${d.theme}</div>
-        <div class="print-text">${fullText}</div>
+      <div class="pdf-day-card">
+        <div class="pdf-day-title" style="color: ${d.color}">
+          <span>🗓️</span> ${esc(d.theme)}
+        </div>
+        <div class="pdf-day-text">${esc(fullText)}</div>
       </div>
     `;
   });
   
-  printArea.innerHTML = html;
-  window.print(); // Ouvre la boîte de dialogue d'impression native
+  exportArea.innerHTML = html;
+  exportArea.style.display = "block"; // On le rend visible temporairement pour la capture
+
+  // Options de configuration pour html2pdf
+  const opt = {
+    margin:       0,
+    filename:     'semaine-editoriale-stories.pdf',
+    image:        { type: 'jpeg', quality: 0.98 },
+    html2canvas:  { scale: 2, useCORS: true },
+    jsPDF:        { unit: 'in', format: 'letter', orientation: 'portrait' }
+  };
+
+  // Lancement de la conversion
+  html2pdf().set(opt).from(exportArea).save().then(() => {
+    // Restauration de l'interface
+    exportArea.style.display = "none";
+    exportArea.innerHTML = "";
+    btn.innerText = originalText;
+    btn.style.opacity = "1";
+    btn.style.pointerEvents = "auto";
+  }).catch(err => {
+    console.error("Erreur d'export PDF :", err);
+    alert("Une erreur est survenue lors de l'export PDF.");
+    btn.innerText = originalText;
+    btn.style.opacity = "1";
+    btn.style.pointerEvents = "auto";
+  });
 }
 </script>
 
