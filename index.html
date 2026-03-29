@@ -111,15 +111,36 @@
 
     /* ZONE PANNEAU DE CONTRÔLE (Actions) */
     .cpanel { flex: 2; min-width: 300px; display: flex; flex-direction: column; }
-    .cbox { background: var(--card-bg); padding: 25px; border-radius: 12px; border: 1px solid var(--border); min-height: 150px; white-space: pre-line; margin-bottom: 20px; font-size: 1.1rem; position: relative; line-height: 1.6;}
+    
+    /* Zone de texte éditable par l'utilisateur */
+    .editable-box {
+      background: var(--card-bg);
+      padding: 25px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      min-height: 150px;
+      margin-bottom: 20px;
+      font-size: 1.1rem;
+      position: relative;
+      line-height: 1.6;
+      color: var(--text);
+      width: 100%;
+      box-sizing: border-box;
+      resize: vertical;
+      font-family: inherit;
+    }
+    .editable-box:focus {
+      outline: none;
+      border-color: var(--accent);
+    }
+    
     .action-row { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 20px;}
     .abtn { flex: 1; min-width: 160px; padding: 14px; border-radius: 8px; border: 1px solid var(--border); background: var(--card-bg); color: var(--text); font-weight: bold; cursor: pointer; transition: 0.2s; display: flex; align-items: center; justify-content: center; gap: 8px; }
     .abtn:hover { background: var(--panel-bg); }
     .abtn.pdf { background: var(--success); color: white; border-color: var(--success); }
     .abtn.pdf:hover { opacity: 0.9; }
 
-    /* Zone Actions rapides dans la CBox */
-    .cbox-actions { position: absolute; top: 15px; right: 15px; display: flex; gap: 8px; }
+    .cbox-header { display: flex; justify-content: flex-end; gap: 8px; margin-bottom: 5px; }
     .cb-btn { background: rgba(255,255,255,0.05); border: 1px solid var(--border); color: var(--text); padding: 6px 10px; border-radius: 6px; font-size: 0.8rem; cursor: pointer; font-weight: bold; transition: 0.2s; }
     .cb-btn:hover { background: rgba(255,255,255,0.1); }
     .cb-btn.copied { background: var(--success); color: white; border-color: var(--success); }
@@ -137,7 +158,7 @@
     .save-alert { text-align: center; color: var(--success); font-size: 0.85rem; margin-top: -15px; margin-bottom: 15px; opacity: 0; transition: opacity 0.5s ease; pointer-events: none; }
     .save-alert.visible { opacity: 1; }
 
-    /* ZONE CACHÉE POUR L'EXPORT PDF (Invisible à l'écran) */
+    /* ZONE CACHÉE POUR L'EXPORT PDF */
     #pdf-export-template {
       display: none;
       width: 100%;
@@ -216,7 +237,6 @@
 <div id="pdf-export-template"></div>
 
 <script>
-// Banque de Hooks Interchangeables (Partie A)
 const HOOKS = [
   "Arrête de scroller 2 secondes ! 🛑 ", "Alerte gros ras-le-bol. 😤 ", "Regarde bien cette slide, elle est pour toi. 👀 ", 
   "Est-ce que tu t'es déjà demandé pourquoi certains réussissent si vite ? 🤔 ", "Oublie tout ce qu'on t'a dit sur la vente. 🤫 ", 
@@ -254,50 +274,14 @@ const HOOKS = [
   "Est-ce que l'investissement en vaut vraiment la peine ? 💰 ", "Brisons un énorme mythe sur l'entrepreneuriat aujourd'hui. 🔨 "
 ];
 
-// Corps de texte basés sur la Psychologie de Vente (Partie B)
 const BIBLE = {
-  lundi: {
-    theme: "LUNDI — Formule AIDA (Attention, Intérêt, Désir, Action)", color: "#FF595E",
-    B: [
-      "Tu mérites un business fluide. C'est exactement ce qu'on fait dans {product}. Prête à changer ? Alors {cta} !", "Si tu veux doubler tes résultats sans travailler plus, {product} est fait pour toi. Envie de voir comment ? Simple : {cta}.", "J'ai créé une méthode pour automatiser ta liberté. Tout est dans {product}. Si tu es motivée, {cta}.", "La seule chose qui te sépare de ton objectif, c'est un bon système. C'est ce qu'on bâtit dans {product}. Pour postuler : {cta}.", "Avoir des prospects qui viennent à toi au lieu de courir après eux ? C'est possible avec {product}. Tu veux savoir comment ? {cta} !", "Tu as le droit d'avoir du temps libre ET de l'argent. Clique sur {product}. Pour démarrer dès lundi : {cta}.", "Arrêtons les détours. Tu veux des résultats ? Rejoins {product}. Ne perds plus de temps, {cta}.", "C'est mathématique : meilleure structure = plus de ventes. C'est la promesse de {product}. Si tu y crois, {cta}.", "Imagine ton planning libéré de 10h par semaine. C'est l'effet {product}. Envie d'essayer ? {cta}.", "Ne subis pas ton quotidien d'entrepreneure. Passe au niveau supérieur grâce à {product}. Fais le premier pas et {cta}."
-    ]
-  },
-  mardi: {
-    theme: "MARDI — Formule PAS (Problème, Agitation, Solution)", color: "#FFCA3A",
-    B: [
-      "C'est parce qu'il te manque une structure. C'est ce qu'on règle ensemble dans {product}. Marre de galérer ? {cta}.", "Le problème n'est pas ton offre, c'est ton process. Avec {product}, on remet tout à plat. Pour en discuter : {cta}.", "Ce n'est pas une fatalité. J'ai créé {product} pour t'enlever ce poids des épaules. Prête pour le déclic ? {cta}.", "Tu n'as pas besoin de travailler plus, juste plus intelligemment. Découvre la méthode {product} ! Envoie-moi un message : {cta}.", "Arrête de t'épuiser. Il existe un raccourci et il s'appelle {product}. Si tu veux voir les coulisses : {cta}.", "J'ai vécu ça aussi avant de trouver LA solution. Tout est condensé dans {product}. Pour sortir du tunnel : {cta}.", "Reprends enfin le contrôle de ton business et de ta vie grâce à {product}. Ne reste pas seule, {cta}.", "Il est temps d'automatiser ce qui te bouffe ton énergie. {product} s'occupe de tout. Tu veux la démo ? {cta}.", "Passe de l'épuisement à la sérénité en appliquant les hacks de {product}. Intéressée ? {cta}.", "Ne laisse pas ton rêve devenir ta prison dorée. Rejoins {product} et respire. Pour me joindre : {cta}."
-    ]
-  },
-  mercredi: {
-    theme: "MERCREDI — Formule FOMO (Urgence & Rareté)", color: "#8AC926",
-    B: [
-      "Ne regrette pas demain de ne pas avoir sauté le pas aujourd'hui. {product} t'attend. Pour sécuriser ta place : {cta}.", "C'est le moment de prendre une vraie décision pour ton avenir. Embarque dans {product} dès maintenant ! {cta}.", "Arrête de procrastiner ton succès. Tout se passe dans {product}. Fais vite et {cta}.", "La balle est dans ton camp. Rejoins la meute dans {product} avant qu'il ne soit trop tard ! Pour t'inscrire : {cta}.", "Tu sais au fond de toi que c'est ce dont tu as besoin. Ne rate pas {product}. Envoie-moi un message : {cta}.", "Le groupe est presque au complet et l'énergie va être folle. Prends ta place dans {product} ! Écris vite : {cta}.", "N'attends pas le 'bon moment', il n'existe pas. Le moment c'est maintenant avec {product}. Dis-moi si tu viens : {cta}.", "C'est ton dernier rappel amical avant la fermeture. Accède à {product} sans attendre. Fonce et {cta}.", "La question n'est pas de savoir si ça marche, mais si TU es prête. Rejoins {product} ! On commence bientôt : {cta}.", "Fais partie des entrepreneures qui agissent. Clique et réserve ton accès à {product}. Une seule action : {cta}."
-    ]
-  },
-  jeudi: {
-    theme: "JEUDI — Preuve Sociale (Biais d'Appartenance)", color: "#1982C4",
-    B: [
-      "Elles ont toutes commencé au même point que toi avant d'intégrer {product}. Tu attends quoi ? {cta}.", "La méthode fonctionne pour tout le monde, pourquoi pas pour toi ? Rejoins {product} ! Pour postuler : {cta}.", "C'est ça la puissance d'un groupe soudé. Viens vivre l'expérience dans {product}. Curieuse ? {cta}.", "Le succès laisse des indices, suis le chemin tracé par les élèves de {product}. Pour avoir les détails : {cta}.", "Ne reste pas isolée alors que des dizaines d'autres avancent ensemble dans {product}. Rejoins-les : {cta}.", "Tu as le droit toi aussi de faire partie des success stories. Ta place t'attend dans {product}. Écris-moi : {cta}.", "C'est fou ce qu'on peut accomplir quand on a le bon entourage. Trouve le tien dans {product}. Pour me joindre : {cta}.", "La preuve est sous tes yeux tous les jours. Saute le pas et rejoins {product}. Une seule chose à faire : {cta}.", "Fais confiance au process qui a déjà changé la vie de tant de femmes. Intègre {product} ! Dis-le moi ici : {cta}.", "Prête à écrire ta propre histoire à succès aux côtés des autres ? Tout commence dans {product}. {cta}."
-    ]
-  },
-  vendredi: {
-    theme: "VENDREDI — Le Contraste (Avant / Après)", color: "#6A4C93",
-    B: [
-      "C'est exactement la transformation qu'on opère à l'intérieur de {product}. Tu veux la tienne ? {cta}.", "Ce n'est pas de la magie, c'est de la pure stratégie appliquée dans {product}. Envie de voir le plan ? {cta}.", "Le pont entre ta situation actuelle et ta vie de rêve s'appelle {product}. Prête à traverser ? {cta}.", "Tu es à une seule décision de faire basculer ton quotidien. Saute le pas avec {product}. Contacte-moi : {cta}.", "Arrête de rêver ta vie et commence à la bâtir sérieusement grâce à {product}. Pour voir si tu es éligible : {cta}.", "C'est le virage à 180 degrés que prennent toutes les participantes de {product}. Tu montes avec nous ? {cta}.", "Pourquoi continuer de subir alors que la solution existe juste ici dans {product} ? Fais le bon choix : {cta}.", "La liberté ne s'attend pas, elle se crée avec les bons outils. Trouve-les dans {product}. Écris-moi : {cta}.", "Passe de l'autre côté de la barrière dès cette semaine. Rejoins {product} ! Pour en parler tranquillement : {cta}.", "C'est possible pour toi aussi, il te suffit de suivre la méthode pas à pas dans {product}. On y va ? {cta}."
-    ]
-  },
-  samedi: {
-    theme: "SAMEDI — Le Storytelling (L'Héroïne)", color: "#FF9F1C",
-    B: [
-      "Mais j'ai trouvé la clé. Elle est dans {product}. Ne fais pas les mêmes erreurs que moi : {cta}.", "C'est de cet échec qu'est né {product}. Épargne-toi ces mois de souffrance : {cta}.", "Le secret c'est que j'ai fini par me faire accompagner. Fais de même avec {product} : {cta}.", "Aujourd'hui, j'utilise cette expérience pour t'aider dans {product}. Dis-moi si tu veux ton plan : {cta}.", "C'est possible pour toi aussi d'inverser la tendance grâce à {product}. Viens m'en parler : {cta}.", "Ne laisse personne te dire que c'est impossible. Prouve-leur le contraire avec {product} ! {cta}.", "J'aurais aimé avoir un guide comme {product} à l'époque. Écris-moi pour l'obtenir : {cta}.", "Cette histoire m'a appris à valoriser mon temps. C'est ce qu'on fait dans {product}. Fais le pas : {cta}.", "La vulnérabilité c'est une force. On reconstruit tout plus solide dans {product}. Parle-moi : {cta}.", "La solution n'est pas de travailler plus dur, mais mieux. Découvre {product} en m'envoyant : {cta}."
-    ]
-  },
-  dimanche: {
-    theme: "DIMANCHE — La Clarté (FAQ / Objections)", color: "#2EC4B6",
-    B: [
-      "La réponse est non. Dans {product}, on s'adapte à ton niveau. Tu as encore des doutes ? Viens me les poser : {cta}.", "On reprend tout à zéro ensemble. C'est le but de {product}. Si tu veux la vérité : {cta}.", "Il n'y a pas de meilleur moment. Saute le pas avec {product} dès aujourd'hui ! Dis-moi : {cta}.", "On a conçu {product} pour les femmes pressées. 2h par semaine suffisent ! Vérifie par toi-même : {cta}.", "Ton unicité fera la différence. On la trouve ensemble dans {product}. Envoie-moi un DM : {cta}.", "Je t'explique tout de A à Z à l'intérieur de {product}. Envie d'en savoir plus ? Simple : {cta}.", "La différence c'est l'humain et le sur-mesure de {product}. Tu veux le programme ? {cta}.", "Au contraire, c'est le moment idéal pour ne pas prendre de mauvaises habitudes ! Rejoins {product} : {cta}.", "Ton business te rapportera ce que tu y investis. {product} est un accélérateur. Viens me parler : {cta}.", "Faisons le tri entre le vrai et le faux. Je t'attends pour échanger sur {product} : {cta}."
-    ]
-  }
+  lundi: { theme: "LUNDI — Formule AIDA (Attention, Intérêt, Désir, Action)", color: "#FF595E", B: ["Tu mérites un business fluide. C'est exactement ce qu'on fait dans {product}. Prête à changer ? Alors {cta} !", "Si tu veux doubler tes résultats sans travailler plus, {product} est fait pour toi. Envie de voir comment ? Simple : {cta}.", "J'ai créé une méthode pour automatiser ta liberté. Tout est dans {product}. Si tu es motivée, {cta}.", "La seule chose qui te sépare de ton objectif, c'est un bon système. C'est ce qu'on bâtit dans {product}. Pour postuler : {cta}.", "Avoir des prospects qui viennent à toi au lieu de courir après eux ? C'est possible avec {product}. Tu veux savoir comment ? {cta} !", "Tu as le droit d'avoir du temps libre ET de l'argent. Clique sur {product}. Pour démarrer dès lundi : {cta}.", "Arrêtons les détours. Tu veux des résultats ? Rejoins {product}. Ne perds plus de temps, {cta}.", "C'est mathématique : meilleure structure = plus de ventes. C'est la promesse de {product}. Si tu y crois, {cta}.", "Imagine ton planning libéré de 10h par semaine. C'est l'effet {product}. Envie d'essayer ? {cta}.", "Ne subis pas ton quotidien d'entrepreneure. Passe au niveau supérieur grâce à {product}. Fais le premier pas et {cta}."] },
+  mardi: { theme: "MARDI — Formule PAS (Problème, Agitation, Solution)", color: "#FFCA3A", B: ["C'est parce qu'il te manque une structure. C'est ce qu'on règle ensemble dans {product}. Marre de galérer ? {cta}.", "Le problème n'est pas ton offre, c'est ton process. Avec {product}, on remet tout à plat. Pour en discuter : {cta}.", "Ce n'est pas une fatalité. J'ai créé {product} pour t'enlever ce poids des épaules. Prête pour le déclic ? {cta}.", "Tu n'as pas besoin de travailler plus, juste plus intelligemment. Découvre la méthode {product} ! Envoie-moi un message : {cta}.", "Arrête de t'épuiser. Il existe un raccourci et il s'appelle {product}. Si tu veux voir les coulisses : {cta}.", "J'ai vécu ça aussi avant de trouver LA solution. Tout est condensé dans {product}. Pour sortir du tunnel : {cta}.", "Reprends enfin le contrôle de ton business et de ta vie grâce à {product}. Ne reste pas seule, {cta}.", "Il est temps d'automatiser ce qui te bouffe ton énergie. {product} s'occupe de tout. Tu veux la démo ? {cta}.", "Passe de l'épuisement à la sérénité en appliquant les hacks de {product}. Intéressée ? {cta}.", "Ne laisse pas ton rêve devenir ta prison dorée. Rejoins {product} et respire. Pour me joindre : {cta}."] },
+  mercredi: { theme: "MERCREDI — Formule FOMO (Urgence & Rareté)", color: "#8AC926", B: ["Ne regrette pas demain de ne pas avoir sauté le pas aujourd'hui. {product} t'attend. Pour sécuriser ta place : {cta}.", "C'est le moment de prendre une vraie décision pour ton avenir. Embarque dans {product} dès maintenant ! {cta}.", "Arrête de procrastiner ton succès. Tout se passe dans {product}. Fais vite et {cta}.", "La balle est dans ton camp. Rejoins la meute dans {product} avant qu'il ne soit trop tard ! Pour t'inscrire : {cta}.", "Tu sais au fond de toi que c'est ce dont tu as besoin. Ne rate pas {product}. Envoie-moi un message : {cta}.", "Le groupe est presque au complet et l'énergie va être folle. Prends ta place dans {product} ! Écris vite : {cta}.", "N'attends pas le 'bon moment', il n'existe pas. Le moment c'est maintenant avec {product}. Dis-moi si tu viens : {cta}.", "C'est ton dernier rappel amical avant la fermeture. Accède à {product} sans attendre. Fonce et {cta}.", "La question n'est pas de savoir si ça marche, mais si TU es prête. Rejoins {product} ! On commence bientôt : {cta}.", "Fais partie des entrepreneures qui agissent. Clique et réserve ton accès à {product}. Une seule action : {cta}."] },
+  jeudi: { theme: "JEUDI — Preuve Sociale (Biais d'Appartenance)", color: "#1982C4", B: ["Elles ont toutes commencé au même point que toi avant d'intégrer {product}. Tu attends quoi ? {cta}.", "La méthode fonctionne pour tout le monde, pourquoi pas pour toi ? Rejoins {product} ! Pour postuler : {cta}.", "C'est ça la puissance d'un groupe soudé. Viens vivre l'expérience dans {product}. Curieuse ? {cta}.", "Le succès laisse des indices, suis le chemin tracé par les élèves de {product}. Pour avoir les détails : {cta}.", "Ne reste pas isolée alors que des dizaines d'autres avancent ensemble dans {product}. Rejoins-les : {cta}.", "Tu as le droit toi aussi de faire partie des success stories. Ta place t'attend dans {product}. Écris-moi : {cta}.", "C'est fou ce qu'on peut accomplir quand on a le bon entourage. Trouve le tien dans {product}. Pour me joindre : {cta}.", "La preuve est sous tes yeux tous les jours. Saute le pas et rejoins {product}. Une seule chose à faire : {cta}.", "Fais confiance au process qui a déjà changé la vie de tant de femmes. Intègre {product} ! Dis-le moi ici : {cta}.", "Prête à écrire ta propre histoire à succès aux côtés des autres ? Tout commence dans {product}. {cta}."] },
+  vendredi: { theme: "VENDREDI — Le Contraste (Avant / Après)", color: "#6A4C93", B: ["C'est exactement la transformation qu'on opère à l'intérieur de {product}. Tu veux la tienne ? {cta}.", "Ce n'est pas de la magie, c'est de la pure stratégie appliquée dans {product}. Envie de voir le plan ? {cta}.", "Le pont entre ta situation actuelle et ta vie de rêve s'appelle {product}. Prête à traverser ? {cta}.", "Tu es à une seule décision de faire basculer ton quotidien. Saute le pas avec {product}. Contacte-moi : {cta}.", "Arrête de rêver ta vie et commence à la bâtir sérieusement grâce à {product}. Pour voir si tu es éligible : {cta}.", "C'est le virage à 180 degrés que prennent toutes les participantes de {product}. Tu montes avec nous ? {cta}.", "Pourquoi continuer de subir alors que la solution existe juste ici dans {product} ? Fais le bon choix : {cta}.", "La liberté ne s'attend pas, elle se crée avec les bons outils. Trouve-les dans {product}. Écris-moi : {cta}.", "Passe de l'autre côté de la barrière dès cette semaine. Rejoins {product} ! Pour en parler tranquillement : {cta}.", "C'est possible pour toi aussi, il te suffit de suivre la méthode pas à pas dans {product}. On y va ? {cta}."] },
+  samedi: { theme: "SAMEDI — Le Storytelling (L'Héroïne)", color: "#FF9F1C", B: ["Mais j'ai trouvé la clé. Elle est dans {product}. Ne fais pas les mêmes erreurs que moi : {cta}.", "C'est de cet échec qu'est né {product}. Épargne-toi ces mois de souffrance : {cta}.", "Le secret c'est que j'ai fini par me faire accompagner. Fais de même avec {product} : {cta}.", "Aujourd'hui, j'utilise cette expérience pour t'aider dans {product}. Dis-moi si tu veux ton plan : {cta}.", "C'est possible pour toi aussi d'inverser la tendance grâce à {product}. Viens m'en parler : {cta}.", "Ne laisse personne te dire que c'est impossible. Prouve-leur le contraire avec {product} ! {cta}.", "J'aurais aimé avoir un guide comme {product} à l'époque. Écris-moi pour l'obtenir : {cta}.", "Cette histoire m'a appris à valoriser mon temps. C'est ce qu'on fait dans {product}. Fais le pas : {cta}.", "La vulnérabilité c'est une force. On reconstruit tout plus solide dans {product}. Parle-moi : {cta}.", "La solution n'est pas de travailler plus dur, mais mieux. Découvre {product} en m'envoyant : {cta}."] },
+  dimanche: { theme: "DIMANCHE — La Clarté (FAQ / Objections)", color: "#2EC4B6", B: ["La réponse est non. Dans {product}, on s'adapte à ton niveau. Tu as encore des doutes ? Viens me les poser : {cta}.", "On reprend tout à zéro ensemble. C'est le but de {product}. Si tu veux la vérité : {cta}.", "Il n'y a pas de meilleur moment. Saute le pas avec {product} dès aujourd'hui ! Dis-moi : {cta}.", "On a conçu {product} pour les femmes pressées. 2h par semaine suffisent ! Vérifie par toi-même : {cta}.", "Ton unicité fera la différence. On la trouve ensemble dans {product}. Envoie-moi un DM : {cta}.", "Je t'explique tout de A à Z à l'intérieur de {product}. Envie d'en savoir plus ? Simple : {cta}.", "La différence c'est l'humain et le sur-mesure de {product}. Tu veux le programme ? {cta}.", "Au contraire, c'est le moment idéal pour ne pas prendre de mauvaises habitudes ! Rejoins {product} : {cta}.", "Ton business te rapportera ce que tu y investis. {product} est un accélérateur. Viens me parler : {cta}.", "Faisons le tri entre le vrai et le faux. Je t'attends pour échanger sur {product} : {cta}."] }
 };
 
 let strategy = null;
@@ -323,33 +307,29 @@ function switchTab(tabId) {
 }
 
 function handleGenerate() {
-  const cfg = { 
-    productName: document.getElementById('f-product').value.trim(), 
-    cta: document.getElementById('f-cta').value.trim() 
-  };
-  
+  const cfg = { productName: document.getElementById('f-product').value.trim(), cta: document.getElementById('f-cta').value.trim() };
   strategy = {};
-  const jours = Object.keys(BIBLE);
-  
-  jours.forEach(j => {
+  Object.keys(BIBLE).forEach(j => {
     const data = BIBLE[j];
     strategy[j] = {
-      theme: data.theme,
-      color: data.color,
-      hook: pick(HOOKS),
-      body: pick(data.B),
-      yPos: 50,
-      textColor: '#ffffff',
-      textBg: false
+      theme: data.theme, color: data.color, hook: pick(HOOKS), body: pick(data.B),
+      yPos: 50, textColor: '#ffffff', textBg: false,
+      fullDraft: "" // Stockage du texte final corrigé
     };
+    strategy[j].fullDraft = strategy[j].hook + fill(strategy[j].body, cfg);
   });
-
   activeDay = "lundi";
   saveToLocalStorage();
   switchTab('result');
 }
 
-function setDay(j) { activeDay = j; renderResult(); }
+function setDay(j) { 
+  if (strategy && document.getElementById('story-text')) {
+    strategy[activeDay].fullDraft = document.getElementById('story-text').value;
+  }
+  activeDay = j; 
+  renderResult(); 
+}
 
 function saveInputs() {
   localStorage.setItem('studio_productName', document.getElementById('f-product').value);
@@ -358,7 +338,10 @@ function saveInputs() {
 }
 
 function saveToLocalStorage() {
-  if (strategy) localStorage.setItem('studio_strategy', JSON.stringify(strategy));
+  if (strategy) {
+    if (document.getElementById('story-text')) strategy[activeDay].fullDraft = document.getElementById('story-text').value;
+    localStorage.setItem('studio_strategy', JSON.stringify(strategy));
+  }
   localStorage.setItem('studio_activeDay', activeDay);
   localStorage.setItem('studio_pepites', JSON.stringify(pepites));
   saveInputs();
@@ -367,12 +350,7 @@ function saveToLocalStorage() {
 function loadFromLocalStorage() {
   if (localStorage.getItem('studio_productName')) document.getElementById('f-product').value = localStorage.getItem('studio_productName');
   if (localStorage.getItem('studio_cta')) document.getElementById('f-cta').value = localStorage.getItem('studio_cta');
-  
-  if (localStorage.getItem('studio_pepites')) {
-    pepites = JSON.parse(localStorage.getItem('studio_pepites'));
-    updatePepitesCount();
-  }
-
+  if (localStorage.getItem('studio_pepites')) { pepites = JSON.parse(localStorage.getItem('studio_pepites')); updatePepitesCount(); }
   if (localStorage.getItem('studio_strategy')) {
     strategy = JSON.parse(localStorage.getItem('studio_strategy'));
     if (localStorage.getItem('studio_activeDay')) activeDay = localStorage.getItem('studio_activeDay');
@@ -397,29 +375,21 @@ function renderResult() {
   }
   
   const d = strategy[activeDay];
-  const ac = d.color;
-  const cfg = { productName: document.getElementById('f-product').value, cta: document.getElementById('f-cta').value };
-  const fullText = d.hook + fill(d.body, cfg);
+  const fullText = d.fullDraft;
   const isStarred = pepites.some(p => p.text === fullText);
 
   p.innerHTML = `
     <div class="daytabs">
-      ${Object.keys(strategy).map(j => `
-        <button class="dtab ${activeDay === j ? 'active' : ''}" onclick="setDay('${j}')">
-          ${j.charAt(0).toUpperCase() + j.slice(1)}
-        </button>
-      `).join('')}
+      ${Object.keys(strategy).map(j => `<button class="dtab ${activeDay === j ? 'active' : ''}" onclick="setDay('${j}')">${j.charAt(0).toUpperCase() + j.slice(1)}</button>`).join('')}
     </div>
     
-    <div class="dayinfo"><span class="dayinfo-t" style="color:${ac}">${d.theme}</span></div>
+    <div class="dayinfo"><span class="dayinfo-t" style="color:${d.color}">${d.theme}</span></div>
     
     <div class="clayout">
       <div class="phonewrap">
         <div id="phone-sim" class="phone" style="background-image: url('${d.bgImage || ''}');">
-          <div id="phone-text-container" class="phone-text-container" 
-               style="top: ${d.yPos}%; color: ${d.textColor}; background-color: ${d.textBg ? 'rgba(0,0,0,0.6)' : 'transparent'};"
-               onmousedown="startDrag(event)" ontouchstart="startDrag(event)">
-            <p class="phone-ct">${esc(fullText)}</p>
+          <div id="phone-text-container" class="phone-text-container" style="top: ${d.yPos}%; color: ${d.textColor}; background-color: ${d.textBg ? 'rgba(0,0,0,0.6)' : 'transparent'};" onmousedown="startDrag(event)" ontouchstart="startDrag(event)">
+            <p id="phone-mirror-text" class="phone-ct">${esc(fullText)}</p>
           </div>
         </div>
         
@@ -438,17 +408,16 @@ function renderResult() {
       </div>
       
       <div class="cpanel">
-        <div class="cbox">
-          <div class="cbox-actions">
-            <button class="cb-btn ${isStarred ? 'starred' : ''}" onclick="togglePepite()">${isStarred ? '⭐' : '☆'}</button>
-            <button class="cb-btn" onclick="copyText(this)">📋 Copier</button>
-          </div>
-          <span id="text-to-copy">${esc(fullText)}</span>
+        <div class="cbox-header">
+          <button class="cb-btn ${isStarred ? 'starred' : ''}" onclick="togglePepite()">${isStarred ? '⭐' : '☆'}</button>
+          <button class="cb-btn" onclick="copyText(this)">📋 Copier</button>
         </div>
         
+        <textarea id="story-text" class="editable-box" oninput="updateMirrorText(this)">${esc(fullText)}</textarea>
+        
         <div class="action-row">
-          <button class="abtn" onclick="regenHookOnly('${activeDay}')" style="color:${ac};">🪝 Changer Hook</button>
-          <button class="abtn" onclick="regenDay('${activeDay}')" style="color:${ac};">🔄 Tout recalculer</button>
+          <button class="abtn" onclick="regenHookOnly('${activeDay}')" style="color:${d.color};">🪝 Changer Hook</button>
+          <button class="abtn" onclick="regenDay('${activeDay}')" style="color:${d.color};">🔄 Tout recalculer</button>
         </div>
         <button class="abtn pdf" id="pdf-btn" onclick="exportPDF()">📄 Exporter toute la semaine (PDF)</button>
       </div>
@@ -456,14 +425,18 @@ function renderResult() {
   `;
 }
 
+// Mise à jour temps réel sur le téléphone
+function updateMirrorText(textarea) {
+  document.getElementById('phone-mirror-text').innerText = textarea.value;
+  strategy[activeDay].fullDraft = textarea.value;
+}
+
 // Drag logic
-let isDragging = false;
-let startY;
+let isDragging = false, startY;
 function startDrag(e) {
   isDragging = true;
   const container = document.getElementById('phone-text-container');
-  const pageY = e.pageY || e.touches[0].pageY;
-  startY = pageY - container.offsetTop;
+  startY = (e.pageY || e.touches[0].pageY) - container.offsetTop;
   document.addEventListener('mousemove', drag);
   document.addEventListener('mouseup', stopDrag);
   document.addEventListener('touchmove', drag, { passive: false });
@@ -472,13 +445,9 @@ function startDrag(e) {
 }
 function drag(e) {
   if (!isDragging) return;
-  const sim = document.getElementById('phone-sim');
-  const container = document.getElementById('phone-text-container');
-  const pageY = e.pageY || e.touches[0].pageY;
-  let newY = pageY - startY;
-  const padding = 20;
-  const minY = padding + container.offsetHeight / 2;
-  const maxY = sim.offsetHeight - padding - container.offsetHeight / 2;
+  const sim = document.getElementById('phone-sim'), container = document.getElementById('phone-text-container');
+  let newY = (e.pageY || e.touches[0].pageY) - startY;
+  const padding = 20, minY = padding + container.offsetHeight / 2, maxY = sim.offsetHeight - padding - container.offsetHeight / 2;
   newY = Math.max(minY, Math.min(newY, maxY));
   const yPercent = (newY / sim.offsetHeight) * 100;
   container.style.top = yPercent + '%';
@@ -487,29 +456,67 @@ function drag(e) {
 }
 function stopDrag() {
   if(isDragging) {
-    isDragging = false;
-    saveToLocalStorage();
-    document.removeEventListener('mousemove', drag);
-    document.removeEventListener('mouseup', stopDrag);
-    document.removeEventListener('touchmove', drag);
-    document.removeEventListener('touchend', stopDrag);
+    isDragging = false; saveToLocalStorage();
+    document.removeEventListener('mousemove', drag); document.removeEventListener('mouseup', stopDrag);
+    document.removeEventListener('touchmove', drag); document.removeEventListener('touchend', stopDrag);
   }
 }
 
+// Compression d'image pour éviter les saturations de stockage
 function handleBgUpload(input) {
   if (input.files && input.files[0]) {
+    const file = input.files[0];
     const reader = new FileReader();
-    reader.onload = function(e) { strategy[activeDay].bgImage = e.target.result; saveToLocalStorage(); renderResult(); }
-    reader.readAsDataURL(input.files[0]);
+    
+    reader.onload = function(e) {
+      const img = new Image();
+      img.onload = function() {
+        // Redimensionnement de l'image sur un canvas
+        const canvas = document.createElement('canvas');
+        let width = img.width, height = img.height;
+        
+        // On limite à 800px max pour l'outil
+        const max_size = 800;
+        if (width > height && width > max_size) { height *= max_size / width; width = max_size; }
+        else if (height > max_size) { width *= max_size / height; height = max_size; }
+        
+        canvas.width = width; canvas.height = height;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, width, height);
+        
+        // Export en qualité JPEG moyenne pour économiser le stockage
+        const compressedDataUrl = canvas.toDataURL('image/jpeg', 0.6);
+        
+        strategy[activeDay].bgImage = compressedDataUrl;
+        saveToLocalStorage();
+        renderResult();
+      }
+      img.src = e.target.result;
+    }
+    reader.readAsDataURL(file);
   }
 }
+
 function removeBg() { strategy[activeDay].bgImage = null; saveToLocalStorage(); renderResult(); }
 function setTextStyle(color, hasBg) { strategy[activeDay].textColor = color; strategy[activeDay].textBg = hasBg; saveToLocalStorage(); renderResult(); }
 
-function regenDay(j) { if (!strategy) return; const data = BIBLE[j]; strategy[j].hook = pick(HOOKS); strategy[j].body = pick(data.B); saveToLocalStorage(); renderResult(); }
-function regenHookOnly(j) { if (!strategy) return; strategy[j].hook = pick(HOOKS); saveToLocalStorage(); renderResult(); }
+function regenDay(j) { 
+  const data = BIBLE[j]; 
+  const cfg = { productName: document.getElementById('f-product').value, cta: document.getElementById('f-cta').value };
+  strategy[j].hook = pick(HOOKS); strategy[j].body = pick(data.B); 
+  strategy[j].fullDraft = strategy[j].hook + fill(strategy[j].body, cfg);
+  saveToLocalStorage(); renderResult(); 
+}
+
+function regenHookOnly(j) { 
+  const cfg = { productName: document.getElementById('f-product').value, cta: document.getElementById('f-cta').value };
+  strategy[j].hook = pick(HOOKS); 
+  strategy[j].fullDraft = strategy[j].hook + fill(strategy[j].body, cfg);
+  saveToLocalStorage(); renderResult(); 
+}
+
 function copyText(btn) {
-  const text = document.getElementById('text-to-copy').innerText;
+  const text = document.getElementById('story-text').value;
   navigator.clipboard.writeText(text).then(() => {
     btn.innerText = "✓ Copié !"; btn.classList.add('copied');
     setTimeout(() => { btn.innerText = "📋 Copier"; btn.classList.remove('copied'); }, 2000);
@@ -519,13 +526,10 @@ function copyText(btn) {
 // --- ARCHIVE PÉPITES ---
 function updatePepitesCount() { document.getElementById('pepites-count').innerText = pepites.length; }
 function togglePepite() {
-  if (!strategy) return;
-  const d = strategy[activeDay];
-  const cfg = { productName: document.getElementById('f-product').value, cta: document.getElementById('f-cta').value };
-  const fullText = d.hook + fill(d.body, cfg);
+  const fullText = document.getElementById('story-text').value;
   const index = pepites.findIndex(p => p.text === fullText);
   if (index > -1) { pepites.splice(index, 1); } else {
-    pepites.unshift({ text: fullText, date: new Date().toLocaleDateString('fr-FR', {day: 'numeric', month: 'short'}), method: d.theme.split('—')[1].split('(')[0].trim() });
+    pepites.unshift({ text: fullText, date: new Date().toLocaleDateString('fr-FR', {day: 'numeric', month: 'short'}), method: strategy[activeDay].theme.split('—')[1].split('(')[0].trim() });
   }
   updatePepitesCount(); saveToLocalStorage(); renderResult();
 }
@@ -552,73 +556,62 @@ function copyPepite(index, btn) {
 }
 function deletePepite(index) { if(confirm("Supprimer cette pépite ?")) { pepites.splice(index, 1); saveToLocalStorage(); updatePepitesCount(); renderPepitesList(); } }
 
-// --- NOUVEAU MODULE : EXPORT PDF SUR-MESURE ---
+// --- MODULE : EXPORT PDF SUR-MESURE (Prend le texte corrigé) ---
 function exportPDF() {
   if (!strategy) return;
   
-  const btn = document.getElementById('pdf-btn');
-  const originalText = btn.innerText;
-  btn.innerText = "⏳ Génération du PDF...";
-  btn.style.opacity = "0.7";
-  btn.style.pointerEvents = "none";
-
-  const cfg = { 
-    productName: document.getElementById('f-product').value, 
-    cta: document.getElementById('f-cta').value 
-  };
+  // Sauvegarde impérative de l'élément courant avant d'exporter
+  if (document.getElementById('story-text')) {
+    strategy[activeDay].fullDraft = document.getElementById('story-text').value;
+    saveToLocalStorage();
+  }
   
+  const btn = document.getElementById('pdf-btn');
+  btn.innerText = "⏳ Génération du PDF...";
+  btn.style.opacity = "0.7"; btn.style.pointerEvents = "none";
+
+  const cfg = { productName: document.getElementById('f-product').value, cta: document.getElementById('f-cta').value };
   const exportArea = document.getElementById('pdf-export-template');
   
-  // Génération du contenu HTML propre au PDF
   let html = `
     <div class="pdf-header">
       <h1>Ma Semaine Éditoriale Mono-Slide</h1>
-      <p>Produit : ${esc(cfg.productName)} | CTA : ${esc(cfg.cta)}</p>
+      <p>Fichier généré sur mesure - Produit : ${esc(cfg.productName)}</p>
     </div>
   `;
   
-  // On liste les 7 jours de la semaine
+  // On liste les 7 jours en prenant le texte EN DIRECT dans la stratégie (donc les corrections de l'utilisateur)
   const jours = Object.keys(strategy);
   jours.forEach(j => {
     const d = strategy[j];
-    const fullText = d.hook + fill(d.body, cfg);
-    
     html += `
       <div class="pdf-day-card">
-        <div class="pdf-day-title" style="color: ${d.color}">
-          <span>🗓️</span> ${esc(d.theme)}
-        </div>
-        <div class="pdf-day-text">${esc(fullText)}</div>
+        <div class="pdf-day-title" style="color: ${d.color}"><span>🗓️</span> ${esc(d.theme)}</div>
+        <div class="pdf-day-text">${esc(d.fullDraft)}</div>
       </div>
     `;
   });
   
   exportArea.innerHTML = html;
-  exportArea.style.display = "block"; // On le rend visible temporairement pour la capture
+  exportArea.style.display = "block";
 
-  // Options de configuration pour html2pdf
   const opt = {
-    margin:       0,
-    filename:     'semaine-editoriale-stories.pdf',
-    image:        { type: 'jpeg', quality: 0.98 },
-    html2canvas:  { scale: 2, useCORS: true },
-    jsPDF:        { unit: 'in', format: 'letter', orientation: 'portrait' }
+    margin: 0,
+    filename: 'semaine-editoriale-stories.pdf',
+    image: { type: 'jpeg', quality: 0.98 },
+    html2canvas: { scale: 2, useCORS: true },
+    jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
   };
 
-  // Lancement de la conversion
   html2pdf().set(opt).from(exportArea).save().then(() => {
-    // Restauration de l'interface
-    exportArea.style.display = "none";
-    exportArea.innerHTML = "";
-    btn.innerText = originalText;
-    btn.style.opacity = "1";
-    btn.style.pointerEvents = "auto";
+    exportArea.style.display = "none"; exportArea.innerHTML = "";
+    btn.innerText = "📄 Exporter toute la semaine (PDF)";
+    btn.style.opacity = "1"; btn.style.pointerEvents = "auto";
   }).catch(err => {
-    console.error("Erreur d'export PDF :", err);
-    alert("Une erreur est survenue lors de l'export PDF.");
-    btn.innerText = originalText;
-    btn.style.opacity = "1";
-    btn.style.pointerEvents = "auto";
+    console.error(err);
+    alert("Une erreur est survenue.");
+    btn.innerText = "📄 Exporter toute la semaine (PDF)";
+    btn.style.opacity = "1"; btn.style.pointerEvents = "auto";
   });
 }
 </script>
