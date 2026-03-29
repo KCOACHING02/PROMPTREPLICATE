@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Générateur Stories Mono-Slide Pro</title>
+  <title>Studio Stories Mono-Slide Pro</title>
   <style>
     :root {
       --bg: #0c0c10;
@@ -14,6 +14,7 @@
       --text-muted: #8a8aa3;
       --border: #2a2a3a;
       --success: #10B981;
+      --star: #FFD700;
     }
     body {
       font-family: 'Inter', -apple-system, sans-serif;
@@ -30,58 +31,108 @@
     }
     h1 { text-align: center; margin-bottom: 5px; }
     .subtitle { text-align: center; color: var(--text-muted); margin-bottom: 30px; font-size: 0.95rem; }
+    
+    /* Onglets Principaux */
     .tabs { display: flex; gap: 10px; margin-bottom: 20px; justify-content: center; }
-    .tab-btn { background: var(--panel-bg); color: var(--text-muted); border: 1px solid var(--border); padding: 12px 24px; border-radius: 8px; cursor: pointer; font-weight: bold; }
+    .tab-btn { background: var(--panel-bg); color: var(--text-muted); border: 1px solid var(--border); padding: 12px 24px; border-radius: 8px; cursor: pointer; font-weight: bold; transition: 0.2s; }
+    .tab-btn:hover { background: var(--card-bg); color: var(--text); }
     .tab-btn.active { background: var(--accent); color: var(--bg); border-color: var(--accent); }
+
+    /* Panneaux */
     .panel { display: none; background: var(--panel-bg); border: 1px solid var(--border); border-radius: 12px; padding: 25px; margin-bottom: 30px; }
     .panel.active { display: block; }
+
+    /* Formulaire Config */
     .form-group { margin-bottom: 20px; }
     label { display: block; margin-bottom: 8px; font-weight: 500; }
-    input { width: 100%; padding: 14px; background: var(--card-bg); border: 1px solid var(--border); border-radius: 8px; color: var(--text); box-sizing: border-box; font-size: 1rem; }
-    .btn-large { width: 100%; padding: 16px; background: var(--accent); color: var(--bg); border: none; border-radius: 8px; font-size: 1.1rem; font-weight: bold; cursor: pointer; }
-    .daytabs { display: flex; gap: 8px; overflow-x: auto; margin-bottom: 20px; padding-bottom: 10px; }
-    .dtab { background: var(--card-bg); color: var(--text); border: 1px solid var(--border); padding: 10px 16px; border-radius: 6px; cursor: pointer; font-weight: bold; }
+    input[type="text"] { width: 100%; padding: 14px; background: var(--card-bg); border: 1px solid var(--border); border-radius: 8px; color: var(--text); box-sizing: border-box; font-size: 1rem; }
+    .btn-large { width: 100%; padding: 16px; background: var(--accent); color: var(--bg); border: none; border-radius: 8px; font-size: 1.1rem; font-weight: bold; cursor: pointer; transition: 0.2s; }
+    .btn-large:hover { opacity: 0.9; }
+
+    /* Résultats - Onglets Jours */
+    .daytabs { display: flex; gap: 8px; overflow-x: auto; margin-bottom: 20px; padding-bottom: 10px; border-bottom: 1px solid var(--border); }
+    .dtab { background: var(--card-bg); color: var(--text-muted); border: 1px solid var(--border); padding: 10px 16px; border-radius: 6px; cursor: pointer; font-weight: bold; white-space: nowrap; transition: 0.2s; }
+    .dtab:hover { color: var(--text); background: var(--panel-bg); }
+    .dtab.active { background: rgba(255,140,66,0.1); color: var(--accent); border-color: var(--accent); }
+
     .dayinfo { margin-bottom: 20px; background: rgba(255,255,255,0.03); padding: 15px; border-radius: 8px; }
-    .dayinfo-t { font-weight: bold; font-size: 1.2rem; }
+    .dayinfo-t { font-weight: bold; font-size: 1.1rem; }
+
+    /* Layout Simulateur + Contrôles */
     .clayout { display: flex; gap: 30px; flex-wrap: wrap; }
-    .phonewrap { flex: 1; min-width: 280px; max-width: 320px; }
-    .phone { background: #111; border: 12px solid #222; border-radius: 36px; height: 520px; padding: 25px; display: flex; flex-direction: column; justify-content: center; text-align: center; box-sizing: border-box; }
-    .phone-ct { font-size: 1.1rem; line-height: 1.6; white-space: pre-line; }
-    .cpanel { flex: 2; min-width: 300px; display: flex; flex-direction: column; justify-content: space-between; }
-    .cbox { background: var(--card-bg); padding: 20px; border-radius: 10px; border: 1px solid var(--border); min-height: 150px; white-space: pre-line; margin-bottom: 20px; font-size: 1.1rem; position: relative; }
-    .arow { display: flex; gap: 10px; flex-wrap: wrap; }
-    .abtn { flex: 1; min-width: 150px; padding: 14px; border-radius: 6px; border: 1px solid var(--border); background: var(--card-bg); color: var(--text); font-weight: bold; cursor: pointer; }
-    .abtn.pdf { background: #10B981; color: white; border-color: #10B981; }
     
-    /* Bouton Copier */
-    .copy-btn {
+    /* ZONE TÉLÉPHONE (Simulateur) */
+    .phonewrap { flex: 1; min-width: 300px; max-width: 320px; display: flex; flex-direction: column; align-items: center; gap: 15px; }
+    .phone { 
+      background: #111; 
+      border: 12px solid #222; 
+      border-radius: 36px; 
+      width: 100%;
+      height: 570px; /* Ratio proche de 9:16 */
+      position: relative; 
+      box-sizing: border-box; 
+      overflow: hidden; 
+      background-size: cover;
+      background-position: center;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    }
+    /* Conteneur de texte déplaçable */
+    .phone-text-container {
       position: absolute;
-      top: 10px;
-      right: 10px;
-      background: rgba(255, 255, 255, 0.1);
-      border: 1px solid var(--border);
-      color: var(--text);
-      padding: 6px 12px;
-      border-radius: 6px;
-      font-size: 0.8rem;
-      cursor: pointer;
-      font-weight: bold;
+      left: 15px;
+      right: 15px;
+      top: 50%; /* Position initiale centrée verticalement */
+      transform: translateY(-50%);
+      cursor: grab;
+      user-select: none; /* Empêche la sélection de texte pendant le drag */
+      text-align: center;
+      padding: 10px;
+      border-radius: 8px;
+      transition: background-color 0.2s; /* Pour le surligneur */
     }
-    .copy-btn.copied {
-      background: var(--success);
-      color: white;
+    .phone-text-container:active { cursor: grabbing; }
+    .phone-ct { 
+      font-size: 1.1rem; 
+      line-height: 1.5; 
+      white-space: pre-line; 
+      margin: 0;
     }
+    
+    /* Contrôles sous le téléphone */
+    .phone-controls { width: 100%; display: flex; flex-direction: column; gap: 10px; }
+    .control-row { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; }
+    .cbtn { background: var(--card-bg); border: 1px solid var(--border); color: var(--text); padding: 8px 12px; border-radius: 6px; font-size: 0.85rem; cursor: pointer; font-weight: bold; transition: 0.2s; }
+    .cbtn:hover { background: var(--panel-bg); }
+    .cbtn.active { background: var(--accent); color: var(--bg); border-color: var(--accent); }
+    .file-input { display: none; }
+
+    /* ZONE PANNEAU DE CONTRÔLE (Actions) */
+    .cpanel { flex: 2; min-width: 300px; display: flex; flex-direction: column; }
+    .cbox { background: var(--card-bg); padding: 25px; border-radius: 12px; border: 1px solid var(--border); min-height: 150px; white-space: pre-line; margin-bottom: 20px; font-size: 1.1rem; position: relative; line-height: 1.6;}
+    .action-row { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 20px;}
+    .abtn { flex: 1; min-width: 160px; padding: 14px; border-radius: 8px; border: 1px solid var(--border); background: var(--card-bg); color: var(--text); font-weight: bold; cursor: pointer; transition: 0.2s; display: flex; align-items: center; justify-content: center; gap: 8px; }
+    .abtn:hover { background: var(--panel-bg); }
+    .abtn.pdf { background: var(--success); color: white; border-color: var(--success); }
+    .abtn.pdf:hover { opacity: 0.9; }
+
+    /* Zone Actions rapides dans la CBox */
+    .cbox-actions { position: absolute; top: 15px; right: 15px; display: flex; gap: 8px; }
+    .cb-btn { background: rgba(255,255,255,0.05); border: 1px solid var(--border); color: var(--text); padding: 6px 10px; border-radius: 6px; font-size: 0.8rem; cursor: pointer; font-weight: bold; transition: 0.2s; }
+    .cb-btn:hover { background: rgba(255,255,255,0.1); }
+    .cb-btn.copied { background: var(--success); color: white; border-color: var(--success); }
+    .cb-btn.starred { background: rgba(255,215,0,0.1); color: var(--star); border-color: var(--star); }
+
+    /* PANNEAU PÉPITES */
+    #pepites-list { display: flex; flex-direction: column; gap: 15px; }
+    .pepite-item { background: var(--card-bg); border: 1px solid var(--border); border-radius: 10px; padding: 20px; position: relative; transition: 0.2s; }
+    .pepite-item:hover { border-color: rgba(255,255,255,0.1); }
+    .pepite-meta { font-size: 0.8rem; color: var(--text-muted); margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
+    .pepite-text { font-size: 1rem; line-height: 1.6; white-space: pre-line; color: var(--text); }
+    .pepite-actions { position: absolute; top: 15px; right: 15px; display: flex; gap: 8px; }
+    .empty-pepites { text-align: center; color: var(--text-muted); padding: 40px; font-style: italic; background: rgba(255,255,255,0.02); border-radius: 8px; }
 
     /* Alerte de sauvegarde */
-    .save-alert {
-      text-align: center;
-      color: var(--success);
-      font-size: 0.85rem;
-      margin-top: -15px;
-      margin-bottom: 15px;
-      opacity: 0;
-      transition: opacity 0.5s ease;
-    }
+    .save-alert { text-align: center; color: var(--success); font-size: 0.85rem; margin-top: -15px; margin-bottom: 15px; opacity: 0; transition: opacity 0.5s ease; pointer-events: none; }
     .save-alert.visible { opacity: 1; }
 
     /* STYLE DÉDIÉ À L'IMPRESSION PDF */
@@ -90,21 +141,22 @@
       body * { display: none !important; }
       #print-area { display: block !important; color: #000 !important; background: #fff !important; font-family: sans-serif !important; padding: 20px !important; }
       .print-day { margin-bottom: 30px; page-break-inside: avoid; border-bottom: 1px solid #ddd; padding-bottom: 15px; }
-      .print-title { font-size: 14px; font-weight: bold; text-transform: uppercase; margin-bottom: 10px; }
-      .print-text { font-size: 13px; line-height: 1.6; white-space: pre-line; }
+      .print-title { font-size: 14px; font-weight: bold; text-transform: uppercase; margin-bottom: 10px; color: #222; }
+      .print-text { font-size: 13px; line-height: 1.6; white-space: pre-line; color: #333; }
     }
   </style>
 </head>
 <body>
 
 <div class="container">
-  <h1>🎯 Générateur Stories Mono-Slide</h1>
-  <div class="subtitle">7 Jours • Hooks Interchangeables • Sauvegarde PDF Fiable</div>
-  <div id="save-status" class="save-alert">✓ Vos données sont sauvegardées localement</div>
+  <h1>🎯 Studio Stories Mono-Slide</h1>
+  <div class="subtitle">7 Jours • Hooks Interchangeables • Simulateur Visuel • Banque de Pépites</div>
+  <div id="save-status" class="save-alert">✓ Données synchronisées localement</div>
 
   <div class="tabs">
-    <button class="tab-btn active" id="tab-config" onclick="switchTab('config')">⚙️ Paramètres</button>
-    <button class="tab-btn" id="tab-result" onclick="switchTab('result')">📱 Mes Stories</button>
+    <button class="tab-btn active" id="tab-config" onclick="switchTab('config')">⚙️ Configuration</button>
+    <button class="tab-btn" id="tab-result" onclick="switchTab('result')">📱 Studio Création</button>
+    <button class="tab-btn" id="tab-pepites" onclick="switchTab('pepites')">⭐ Mes Pépites (<span id="pepites-count">0</span>)</button>
   </div>
 
   <div class="panel active" id="panel-config">
@@ -116,16 +168,23 @@
       <label>Ton appel à l'action (CTA)</label>
       <input type="text" id="f-cta" value="écris-moi 'GO' en DM" oninput="saveInputs()">
     </div>
-    <button class="btn-large" onclick="handleGenerate()">🚀 CRÉER MA SEMAINE DE STORIES</button>
+    <button class="btn-large" onclick="handleGenerate()">🚀 GÉNÉRER MA SEMAINE DE STORIES</button>
   </div>
 
   <div class="panel" id="panel-result"></div>
+
+  <div class="panel" id="panel-pepites">
+    <div id="pepites-list">
+      </div>
+  </div>
 </div>
 
 <div id="print-area"></div>
 
 <script>
-// La bible des Hooks (Partie A)
+// --- DONNÉES & BIBLE COPYWRITING ---
+
+// Banque de Hooks Interchangeables (Partie A)
 const HOOKS = [
   "Arrête de scroller 2 secondes ! 🛑 ", "Alerte gros ras-le-bol. 😤 ", "Regarde bien cette slide, elle est pour toi. 👀 ", 
   "Est-ce que tu t'es déjà demandé pourquoi certains réussissent si vite ? 🤔 ", "Oublie tout ce qu'on t'a dit sur la vente. 🤫 ", 
@@ -163,7 +222,7 @@ const HOOKS = [
   "Est-ce que l'investissement en vaut vraiment la peine ? 💰 ", "Brisons un énorme mythe sur l'entrepreneuriat aujourd'hui. 🔨 "
 ];
 
-// Les chutes psychologiques orientées Ventes (Partie B)
+// Corps de texte basés sur la Psychologie de Vente (Partie B)
 const BIBLE = {
   lundi: {
     theme: "LUNDI — Formule AIDA (Attention, Intérêt, Désir, Action)", color: "#FF595E",
@@ -186,7 +245,7 @@ const BIBLE = {
   jeudi: {
     theme: "JEUDI — Preuve Sociale (Biais d'Appartenance)", color: "#1982C4",
     B: [
-      "Elles ont toutes commencé au même point que toi avant d'intégrer {product}. Tu attends quoi ? {cta}.", "La méthode fonctionne pour tout le monde, pourquoi pas toi ? Rejoins {product} ! Pour postuler : {cta}.", "C'est ça la puissance d'un groupe soudé. Viens vivre l'expérience dans {product}. Curieuse ? {cta}.", "Le succès laisse des indices, suis le chemin tracé par les élèves de {product}. Pour avoir les détails : {cta}.", "Ne reste pas isolée alors que des dizaines d'autres avancent ensemble dans {product}. Rejoins-les : {cta}.", "Tu as le droit toi aussi de faire partie des success stories. Ta place t'attend dans {product}. Écris-moi : {cta}.", "C'est fou ce qu'on peut accomplir quand on a le bon entourage. Trouve le tien dans {product}. Pour me joindre : {cta}.", "La preuve est sous tes yeux tous les jours. Saute le pas et rejoins {product}. Une seule chose à faire : {cta}.", "Fais confiance au process qui a déjà changé la vie de tant de femmes. Intègre {product} ! Dis-le moi ici : {cta}.", "Prête à écrire ta propre histoire à succès aux côtés des autres ? Tout commence dans {product}. {cta}."
+      "Elles ont toutes commencé au même point que toi avant d'intégrer {product}. Tu attends quoi ? {cta}.", "La méthode fonctionne pour tout le monde, pourquoi pas pour toi ? Rejoins {product} ! Pour postuler : {cta}.", "C'est ça la puissance d'un groupe soudé. Viens vivre l'expérience dans {product}. Curieuse ? {cta}.", "Le succès laisse des indices, suis le chemin tracé par les élèves de {product}. Pour avoir les détails : {cta}.", "Ne reste pas isolée alors que des dizaines d'autres avancent ensemble dans {product}. Rejoins-les : {cta}.", "Tu as le droit toi aussi de faire partie des success stories. Ta place t'attend dans {product}. Écris-moi : {cta}.", "C'est fou ce qu'on peut accomplir quand on a le bon entourage. Trouve le tien dans {product}. Pour me joindre : {cta}.", "La preuve est sous tes yeux tous les jours. Saute le pas et rejoins {product}. Une seule chose à faire : {cta}.", "Fais confiance au process qui a déjà changé la vie de tant de femmes. Intègre {product} ! Dis-le moi ici : {cta}.", "Prête à écrire ta propre histoire à succès aux côtés des autres ? Tout commence dans {product}. {cta}."
     ]
   },
   vendredi: {
@@ -209,6 +268,8 @@ const BIBLE = {
   }
 };
 
+// --- MOTEUR & ÉTATS (Fonctions Globales) ---
+
 const pick = a => a[Math.floor(Math.random() * a.length)];
 const esc = s => {const d = document.createElement('div'); d.textContent = s || ''; return d.innerHTML};
 
@@ -218,17 +279,26 @@ function fill(s, c) {
     .replace(/\{cta\}/g, c.cta || 'Écris-moi en DM');
 }
 
-let strategy = null;
-let activeDay = "lundi";
+let strategy = null; // Stocke les stories générées de la semaine
+let activeDay = "lundi"; // Jour affiché actuellement dans le studio
+let pepites = []; // Banque des favoris archivés
 
-function switchTab(tab) {
-  document.getElementById('tab-config').classList.toggle('active', tab === 'config');
-  document.getElementById('tab-result').classList.toggle('active', tab === 'result');
-  document.getElementById('panel-config').classList.toggle('active', tab === 'config');
-  document.getElementById('panel-result').classList.toggle('active', tab === 'result');
-  if (tab === 'result') renderResult();
+// Gestion des onglets principaux
+function switchTab(tabId) {
+  // Désactiver tous les onglets et panneaux
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  
+  // Activer le bon onglet et panneau
+  document.getElementById(`tab-${tabId}`).classList.add('active');
+  document.getElementById(`panel-${tabId}`).classList.add('active');
+  
+  // Actions spécifiques au chargement de l'onglet
+  if (tabId === 'result') renderResult();
+  if (tabId === 'pepites') renderPepitesList();
 }
 
+// Génération de la semaine complète
 function handleGenerate() {
   const cfg = { 
     productName: document.getElementById('f-product').value.trim(), 
@@ -244,7 +314,10 @@ function handleGenerate() {
       theme: data.theme,
       color: data.color,
       hook: pick(HOOKS),
-      body: pick(data.B)
+      body: pick(data.B),
+      yPos: 50, // Position verticale initiale (%) pour le simulateur
+      textColor: '#ffffff', // Couleur texte initiale
+      textBg: false // Surligneur initial désactivé
     };
   });
 
@@ -252,6 +325,215 @@ function handleGenerate() {
   saveToLocalStorage();
   switchTab('result');
 }
+
+function setDay(j) { activeDay = j; renderResult(); }
+
+// Sauvegarde automatique des inputs dans LocalStorage
+function saveInputs() {
+  localStorage.setItem('studio_productName', document.getElementById('f-product').value);
+  localStorage.setItem('studio_cta', document.getElementById('f-cta').value);
+  showSaveStatus();
+}
+
+// Sauvegarde complète de l'état (stratégie + inputs)
+function saveToLocalStorage() {
+  if (strategy) localStorage.setItem('studio_strategy', JSON.stringify(strategy));
+  localStorage.setItem('studio_activeDay', activeDay);
+  localStorage.setItem('studio_pepites', JSON.stringify(pepites));
+  saveInputs();
+}
+
+// Chargement au démarrage
+function loadFromLocalStorage() {
+  // Charger inputs
+  if (localStorage.getItem('studio_productName')) document.getElementById('f-product').value = localStorage.getItem('studio_productName');
+  if (localStorage.getItem('studio_cta')) document.getElementById('f-cta').value = localStorage.getItem('studio_cta');
+  
+  // Charger Pépites
+  if (localStorage.getItem('studio_pepites')) {
+    pepites = JSON.parse(localStorage.getItem('studio_pepites'));
+    updatePepitesCount();
+  }
+
+  // Charger Stratégie de la semaine
+  if (localStorage.getItem('studio_strategy')) {
+    strategy = JSON.parse(localStorage.getItem('studio_strategy'));
+    if (localStorage.getItem('studio_activeDay')) activeDay = localStorage.getItem('studio_activeDay');
+    switchTab('result'); // Aller direct au studio si données existantes
+  }
+}
+
+function showSaveStatus() {
+  const s = document.getElementById('save-status');
+  s.classList.add('visible');
+  setTimeout(() => s.classList.remove('visible'), 2000);
+}
+
+// Initialisation au chargement de la page
+window.onload = loadFromLocalStorage;
+
+</script>
+
+<script>
+// --- MODULE : STUDIO & SIMULATEUR (POINT 1) ---
+
+function renderResult() {
+  const p = document.getElementById('panel-result');
+  if (!strategy) {
+    p.innerHTML = `<div style="text-align:center; color:var(--text-muted); padding:40px;">⚠️ Génère ta semaine dans l'onglet Configuration pour activer le Studio.</div>`;
+    return;
+  }
+  
+  const d = strategy[activeDay];
+  const ac = d.color;
+  const cfg = { productName: document.getElementById('f-product').value, cta: document.getElementById('f-cta').value };
+  const fullText = d.hook + fill(d.body, cfg);
+  
+  // Vérifier si la story est déjà dans les pépites
+  const isStarred = pepites.some(p => p.text === fullText);
+
+  p.innerHTML = `
+    <div class="daytabs">
+      ${Object.keys(strategy).map(j => `
+        <button class="dtab ${activeDay === j ? 'active' : ''}" onclick="setDay('${j}')">
+          ${j.charAt(0).toUpperCase() + j.slice(1)}
+        </button>
+      `).join('')}
+    </div>
+    
+    <div class="dayinfo"><span class="dayinfo-t" style="color:${ac}">${d.theme}</span></div>
+    
+    <div class="clayout">
+      <div class="phonewrap">
+        <div id="phone-sim" class="phone" style="background-image: url('${d.bgImage || ''}');">
+          <div id="phone-text-container" class="phone-text-container" 
+               style="top: ${d.yPos}%; color: ${d.textColor}; background-color: ${d.textBg ? 'rgba(0,0,0,0.6)' : 'transparent'};"
+               onmousedown="startDrag(event)" ontouchstart="startDrag(event)">
+            <p class="phone-ct">${esc(fullText)}</p>
+          </div>
+        </div>
+        
+        <div class="phone-controls">
+          <div class="control-row">
+            <button class="cbtn" onclick="document.getElementById('bgUpload').click()">🖼️ Fond</button>
+            <input type="file" id="bgUpload" class="file-input" accept="image/*" onchange="handleBgUpload(this)">
+            ${d.bgImage ? `<button class="cbtn" onclick="removeBg()">🗑️</button>` : ''}
+          </div>
+          <div class="control-row">
+            <button class="cbtn ${d.textColor === '#ffffff' ? 'active' : ''}" onclick="setTextStyle('#ffffff', ${d.textBg})">⚪ Blanc</button>
+            <button class="cbtn ${d.textColor === '#000000' ? 'active' : ''}" onclick="setTextStyle('#000000', ${d.textBg})">⚫ Noir</button>
+            <button class="cbtn ${d.textBg ? 'active' : ''}" onclick="setTextStyle('${d.textColor}', !${d.textBg})">🅰️ Surligner</button>
+          </div>
+          <div style="text-align:center; font-size:0.8rem; color:var(--text-muted);">↔️ Glisse le texte verticalement</div>
+        </div>
+      </div>
+      
+      <div class="cpanel">
+        <div class="cbox">
+          <div class="cbox-actions">
+            <button class="cb-btn ${isStarred ? 'starred' : ''}" onclick="togglePepite()">${isStarred ? '⭐' : '☆'}</button>
+            <button class="cb-btn" onclick="copyText(this)">📋 Copier</button>
+          </div>
+          <span id="text-to-copy">${esc(fullText)}</span>
+        </div>
+        
+        <div class="action-row">
+          <button class="abtn" onclick="regenHookOnly('${activeDay}')" style="color:${ac};">🪝 Changer Hook</button>
+          <button class="abtn" onclick="regenDay('${activeDay}')" style="color:${ac};">🔄 Tout recalculer</button>
+        </div>
+        <button class="abtn pdf" onclick="exportPDF()">📄 Sauvegarder ma semaine en PDF</button>
+      </div>
+    </div>
+  `;
+}
+
+// --- LOGIQUE SIMULATEUR (Drag, Style, Upload) ---
+
+let isDragging = false;
+let startY;
+let startYPercent;
+
+function startDrag(e) {
+  isDragging = true;
+  const container = document.getElementById('phone-text-container');
+  const simHeight = document.getElementById('phone-sim').offsetHeight;
+  
+  // Gestion souris vs tactile
+  const pageY = e.pageY || e.touches[0].pageY;
+  
+  startY = pageY - container.offsetTop;
+  
+  // Ajouter les écouteurs d'événements globaux
+  document.addEventListener('mousemove', drag);
+  document.addEventListener('mouseup', stopDrag);
+  document.addEventListener('touchmove', drag, { passive: false });
+  document.addEventListener('touchend', stopDrag);
+  
+  e.preventDefault(); // Empêche scroll tactile
+}
+
+function drag(e) {
+  if (!isDragging) return;
+  
+  const sim = document.getElementById('phone-sim');
+  const container = document.getElementById('phone-text-container');
+  const pageY = e.pageY || e.touches[0].pageY;
+  
+  let newY = pageY - startY;
+  
+  // Contraintes (ne pas sortir du téléphone, en tenant compte du padding de sécurité)
+  const padding = 20;
+  const minY = padding + container.offsetHeight / 2;
+  const maxY = sim.offsetHeight - padding - container.offsetHeight / 2;
+  
+  newY = Math.max(minY, Math.min(newY, maxY));
+  
+  // Convertir en pourcentage pour la sauvegarde
+  const yPercent = (newY / sim.offsetHeight) * 100;
+  container.style.top = yPercent + '%';
+  strategy[activeDay].yPos = yPercent; // Enregistrer position
+  
+  if(e.type === 'touchmove') e.preventDefault(); // Empêche scroll
+}
+
+function stopDrag() {
+  if(isDragging) {
+    isDragging = false;
+    saveToLocalStorage(); // Sauvegarder la nouvelle position
+    // Retirer les écouteurs
+    document.removeEventListener('mousemove', drag);
+    document.removeEventListener('mouseup', stopDrag);
+    document.removeEventListener('touchmove', drag);
+    document.removeEventListener('touchend', stopDrag);
+  }
+}
+
+function handleBgUpload(input) {
+  if (input.files && input.files[0]) {
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      strategy[activeDay].bgImage = e.target.result;
+      saveToLocalStorage();
+      renderResult();
+    }
+    reader.readAsDataURL(input.files[0]);
+  }
+}
+
+function removeBg() {
+  strategy[activeDay].bgImage = null;
+  saveToLocalStorage();
+  renderResult();
+}
+
+function setTextStyle(color, hasBg) {
+  strategy[activeDay].textColor = color;
+  strategy[activeDay].textBg = hasBg;
+  saveToLocalStorage();
+  renderResult();
+}
+
+// --- LOGIQUE ACTIONS (Recalcul, Copier) ---
 
 function regenDay(j) {
   if (!strategy) return;
@@ -269,53 +551,6 @@ function regenHookOnly(j) {
   renderResult();
 }
 
-function setDay(j) { activeDay = j; renderResult(); }
-
-function renderResult() {
-  const p = document.getElementById('panel-result');
-  if (!strategy) return;
-  
-  const d = strategy[activeDay];
-  const ac = d.color;
-  const cfg = { 
-    productName: document.getElementById('f-product').value, 
-    cta: document.getElementById('f-cta').value 
-  };
-  
-  const fullText = d.hook + fill(d.body, cfg);
-  
-  p.innerHTML = `
-    <div class="daytabs">
-      ${Object.keys(strategy).map(j => `
-        <button class="dtab" onclick="setDay('${j}')" style="${activeDay === j ? `border-color:${strategy[j].color}; background:${strategy[j].color}15; color:${strategy[j].color};` : ''}">
-          ${j.charAt(0).toUpperCase() + j.slice(1)}
-        </button>
-      `).join('')}
-    </div>
-    <div class="dayinfo"><span class="dayinfo-t" style="color:${ac}">${d.theme}</span></div>
-    <div class="clayout">
-      <div class="phonewrap">
-        <div class="phone">
-          <div class="phone-ct">${esc(fullText)}</div>
-        </div>
-      </div>
-      <div class="cpanel">
-        <div>
-          <div class="cbox">
-            <button class="copy-btn" onclick="copyText(this)">📋 Copier</button>
-            <span id="text-to-copy">${esc(fullText)}</span>
-          </div>
-        </div>
-        <div class="arow">
-          <button class="abtn" onclick="regenHookOnly('${activeDay}')" style="border-color:${ac}; color:${ac};">🪝 Changer juste le Hook</button>
-          <button class="abtn" onclick="regenDay('${activeDay}')" style="border-color:${ac}; color:${ac};">🔄 Tout recalculer</button>
-          <button class="abtn pdf" onclick="exportPDF()">📄 Sauvegarder en PDF</button>
-        </div>
-      </div>
-    </div>
-  `;
-}
-
 function copyText(btn) {
   const text = document.getElementById('text-to-copy').innerText;
   navigator.clipboard.writeText(text).then(() => {
@@ -327,57 +562,100 @@ function copyText(btn) {
     }, 2000);
   });
 }
+</script>
 
-function saveInputs() {
-  localStorage.setItem('mono_productName', document.getElementById('f-product').value);
-  localStorage.setItem('mono_cta', document.getElementById('f-cta').value);
-  showSaveAlert();
+<script>
+// --- MODULE : ARCHIVE PÉPITES (POINT 4) ---
+
+function updatePepitesCount() {
+  document.getElementById('pepites-count').innerText = pepites.length;
 }
 
-function saveToLocalStorage() {
+function togglePepite() {
   if (!strategy) return;
-  localStorage.setItem('mono_strategy', JSON.stringify(strategy));
-  localStorage.setItem('mono_activeDay', activeDay);
-  saveInputs();
+  
+  const d = strategy[activeDay];
+  const cfg = { productName: document.getElementById('f-product').value, cta: document.getElementById('f-cta').value };
+  const fullText = d.hook + fill(d.body, cfg);
+  
+  const index = pepites.findIndex(p => p.text === fullText);
+  
+  if (index > -1) {
+    // Retirer des pépites
+    pepites.splice(index, 1);
+  } else {
+    // Ajouter aux pépites
+    pepites.unshift({
+      text: fullText,
+      date: new Date().toLocaleDateString('fr-FR', {day: 'numeric', month: 'short'}),
+      method: d.theme.split('—')[1].split('(')[0].trim() // Extraire juste le nom de la méthode
+    });
+  }
+  
+  updatePepitesCount();
+  saveToLocalStorage();
+  renderResult(); // Pour mettre à jour l'étoile
 }
 
-function showSaveAlert() {
-  const alertBox = document.getElementById('save-status');
-  alertBox.classList.add('visible');
-  setTimeout(() => alertBox.classList.remove('visible'), 2000);
+function renderPepitesList() {
+  const list = document.getElementById('pepites-list');
+  if (pepites.length === 0) {
+    list.innerHTML = `<div class="empty-pepites">☆ Tes stories préférées apparaîtront ici quand tu cliqueras sur l'étoile dans le Studio.</div>`;
+    return;
+  }
+  
+  list.innerHTML = pepites.map((p, index) => `
+    <div class="pepite-item">
+      <div class="pepite-meta">
+        <span>📅 ${p.date}</span>
+        <span>🧠 ${p.method}</span>
+      </div>
+      <p class="pepite-text" id="pepite-text-${index}">${esc(p.text)}</p>
+      <div class="pepite-actions">
+        <button class="cb-btn" onclick="copyPepite(${index}, this)">📋 Copier</button>
+        <button class="cb-btn" onclick="deletePepite(${index})">🗑️</button>
+      </div>
+    </div>
+  `).join('');
 }
 
-function loadFromLocalStorage() {
-  const savedProduct = localStorage.getItem('mono_productName');
-  const savedCta = localStorage.getItem('mono_cta');
-  const savedStrategy = localStorage.getItem('mono_strategy');
-  const savedDay = localStorage.getItem('mono_activeDay');
+function copyPepite(index, btn) {
+  const text = document.getElementById(`pepite-text-${index}`).innerText;
+  navigator.clipboard.writeText(text).then(() => {
+    btn.innerText = "✓ Copié !";
+    btn.classList.add('copied');
+    setTimeout(() => {
+      btn.innerText = "📋 Copier";
+      btn.classList.remove('copied');
+    }, 2000);
+  });
+}
 
-  if (savedProduct) document.getElementById('f-product').value = savedProduct;
-  if (savedCta) document.getElementById('f-cta').value = savedCta;
-
-  if (savedStrategy) {
-    strategy = JSON.parse(savedStrategy);
-    if (savedDay) activeDay = savedDay;
-    switchTab('result');
+function deletePepite(index) {
+  if(confirm("Supprimer cette pépite définitivement ?")) {
+    pepites.splice(index, 1);
+    saveToLocalStorage();
+    updatePepitesCount();
+    renderPepitesList();
   }
 }
+</script>
+
+<script>
+// --- MODULE : EXPORT PRINT/PDF (Fiabilisé) ---
 
 function exportPDF() {
   if (!strategy) return;
   const printArea = document.getElementById('print-area');
-  const cfg = { 
-    productName: document.getElementById('f-product').value, 
-    cta: document.getElementById('f-cta').value 
-  };
+  const cfg = { productName: document.getElementById('f-product').value, cta: document.getElementById('f-cta').value };
   
-  let html = `<h1 style="text-align:center; margin-bottom:30px;">Ma Semaine de Stories Copywriting</h1>`;
+  let html = `<h1 style="text-align:center; margin-bottom:30px; font-family:sans-serif;">Ma Semaine de Stories Copywriting</h1>`;
   
   Object.keys(strategy).forEach(j => {
     const d = strategy[j];
     const fullText = d.hook + fill(d.body, cfg);
     html += `
-      <div class="print-day">
+      <div class="print-day" style="border-left: 5px solid ${d.color}; padding-left: 15px;">
         <div class="print-title" style="color:${d.color}">${d.theme}</div>
         <div class="print-text">${fullText}</div>
       </div>
@@ -385,11 +663,8 @@ function exportPDF() {
   });
   
   printArea.innerHTML = html;
-  window.print();
+  window.print(); // Ouvre la boîte de dialogue d'impression native
 }
-
-// Charger les données dès l'ouverture de la page
-window.onload = loadFromLocalStorage;
 </script>
 
 </body>
