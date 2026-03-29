@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Générateur Stories Mono-Slide (7 Jours - 100 Combinaisons)</title>
+  <title>Générateur Stories Mono-Slide Pro</title>
   <style>
     :root {
       --bg: #0c0c10;
@@ -13,6 +13,7 @@
       --text: #f5f0e8;
       --text-muted: #8a8aa3;
       --border: #2a2a3a;
+      --success: #10B981;
     }
     body {
       font-family: 'Inter', -apple-system, sans-serif;
@@ -47,11 +48,42 @@
     .phone { background: #111; border: 12px solid #222; border-radius: 36px; height: 520px; padding: 25px; display: flex; flex-direction: column; justify-content: center; text-align: center; box-sizing: border-box; }
     .phone-ct { font-size: 1.1rem; line-height: 1.6; white-space: pre-line; }
     .cpanel { flex: 2; min-width: 300px; display: flex; flex-direction: column; justify-content: space-between; }
-    .cbox { background: var(--card-bg); padding: 20px; border-radius: 10px; border: 1px solid var(--border); min-height: 150px; white-space: pre-line; margin-bottom: 20px; font-size: 1.1rem; }
+    .cbox { background: var(--card-bg); padding: 20px; border-radius: 10px; border: 1px solid var(--border); min-height: 150px; white-space: pre-line; margin-bottom: 20px; font-size: 1.1rem; position: relative; }
     .arow { display: flex; gap: 10px; flex-wrap: wrap; }
     .abtn { flex: 1; min-width: 150px; padding: 14px; border-radius: 6px; border: 1px solid var(--border); background: var(--card-bg); color: var(--text); font-weight: bold; cursor: pointer; }
     .abtn.pdf { background: #10B981; color: white; border-color: #10B981; }
     
+    /* Bouton Copier */
+    .copy-btn {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 0.8rem;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    .copy-btn.copied {
+      background: var(--success);
+      color: white;
+    }
+
+    /* Alerte de sauvegarde */
+    .save-alert {
+      text-align: center;
+      color: var(--success);
+      font-size: 0.85rem;
+      margin-top: -15px;
+      margin-bottom: 15px;
+      opacity: 0;
+      transition: opacity 0.5s ease;
+    }
+    .save-alert.visible { opacity: 1; }
+
     /* STYLE DÉDIÉ À L'IMPRESSION PDF */
     #print-area { display: none; }
     @media print {
@@ -67,7 +99,8 @@
 
 <div class="container">
   <h1>🎯 Générateur Stories Mono-Slide</h1>
-  <div class="subtitle">7 Jours • 100 Combinaisons par jour • Sauvegarde PDF Fiable</div>
+  <div class="subtitle">7 Jours • Hooks Interchangeables • Sauvegarde PDF Fiable</div>
+  <div id="save-status" class="save-alert">✓ Vos données sont sauvegardées localement</div>
 
   <div class="tabs">
     <button class="tab-btn active" id="tab-config" onclick="switchTab('config')">⚙️ Paramètres</button>
@@ -77,11 +110,11 @@
   <div class="panel active" id="panel-config">
     <div class="form-group">
       <label>Nom de ton produit ou service</label>
-      <input type="text" id="f-product" value="mon programme">
+      <input type="text" id="f-product" value="mon programme" oninput="saveInputs()">
     </div>
     <div class="form-group">
       <label>Ton appel à l'action (CTA)</label>
-      <input type="text" id="f-cta" value="écris-moi 'GO' en DM">
+      <input type="text" id="f-cta" value="écris-moi 'GO' en DM" oninput="saveInputs()">
     </div>
     <button class="btn-large" onclick="handleGenerate()">🚀 CRÉER MA SEMAINE DE STORIES</button>
   </div>
@@ -92,66 +125,84 @@
 <div id="print-area"></div>
 
 <script>
+// La bible des Hooks (Partie A)
+const HOOKS = [
+  "Arrête de scroller 2 secondes ! 🛑 ", "Alerte gros ras-le-bol. 😤 ", "Regarde bien cette slide, elle est pour toi. 👀 ", 
+  "Est-ce que tu t'es déjà demandé pourquoi certains réussissent si vite ? 🤔 ", "Oublie tout ce qu'on t'a dit sur la vente. 🤫 ", 
+  "Avis aux entrepreneures déterminées : 📣 ", "Lis bien ce qui va suivre si tu veux passer un cap. 🚀 ", 
+  "Stop au syndrome de l'imposteur ! 🧠 ", "Je n'ai jamais partagé ça ici... 🤭 ", "C'est le moment d'être 100% honnête avec toi-même. 🎯 ",
+  "Tu passes tes journées à courir partout sans voir de vrais résultats ? 🏃‍♀️ ", "Encore une fin de mois stressante à te demander où trouver des clients ? 📉 ", 
+  "Marre de passer 3 heures à créer du contenu qui ne te rapporte rien ? 📱 ", "Tu te sens complètement bloquée et invisible sur les réseaux ? 👻 ", 
+  "Ton agenda déborde mais ton compte en banque stagne ? 💸 ", "Tu as l'impression de t'éparpiller et de brasser du vent ? 🌪️ ", 
+  "Le syndrome de la page blanche te paralyse chaque matin ? 📝 ", "Tu vends ton temps mais tu n'as plus aucune vie perso ? ⏳ ", 
+  "Honnêtement, tu n'en as pas marre de stagner au même niveau ? 🛑 ", "Si tu as la boule au ventre avant d'ouvrir ton calendrier le lundi... 🗓️ ",
+  "Tic-tac... les portes se ferment ce soir à minuit ! ⏳ ", "Dernier appel pour celles qui veulent transformer leur année ! 📣 ", 
+  "Il ne reste plus que 2 places disponibles pour cette session. 🚨 ", "C'est maintenant ou jamais pour nous rejoindre. 🚪 ", 
+  "Je ne proposerai plus cette offre avant plusieurs mois. 🛑 ", "Regarde autour de toi, le train est en train de partir. 🚂 ", 
+  "Les plus déterminées sont déjà passées à l'action. Et toi ? 💨 ", "Dernière chance d'accéder à ce tarif exclusif ! 💎 ", 
+  "J'arrête définitivement les prises en charge cette semaine. ⚠️ ", "Attention, l'accès à ce groupe est ultra-limité ! 🔒 ",
+  "Elles l'ont fait, pourquoi pas toi ? 👭 ", "Encore une pluie de résultats incroyables cette semaine ! 🌧️✨ ", 
+  "Quand mes clientes m'envoient ce genre de messages, j'en ai des frissons ! 🥺 ", "Plus de 100 entrepreneures ont déjà validé cette méthode. 💯 ", 
+  "Ce n'est plus une théorie, c'est prouvé par mes élèves sur le terrain ! 📊 ", "Regarde la story précédente pour voir le résultat d'une de mes élèves. 📸 ", 
+  "La communauté s'agrandit et les succès s'enchaînent ! 🚀 ", "Le point commun entre toutes les femmes qui cartonnent chez moi ? 🧠 ", 
+  "C'est le plus beau compliment qu'on pouvait me faire ce matin ! 💌 ", "Arrête d'essayer de réinventer la roue toute seule dans ton coin. 🎡 ",
+  "Imagine passer d'un agenda saturé à seulement 4h de focus par jour... 🧘‍♀️ ", "Imagine ne plus jamais avoir à prospecter dans le vide... 🎯 ", 
+  "Passer de 0 à tes premiers 5k€ par mois, c'est possible. 📈 ", "De la peur de vendre à l'excitation de closer des contrats premium... 🤝 ", 
+  "Fini le stress des fins de mois, place à la sérénité financière. 💸 ", "Imagine avoir une file d'attente de clients qui veulent bosser avec toi... 🚶‍♂️🚶‍♀️ ", 
+  "Passer du statut de 'freelance épuisée' à 'chef d'entreprise libre'... 👑 ", "Oublie la création de contenu épuisante, place à la stratégie minimaliste. 🧠 ", 
+  "Imagine te réveiller chaque matin avec une vision claire et précise... 🌅 ", "Passer d'une offre que personne ne comprend à un best-seller évident... 📦 ",
+  "Il y a un an jour pour jour, j'étais en larmes devant mon écran... 😢 ", "J'ai failli tout envoyer valser pour reprendre un job salarié... 💼 ", 
+  "Si on m'avait dit que je vivrais de ma passion aujourd'hui, je n'y aurais pas cru. ✨ ", "J'ai fait une erreur de débutante qui m'a coûté très cher... 📉 ", 
+  "Le jour où j'ai compris que je faisais fausse route... 💡 ", "Mon entourage m'a dit que j'étais folle de me lancer. 🗣️ ", 
+  "J'ai passé des nuits blanches à essayer de tout comprendre toute seule. 🌙 ", "La vérité sur mes débuts que je n'ai jamais racontée... 🤫 ", 
+  "J'ai cru que la réussite n'était réservée qu'aux autres. 🏆 ", "Voici l'histoire de la plus grosse claque de ma vie d'entrepreneure. 💥 ",
+  "Non, tu n'as pas besoin d'avoir 10k abonnés pour réussir ! ❌ ", "On me demande souvent s'il faut déjà avoir une offre prête... 🤔 ", 
+  "Est-ce que c'est trop tard pour te lancer cette année ? 📅 ", "Tu as peur de ne pas avoir assez de temps à y consacrer ? ⏳ ", 
+  "Tu penses que le marché est déjà trop saturé ? 🌊 ", "La question qui revient 10 fois par jour dans mes DM : 📥 ", 
+  "C'est quoi la différence entre ma méthode et les autres ? 🔍 ", "Tu penses que ce n'est pas pour toi parce que tu débutes ? 👶 ", 
+  "Est-ce que l'investissement en vaut vraiment la peine ? 💰 ", "Brisons un énorme mythe sur l'entrepreneuriat aujourd'hui. 🔨 "
+];
+
+// Les chutes psychologiques orientées Ventes (Partie B)
 const BIBLE = {
   lundi: {
     theme: "LUNDI — Formule AIDA (Attention, Intérêt, Désir, Action)", color: "#FF595E",
-    A: [
-      "Arrête de scroller 2 secondes ! 🛑 ", "Alerte gros ras-le-bol. 😤 ", "Regarde bien cette slide, elle est pour toi. 👀 ", "Est-ce que tu t'es déjà demandé pourquoi certains réussissent si vite ? 🤔 ", "Oublie tout ce qu'on t'a dit sur la vente. 🤫 ", "Avis aux entrepreneures déterminées : 📣 ", "Lis bien ce qui va suivre si tu veux passer un cap. 🚀 ", "Stop au syndrome de l'imposteur ! 🧠 ", "Je n'ai jamais partagé ça ici... 🤭 ", "C'est le moment d'être 100% honnête avec toi-même. 🎯 "
-    ],
     B: [
       "Tu mérites un business fluide. C'est exactement ce qu'on fait dans {product}. Prête à changer ? Alors {cta} !", "Si tu veux doubler tes résultats sans travailler plus, {product} est fait pour toi. Envie de voir comment ? Simple : {cta}.", "J'ai créé une méthode pour automatiser ta liberté. Tout est dans {product}. Si tu es motivée, {cta}.", "La seule chose qui te sépare de ton objectif, c'est un bon système. C'est ce qu'on bâtit dans {product}. Pour postuler : {cta}.", "Avoir des prospects qui viennent à toi au lieu de courir après eux ? C'est possible avec {product}. Tu veux savoir comment ? {cta} !", "Tu as le droit d'avoir du temps libre ET de l'argent. Clique sur {product}. Pour démarrer dès lundi : {cta}.", "Arrêtons les détours. Tu veux des résultats ? Rejoins {product}. Ne perds plus de temps, {cta}.", "C'est mathématique : meilleure structure = plus de ventes. C'est la promesse de {product}. Si tu y crois, {cta}.", "Imagine ton planning libéré de 10h par semaine. C'est l'effet {product}. Envie d'essayer ? {cta}.", "Ne subis pas ton quotidien d'entrepreneure. Passe au niveau supérieur grâce à {product}. Fais le premier pas et {cta}."
     ]
   },
   mardi: {
     theme: "MARDI — Formule PAS (Problème, Agitation, Solution)", color: "#FFCA3A",
-    A: [
-      "Tu passes tes journées à courir partout sans voir de vrais résultats ? 🏃‍♀️ ", "Encore une fin de mois stressante à te demander où trouver des clients ? 📉 ", "Marre de passer 3 heures à créer du contenu qui ne te rapporte rien ? 📱 ", "Tu te sens complètement bloquée et invisible sur les réseaux ? 👻 ", "Ton agenda déborde mais ton compte en banque stagne ? 💸 ", "Tu as l'impression de t'éparpiller et de brasser du vent ? 🌪️ ", "Le syndrome de la page blanche te paralyse chaque matin ? 📝 ", "Tu vends ton temps mais tu n'as plus aucune vie perso ? ⏳ ", "Honnêtement, tu n'en as pas marre de stagner au même niveau ? 🛑 ", "Si tu as la boule au ventre avant d'ouvrir ton calendrier le lundi... 🗓️ "
-    ],
     B: [
       "C'est parce qu'il te manque une structure. C'est ce qu'on règle ensemble dans {product}. Marre de galérer ? {cta}.", "Le problème n'est pas ton offre, c'est ton process. Avec {product}, on remet tout à plat. Pour en discuter : {cta}.", "Ce n'est pas une fatalité. J'ai créé {product} pour t'enlever ce poids des épaules. Prête pour le déclic ? {cta}.", "Tu n'as pas besoin de travailler plus, juste plus intelligemment. Découvre la méthode {product} ! Envoie-moi un message : {cta}.", "Arrête de t'épuiser. Il existe un raccourci et il s'appelle {product}. Si tu veux voir les coulisses : {cta}.", "J'ai vécu ça aussi avant de trouver LA solution. Tout est condensé dans {product}. Pour sortir du tunnel : {cta}.", "Reprends enfin le contrôle de ton business et de ta vie grâce à {product}. Ne reste pas seule, {cta}.", "Il est temps d'automatiser ce qui te bouffe ton énergie. {product} s'occupe de tout. Tu veux la démo ? {cta}.", "Passe de l'épuisement à la sérénité en appliquant les hacks de {product}. Intéressée ? {cta}.", "Ne laisse pas ton rêve devenir ta prison dorée. Rejoins {product} et respire. Pour me joindre : {cta}."
     ]
   },
   mercredi: {
     theme: "MERCREDI — Formule FOMO (Urgence & Rareté)", color: "#8AC926",
-    A: [
-      "Tic-tac... les portes se ferment ce soir à minuit ! ⏳ ", "Dernier appel pour celles qui veulent transformer leur année ! 📣 ", "Il ne reste plus que 2 places disponibles pour cette session. 🚨 ", "C'est maintenant ou jamais pour nous rejoindre. 🚪 ", "Je ne proposerai plus cette offre avant plusieurs mois. 🛑 ", "Regarde autour de toi, le train est en train de partir. 🚂 ", "Les plus déterminées sont déjà passées à l'action. Et toi ? 💨 ", "Dernière chance d'accéder à ce tarif exclusif ! 💎 ", "J'arrête définitivement les prises en charge cette semaine. ⚠️ ", "Attention, l'accès à ce groupe est ultra-limité ! 🔒 "
-    ],
     B: [
       "Ne regrette pas demain de ne pas avoir sauté le pas aujourd'hui. {product} t'attend. Pour sécuriser ta place : {cta}.", "C'est le moment de prendre une vraie décision pour ton avenir. Embarque dans {product} dès maintenant ! {cta}.", "Arrête de procrastiner ton succès. Tout se passe dans {product}. Fais vite et {cta}.", "La balle est dans ton camp. Rejoins la meute dans {product} avant qu'il ne soit trop tard ! Pour t'inscrire : {cta}.", "Tu sais au fond de toi que c'est ce dont tu as besoin. Ne rate pas {product}. Envoie-moi un message : {cta}.", "Le groupe est presque au complet et l'énergie va être folle. Prends ta place dans {product} ! Écris vite : {cta}.", "N'attends pas le 'bon moment', il n'existe pas. Le moment c'est maintenant avec {product}. Dis-moi si tu viens : {cta}.", "C'est ton dernier rappel amical avant la fermeture. Accède à {product} sans attendre. Fonce et {cta}.", "La question n'est pas de savoir si ça marche, mais si TU es prête. Rejoins {product} ! On commence bientôt : {cta}.", "Fais partie des entrepreneures qui agissent. Clique et réserve ton accès à {product}. Une seule action : {cta}."
     ]
   },
   jeudi: {
     theme: "JEUDI — Preuve Sociale (Biais d'Appartenance)", color: "#1982C4",
-    A: [
-      "Elles l'ont fait, pourquoi pas toi ? 👭 ", "Encore une pluie de résultats incroyables cette semaine ! 🌧️✨ ", "Quand mes clientes m'envoient ce genre de messages, j'en ai des frissons ! 🥺 ", "Plus de 100 entrepreneures ont déjà validé cette méthode. 💯 ", "Ce n'est plus une théorie, c'est prouvé par mes élèves sur le terrain ! 📊 ", "Regarde la story précédente pour voir le résultat d'une de mes élèves. 📸 ", "La communauté s'agrandit et les succès s'enchaînent ! 🚀 ", "Le point commun entre toutes les femmes qui cartonnent chez moi ? 🧠 ", "C'est le plus beau compliment qu'on pouvait me faire ce matin ! 💌 ", "Arrête d'essayer de réinventer la roue toute seule dans ton coin. 🎡 "
-    ],
     B: [
-      "Elles ont toutes commencé au même point que toi avant d'intégrer {product}. Tu attends quoi ? {cta}.", "La méthode fonctionne pour tout le monde, pourquoi pas pour toi ? Rejoins {product} ! Pour postuler : {cta}.", "C'est ça la puissance d'un groupe soudé. Viens vivre l'expérience dans {product}. Curieuse ? {cta}.", "Le succès laisse des indices, suis le chemin tracé par les élèves de {product}. Pour avoir les détails : {cta}.", "Ne reste pas isolée alors que des dizaines d'autres avancent ensemble dans {product}. Rejoins-les : {cta}.", "Tu as le droit toi aussi de faire partie des success stories. Ta place t'attend dans {product}. Écris-moi : {cta}.", "C'est fou ce qu'on peut accomplir quand on a le bon entourage. Trouve le tien dans {product}. Pour me joindre : {cta}.", "La preuve est sous tes yeux tous les jours. Saute le pas et rejoins {product}. Une seule chose à faire : {cta}.", "Fais confiance au process qui a déjà changé la vie de tant de femmes. Intègre {product} ! Dis-le moi ici : {cta}.", "Prête à écrire ta propre histoire à succès aux côtés des autres ? Tout commence dans {product}. {cta}."
+      "Elles ont toutes commencé au même point que toi avant d'intégrer {product}. Tu attends quoi ? {cta}.", "La méthode fonctionne pour tout le monde, pourquoi pas toi ? Rejoins {product} ! Pour postuler : {cta}.", "C'est ça la puissance d'un groupe soudé. Viens vivre l'expérience dans {product}. Curieuse ? {cta}.", "Le succès laisse des indices, suis le chemin tracé par les élèves de {product}. Pour avoir les détails : {cta}.", "Ne reste pas isolée alors que des dizaines d'autres avancent ensemble dans {product}. Rejoins-les : {cta}.", "Tu as le droit toi aussi de faire partie des success stories. Ta place t'attend dans {product}. Écris-moi : {cta}.", "C'est fou ce qu'on peut accomplir quand on a le bon entourage. Trouve le tien dans {product}. Pour me joindre : {cta}.", "La preuve est sous tes yeux tous les jours. Saute le pas et rejoins {product}. Une seule chose à faire : {cta}.", "Fais confiance au process qui a déjà changé la vie de tant de femmes. Intègre {product} ! Dis-le moi ici : {cta}.", "Prête à écrire ta propre histoire à succès aux côtés des autres ? Tout commence dans {product}. {cta}."
     ]
   },
   vendredi: {
     theme: "VENDREDI — Le Contraste (Avant / Après)", color: "#6A4C93",
-    A: [
-      "Imagine passer d'un agenda saturé à seulement 4h de focus par jour... 🧘‍♀️ ", "Imagine ne plus jamais avoir à prospecter dans le vide... 🎯 ", "Passer de 0 à tes premiers 5k€ par mois, c'est possible. 📈 ", "De la peur de vendre à l'excitation de closer des contrats premium... 🤝 ", "Fini le stress des fins de mois, place à la sérénité financière. 💸 ", "Imagine avoir une file d'attente de clients qui veulent bosser avec toi... 🚶‍♂️🚶‍♀️ ", "Passer du statut de 'freelance épuisée' à 'chef d'entreprise libre'... 👑 ", "Oublie la création de contenu épuisante, place à la stratégie minimaliste. 🧠 ", "Imagine te réveiller chaque matin avec une vision claire et précise... 🌅 ", "Passer d'une offre que personne ne comprend à un best-seller évident... 📦 "
-    ],
     B: [
       "C'est exactement la transformation qu'on opère à l'intérieur de {product}. Tu veux la tienne ? {cta}.", "Ce n'est pas de la magie, c'est de la pure stratégie appliquée dans {product}. Envie de voir le plan ? {cta}.", "Le pont entre ta situation actuelle et ta vie de rêve s'appelle {product}. Prête à traverser ? {cta}.", "Tu es à une seule décision de faire basculer ton quotidien. Saute le pas avec {product}. Contacte-moi : {cta}.", "Arrête de rêver ta vie et commence à la bâtir sérieusement grâce à {product}. Pour voir si tu es éligible : {cta}.", "C'est le virage à 180 degrés que prennent toutes les participantes de {product}. Tu montes avec nous ? {cta}.", "Pourquoi continuer de subir alors que la solution existe juste ici dans {product} ? Fais le bon choix : {cta}.", "La liberté ne s'attend pas, elle se crée avec les bons outils. Trouve-les dans {product}. Écris-moi : {cta}.", "Passe de l'autre côté de la barrière dès cette semaine. Rejoins {product} ! Pour en parler tranquillement : {cta}.", "C'est possible pour toi aussi, il te suffit de suivre la méthode pas à pas dans {product}. On y va ? {cta}."
     ]
   },
   samedi: {
     theme: "SAMEDI — Le Storytelling (L'Héroïne)", color: "#FF9F1C",
-    A: [
-      "Il y a un nom jour pour jour, j'étais en larmes devant mon écran... 😢 ", "J'ai failli tout envoyer valser pour reprendre un job salarié... 💼 ", "Si on m'avait dit que je vivrais de ma passion aujourd'hui, je n'y aurais pas cru. ✨ ", "J'ai fait une erreur de débutante qui m'a coûté très cher... 📉 ", "Le jour où j'ai compris que je faisais fausse route... 💡 ", "Mon entourage m'a dit que j'étais folle de me lancer. 🗣️ ", "J'ai passé des nuits blanches à essayer de tout comprendre toute seule. 🌙 ", "La vérité sur mes débuts que je n'ai jamais racontée... 🤫 ", "J'ai cru que la réussite n'était réservée qu'aux autres. 🏆 ", "Voici l'histoire de la plus grosse claque de ma vie d'entrepreneure. 💥 "
-    ],
     B: [
       "Mais j'ai trouvé la clé. Elle est dans {product}. Ne fais pas les mêmes erreurs que moi : {cta}.", "C'est de cet échec qu'est né {product}. Épargne-toi ces mois de souffrance : {cta}.", "Le secret c'est que j'ai fini par me faire accompagner. Fais de même avec {product} : {cta}.", "Aujourd'hui, j'utilise cette expérience pour t'aider dans {product}. Dis-moi si tu veux ton plan : {cta}.", "C'est possible pour toi aussi d'inverser la tendance grâce à {product}. Viens m'en parler : {cta}.", "Ne laisse personne te dire que c'est impossible. Prouve-leur le contraire avec {product} ! {cta}.", "J'aurais aimé avoir un guide comme {product} à l'époque. Écris-moi pour l'obtenir : {cta}.", "Cette histoire m'a appris à valoriser mon temps. C'est ce qu'on fait dans {product}. Fais le pas : {cta}.", "La vulnérabilité c'est une force. On reconstruit tout plus solide dans {product}. Parle-moi : {cta}.", "La solution n'est pas de travailler plus dur, mais mieux. Découvre {product} en m'envoyant : {cta}."
     ]
   },
   dimanche: {
     theme: "DIMANCHE — La Clarté (FAQ / Objections)", color: "#2EC4B6",
-    A: [
-      "Non, tu n'as pas besoin d'avoir 10k abonnés pour réussir ! ❌ ", "On me demande souvent s'il faut déjà avoir une offre prête... 🤔 ", "Est-ce que c'est trop tard pour te lancer cette année ? 📅 ", "Tu as peur de ne pas avoir assez de temps à y consacrer ? ⏳ ", "Tu penses que le marché est déjà trop saturé ? 🌊 ", "La question qui revient 10 fois par jour dans mes DM : 📥 ", "C'est quoi la différence entre ma méthode et les autres ? 🔍 ", "Tu penses que ce n'est pas pour toi parce que tu débutes ? 👶 ", "Est-ce que l'investissement en vaut vraiment la peine ? 💰 ", "Brisons un énorme mythe sur l'entrepreneuriat aujourd'hui. 🔨 "
-    ],
     B: [
       "La réponse est non. Dans {product}, on s'adapte à ton niveau. Tu as encore des doutes ? Viens me les poser : {cta}.", "On reprend tout à zéro ensemble. C'est le but de {product}. Si tu veux la vérité : {cta}.", "Il n'y a pas de meilleur moment. Saute le pas avec {product} dès aujourd'hui ! Dis-moi : {cta}.", "On a conçu {product} pour les femmes pressées. 2h par semaine suffisent ! Vérifie par toi-même : {cta}.", "Ton unicité fera la différence. On la trouve ensemble dans {product}. Envoie-moi un DM : {cta}.", "Je t'explique tout de A à Z à l'intérieur de {product}. Envie d'en savoir plus ? Simple : {cta}.", "La différence c'est l'humain et le sur-mesure de {product}. Tu veux le programme ? {cta}.", "Au contraire, c'est le moment idéal pour ne pas prendre de mauvaises habitudes ! Rejoins {product} : {cta}.", "Ton business te rapportera ce que tu y investis. {product} est un accélérateur. Viens me parler : {cta}.", "Faisons le tri entre le vrai et le faux. Je t'attends pour échanger sur {product} : {cta}."
     ]
@@ -192,23 +243,29 @@ function handleGenerate() {
     strategy[j] = {
       theme: data.theme,
       color: data.color,
-      text: fill(pick(data.A) + pick(data.B), cfg)
+      hook: pick(HOOKS),
+      body: pick(data.B)
     };
   });
 
   activeDay = "lundi";
+  saveToLocalStorage();
   switchTab('result');
 }
 
 function regenDay(j) {
   if (!strategy) return;
-  const cfg = { 
-    productName: document.getElementById('f-product').value.trim(), 
-    cta: document.getElementById('f-cta').value.trim() 
-  };
-  
   const data = BIBLE[j];
-  strategy[j].text = fill(pick(data.A) + pick(data.B), cfg);
+  strategy[j].hook = pick(HOOKS);
+  strategy[j].body = pick(data.B);
+  saveToLocalStorage();
+  renderResult();
+}
+
+function regenHookOnly(j) {
+  if (!strategy) return;
+  strategy[j].hook = pick(HOOKS);
+  saveToLocalStorage();
   renderResult();
 }
 
@@ -218,14 +275,19 @@ function renderResult() {
   const p = document.getElementById('panel-result');
   if (!strategy) return;
   
-  const jours = Object.keys(strategy);
   const d = strategy[activeDay];
   const ac = d.color;
+  const cfg = { 
+    productName: document.getElementById('f-product').value, 
+    cta: document.getElementById('f-cta').value 
+  };
+  
+  const fullText = d.hook + fill(d.body, cfg);
   
   p.innerHTML = `
     <div class="daytabs">
-      ${jours.map(j => `
-        <button class="dtab" onclick="setDay('${j}')" style="${activeDay === j ? `border-color:${ac}; background:${ac}15; color:${ac};` : ''}">
+      ${Object.keys(strategy).map(j => `
+        <button class="dtab" onclick="setDay('${j}')" style="${activeDay === j ? `border-color:${strategy[j].color}; background:${strategy[j].color}15; color:${strategy[j].color};` : ''}">
           ${j.charAt(0).toUpperCase() + j.slice(1)}
         </button>
       `).join('')}
@@ -234,15 +296,19 @@ function renderResult() {
     <div class="clayout">
       <div class="phonewrap">
         <div class="phone">
-          <div class="phone-ct">${esc(d.text)}</div>
+          <div class="phone-ct">${esc(fullText)}</div>
         </div>
       </div>
       <div class="cpanel">
         <div>
-          <div class="cbox">${esc(d.text)}</div>
+          <div class="cbox">
+            <button class="copy-btn" onclick="copyText(this)">📋 Copier</button>
+            <span id="text-to-copy">${esc(fullText)}</span>
+          </div>
         </div>
         <div class="arow">
-          <button class="abtn" onclick="regenDay('${activeDay}')" style="border-color:${ac}; color:${ac};">🔄 Recalculer ce jour (100 options)</button>
+          <button class="abtn" onclick="regenHookOnly('${activeDay}')" style="border-color:${ac}; color:${ac};">🪝 Changer juste le Hook</button>
+          <button class="abtn" onclick="regenDay('${activeDay}')" style="border-color:${ac}; color:${ac};">🔄 Tout recalculer</button>
           <button class="abtn pdf" onclick="exportPDF()">📄 Sauvegarder en PDF</button>
         </div>
       </div>
@@ -250,27 +316,80 @@ function renderResult() {
   `;
 }
 
+function copyText(btn) {
+  const text = document.getElementById('text-to-copy').innerText;
+  navigator.clipboard.writeText(text).then(() => {
+    btn.innerText = "✓ Copié !";
+    btn.classList.add('copied');
+    setTimeout(() => {
+      btn.innerText = "📋 Copier";
+      btn.classList.remove('copied');
+    }, 2000);
+  });
+}
+
+function saveInputs() {
+  localStorage.setItem('mono_productName', document.getElementById('f-product').value);
+  localStorage.setItem('mono_cta', document.getElementById('f-cta').value);
+  showSaveAlert();
+}
+
+function saveToLocalStorage() {
+  if (!strategy) return;
+  localStorage.setItem('mono_strategy', JSON.stringify(strategy));
+  localStorage.setItem('mono_activeDay', activeDay);
+  saveInputs();
+}
+
+function showSaveAlert() {
+  const alertBox = document.getElementById('save-status');
+  alertBox.classList.add('visible');
+  setTimeout(() => alertBox.classList.remove('visible'), 2000);
+}
+
+function loadFromLocalStorage() {
+  const savedProduct = localStorage.getItem('mono_productName');
+  const savedCta = localStorage.getItem('mono_cta');
+  const savedStrategy = localStorage.getItem('mono_strategy');
+  const savedDay = localStorage.getItem('mono_activeDay');
+
+  if (savedProduct) document.getElementById('f-product').value = savedProduct;
+  if (savedCta) document.getElementById('f-cta').value = savedCta;
+
+  if (savedStrategy) {
+    strategy = JSON.parse(savedStrategy);
+    if (savedDay) activeDay = savedDay;
+    switchTab('result');
+  }
+}
+
 function exportPDF() {
   if (!strategy) return;
   const printArea = document.getElementById('print-area');
+  const cfg = { 
+    productName: document.getElementById('f-product').value, 
+    cta: document.getElementById('f-cta').value 
+  };
   
   let html = `<h1 style="text-align:center; margin-bottom:30px;">Ma Semaine de Stories Copywriting</h1>`;
   
   Object.keys(strategy).forEach(j => {
     const d = strategy[j];
+    const fullText = d.hook + fill(d.body, cfg);
     html += `
       <div class="print-day">
         <div class="print-title" style="color:${d.color}">${d.theme}</div>
-        <div class="print-text">${d.text}</div>
+        <div class="print-text">${fullText}</div>
       </div>
     `;
   });
   
   printArea.innerHTML = html;
-  
-  // Utilisation de la boîte d'impression native (indestructible)
   window.print();
 }
+
+// Charger les données dès l'ouverture de la page
+window.onload = loadFromLocalStorage;
 </script>
 
 </body>
