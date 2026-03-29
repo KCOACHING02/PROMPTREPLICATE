@@ -3,7 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Générateur Éditorial - Mode Infini</title>
+  <title>Générateur Éditorial - Semaine Complète & PDF</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
   <style>
     :root {
       --bg: #0c0c10;
@@ -39,7 +40,7 @@
     input, select { width: 100%; padding: 14px; background: var(--card-bg); border: 1px solid var(--border); border-radius: 8px; color: var(--text); box-sizing: border-box; font-size: 1rem; }
     .btn-large { width: 100%; padding: 16px; background: var(--accent); color: var(--bg); border: none; border-radius: 8px; font-size: 1.1rem; font-weight: bold; cursor: pointer; }
     .daytabs { display: flex; gap: 8px; overflow-x: auto; margin-bottom: 20px; padding-bottom: 10px; }
-    .dtab { background: var(--card-bg); color: var(--text); border: 1px solid var(--border); padding: 10px 16px; border-radius: 6px; cursor: pointer; white-space: nowrap; }
+    .dtab { background: var(--card-bg); color: var(--text); border: 1px solid var(--border); padding: 10px 16px; border-radius: 6px; cursor: pointer; white-space: nowrap; font-weight: bold; }
     .dayinfo { margin-bottom: 20px; background: rgba(255,255,255,0.03); padding: 15px; border-radius: 8px; }
     .dayinfo-t { font-weight: bold; font-size: 1.2rem; }
     .clayout { display: flex; gap: 30px; flex-wrap: wrap; }
@@ -50,19 +51,24 @@
     .phone-sl { font-size: 0.75rem; font-weight: bold; margin-bottom: 10px; text-transform: uppercase; }
     .phone-ct { font-size: 0.95rem; line-height: 1.5; white-space: pre-line; overflow-y: auto; }
     .cpanel { flex: 2; min-width: 300px; display: flex; flex-direction: column; justify-content: space-between; }
-    .cbox { background: var(--card-bg); padding: 20px; border-radius: 10px; border: 1px solid var(--border); min-height: 150px; white-space: pre-line; margin-bottom: 20px; }
-    .arow { display: flex; gap: 10px; }
-    .abtn { flex: 1; padding: 14px; border-radius: 6px; border: 1px solid var(--border); background: var(--card-bg); color: var(--text); font-weight: bold; cursor: pointer; }
-    .abtn.ac { background: var(--accent); color: var(--bg); border-color: var(--accent); }
-    #toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: #333; color: white; padding: 10px 20px; border-radius: 20px; display: none; }
-    #toast.show { display: block; }
+    .cbox { background: var(--card-bg); padding: 20px; border-radius: 10px; border: 1px solid var(--border); min-height: 150px; white-space: pre-line; margin-bottom: 20px; font-size: 1.05rem; }
+    .arow { display: flex; gap: 10px; flex-wrap: wrap; }
+    .abtn { flex: 1; min-width: 150px; padding: 14px; border-radius: 6px; border: 1px solid var(--border); background: var(--card-bg); color: var(--text); font-weight: bold; cursor: pointer; }
+    .abtn.pdf { background: #10B981; color: white; border-color: #10B981; }
+    
+    /* Style pour l'export PDF masqué à l'écran */
+    #pdf-content { display: none; color: #333; padding: 30px; }
+    .pdf-day { margin-bottom: 40px; page-break-inside: avoid; }
+    .pdf-title { font-size: 20px; font-weight: bold; border-bottom: 2px solid #ccc; padding-bottom: 10px; margin-bottom: 15px; color: #111; }
+    .pdf-slide { background: #f9f9f9; padding: 15px; border: 1px solid #ddd; border-radius: 6px; margin-bottom: 10px; }
+    .pdf-slide-title { font-weight: bold; color: #666; font-size: 12px; text-transform: uppercase; margin-bottom: 5px; }
   </style>
 </head>
 <body>
 
 <div class="container">
   <h1>🎯 Générateur Éditorial Haute Fréquence</h1>
-  <div class="subtitle">Des millions de combinaisons grâce au moteur combinatoire.</div>
+  <div class="subtitle">100 phrases par slide minimum • Semaine complète • Export PDF</div>
 
   <div class="tabs">
     <button class="tab-btn active" id="tab-config" onclick="switchTab('config')">⚙️ Paramètres</button>
@@ -79,7 +85,7 @@
     </div>
     <div class="form-group">
       <label>Nom de ton produit ou service</label>
-      <input type="text" id="f-product" placeholder="Ex: Masterclass Instagram..." value="mon programme">
+      <input type="text" id="f-product" placeholder="Ex: Masterclass..." value="mon programme">
     </div>
     <div class="form-group">
       <label>Ton appel à l'action (CTA)</label>
@@ -91,76 +97,58 @@
   <div class="panel" id="panel-result"></div>
 </div>
 
-<div id="toast"></div>
+<div id="pdf-content"></div>
 
 <script>
-// Structure combinatoire pour garantir 100 phrases minimum par slide (10 x 10)
+// Structure combinatoire géante garantissant 100 phrases minimum par slide (10 x 10)
 const BIBLE = {
   whatsapp: {
     lundi: {
-      theme: "Message WhatsApp — Le Boost du lundi",
-      color: "#4EA8DE",
-      s1: {
-        A: ["Coucou toi ! ", "Alerte lundi... ", "Hello ! ", "Hé ! ", "Nouveau départ, ", "Café chaud, téléphone en main... ", "Coucou ! ", "Bon lundi ! ", "Yo ! ", "Hello ! "],
-        B: ["J'espère que tu as passé un bon week-end ? Prête ?", "Je viens de regarder ma to-do list et j'ai eu un mini vertige 😅", "S'il te plaît, promets-moi de ne pas subir ta semaine !", "J'espère que tu as la pêche ce matin.", "Tu l'abordes comment ce matin ?", "C'est le début d'une semaine de feu !", "J'espère que tu n'as pas la boule au ventre ?", "Allez, on commence dans la bonne humeur.", "Prête pour un nouveau marathon ou d'humeur tranquille ?", "Alerte début de semaine. On se motive ensemble ?"]
-      },
-      s2: {
-        A: ["Franchement, courir partout ", "Le lundi c'est souvent le gros rush, ", "Si ton agenda ressemble à un Tetris hyper stressant, ", "Vouloir tout faire parfaitement ", "Passer ta journée à éteindre des incendies ", "On s'habitue trop souvent à accepter ", "Le problème n'est pas ton manque de temps, ", "Si tu passes tes lundis à attendre le vendredi, ", "Le problème avec le lundi, ", "Si tu te sens déjà débordée "],
-        B: ["pour un projet qui n'avance pas, ce n'est plus possible.", "et le problème c'est qu'on s'oublie un peu là-dedans...", "c'est le moment de dire stop.", "pour finir la journée sur les rotules... on arrête ça.", "au lieu d'avancer sur TES projets... c'est rageant.", "le stress du début de semaine comme une fatalité.", "c'est que tu l'offres aux mauvaises personnes.", "il faut changer quelque chose urgemment.", "c'est qu'on veut rattraper tout le retard du monde en 24h.", "en regardant ton calendrier, c'est qu'il y a un souci."]
-      },
-      s3: {
-        A: ["J'ai créé un système super simple ", "C'est exactement pour ça que j'ai conçu {product}. ", "Le secret, c'est d'automatiser ", "Aujourd'hui, j'aimerais t'aider ", "Tu as le droit d'avoir un business ", "Avec {product}, on va nettoyer ", "Il existe une méthode pour faire en 2 heures ", "Imagine une semaine ", "J'ai passé des mois à peaufiner ", "On peut totalement simplifier "],
-        B: ["pour t'aider à reprendre le contrôle de ton temps.", "Pour t'enlever cette charge mentale définitivement.", "ce qui te bouffe de l'énergie pour te concentrer sur l'essentiel.", "à poser un cadre pour que tes journées t'appartiennent.", "qui s'adapte à ta vie, pas l'inverse.", "ton organisation pour ne garder que ce qui paye.", "ce qui t'en prend 8 aujourd'hui. Promis.", "où c'est toi qui décides de ton rythme, sans compte à rendre.", "une méthode pour me libérer du temps. Ça marche de fou.", "tout ça. J'ai un petit process qui va te changer la vie."]
-      },
-      s4: {
-        A: ["On commence dès aujourd'hui ? ", "Prends 2 minutes pour m'en parler : ", "Dis-moi en un mot ce qui te bloque : ", "Ne repousse pas à lundi prochain. ", "Prête à changer de rythme ? ", "On regarde ça ensemble cet après-midi ? ", "Fais le premier pas : ", "Envoie-moi ta plus grosse frustration. ", "C'est le moment parfait pour switcher. ", "Dis-moi en DM si tu veux "],
-        B: ["{cta}.", "parlons-en en privé ! {cta}.", "on va débloquer ça. {cta}.", "C'est maintenant ou jamais. {cta}.", "Je t'attends en DM. {cta}.", "Tu as le pouvoir de décider. {cta}.", "Viens m'en parler. {cta}.", "On va régler ça ensemble. {cta}.", "Envoie-moi un message. {cta}.", "qu'on en discute tranquillement. {cta}."]
-      }
+      theme: "LUNDI — Message WhatsApp : Le Boost", color: "#4EA8DE",
+      s1: { A: ["Coucou toi ! ", "Alerte lundi... ", "Hello ! ", "Hé ! ", "Nouveau départ, ", "Café chaud, téléphone en main... ", "Coucou ! ", "Bon lundi ! ", "Yo ! ", "Hello ! "], B: ["J'espère que tu as passé un bon week-end ? Prête ?", "Je viens de regarder ma to-do list et j'ai eu un mini vertige 😅", "S'il te plaît, promets-moi de ne pas subir ta semaine !", "J'espère que tu as la pêche ce matin.", "Tu l'abordes comment ce matin ?", "C'est le début d'une semaine de feu !", "J'espère que tu n'as pas la boule au ventre ?", "Allez, on commence dans la bonne humeur.", "Prête pour un nouveau marathon ou d'humeur tranquille ?", "Alerte début de semaine. On se motive ensemble ?"] },
+      s2: { A: ["Franchement, courir partout ", "Le lundi c'est souvent le gros rush, ", "Si ton agenda ressemble à un Tetris hyper stressant, ", "Vouloir tout faire parfaitement ", "Passer ta journée à éteindre des incendies ", "On s'habitue trop souvent à accepter ", "Le problème n'est pas ton manque de temps, ", "Si tu passes tes lundis à attendre le vendredi, ", "Le problème avec le lundi, ", "Si tu te sens déjà débordée "], B: ["pour un projet qui n'avance pas, ce n'est plus possible.", "et le problème c'est qu'on s'oublie un peu là-dedans...", "c'est le moment de dire stop.", "pour finir la journée sur les rotules... on arrête ça.", "au lieu d'avancer sur TES projets... c'est rageant.", "le stress du début de semaine comme une fatalité.", "c'est que tu l'offres aux mauvaises personnes.", "il faut changer quelque chose urgemment.", "c'est qu'on veut rattraper tout le retard du monde en 24h.", "en regardant ton calendrier, c'est qu'il y a un souci."] },
+      s3: { A: ["J'ai créé un système super simple ", "C'est exactement pour ça que j'ai conçu {product}. ", "Le secret, c'est d'automatiser ", "Aujourd'hui, j'aimerais t'aider ", "Tu as le droit d'avoir un business ", "Avec {product}, on va nettoyer ", "Il existe une méthode pour faire en 2 heures ", "Imagine une semaine ", "J'ai passé des mois à peaufiner ", "On peut totalement simplifier "], B: ["pour t'aider à reprendre le contrôle de ton temps.", "Pour t'enlever cette charge mentale définitivement.", "ce qui te bouffe de l'énergie pour te concentrer sur l'essentiel.", "à poser un cadre pour que tes journées t'appartiennent.", "qui s'adapte à ta vie, pas l'inverse.", "ton organisation pour ne garder que ce qui paye.", "ce qui t'en prend 8 aujourd'hui. Promis.", "où c'est toi qui décides de ton rythme, sans compte à rendre.", "une méthode pour me libérer du temps. Ça marche de fou.", "tout ça. J'ai un petit process qui va te changer la vie."] },
+      s4: { A: ["On commence dès aujourd'hui ? ", "Prends 2 minutes pour m'en parler : ", "Dis-moi en un mot ce qui te bloque : ", "Ne repousse pas à lundi prochain. ", "Prête à changer de rythme ? ", "On regarde ça ensemble cet après-midi ? ", "Fais le premier pas : ", "Envoie-moi ta plus grosse frustration. ", "C'est le moment parfait pour switcher. ", "Dis-moi en DM si tu veux "], B: ["{cta}.", "parlons-en en privé ! {cta}.", "on va débloquer ça. {cta}.", "C'est maintenant ou jamais. {cta}.", "Je t'attends en DM. {cta}.", "Tu as le pouvoir de décider. {cta}.", "Viens m'en parler. {cta}.", "On va régler ça ensemble. {cta}.", "Envoie-moi un message. {cta}.", "qu'on en discute tranquillement. {cta}."] }
     },
     mardi: {
-      theme: "Message WhatsApp — La Pépite Gratuite",
-      color: "#48BFE3",
-      s1: {
-        A: ["Petite pépite du jour : ", "On me demande souvent ", "Alerte astuce ! ", "Cadeau du mardi ! ", "Installe-toi confortablement, ", "Focus valeur aujourd'hui. ", "Marre des conseils théoriques ? ", "Je partage rarement ça, ", "Hello ! J'ai testé ", "Aujourd'hui, j'ai envie "],
-        B: ["note bien ça, ça va te servir !", "comment je fais pour tenir le rythme sans m'épuiser.", "Pas de blabla marketing, juste du concret.", "C'est gratuit et ça peut changer ton quotidien.", "je vais te donner une astuce de fou.", "Je te partage un truc génial.", "On passe à la pratique tout de suite.", "mais allez... c'est pour toi ce matin.", "un truc incroyable hier, je te le partage.", "de te donner un vrai coup de pouce."]
-      },
-      s2: {
-        A: ["Prends 15 minutes chaque matin, ", "Utilise des scripts et des templates ", "Bloque des plages de travail de 50 minutes ", "La clé, c'est d'appliquer ", "Arrête de vouloir être sur tous les fronts. ", "Délègue ou automatise les tâches ", "Arrête de vendre ton temps, ", "Crée du contenu une fois, ", "Le secret d'une bonne offre, ", "Fais le tri dans tes outils. "],
-        B: ["sans téléphone, pour planifier ta tâche du jour.", "pour tout. Ne réinvente jamais la roue.", "en mode avion. Tu vas halluciner sur ta productivité.", "la règle des 80/20. Focus sur ce qui paye.", "Choisis UN seul canal et deviens-y excellente.", "à faible valeur pour te concentrer sur le reste.", "vends un résultat concret. Ça change tout.", "et recycle-le sous 5 formats différents.", "c'est de résoudre un problème DOULOUREUX.", "Ne garde que le strict nécessaire."]
-      },
-      s3: {
-        A: ["Rien qu'en faisant ça, ", "C'est tout bête, ", "Tu vas voir ton niveau de stress baisser ", "Tu n'imagines pas à quel point ", "Fais le test aujourd'hui. ", "C'est la différence ", "Moins de fatigue, plus de résultats. ", "C'est comme ça qu'on passe ", "C'est bête comme chou, ", "Tu vas gagner au moins 1h par jour "],
-        B: ["tu vas libérer un temps de dingue.", "mais 90% des gens ne le font pas. Fais partie des 10%.", "et ton efficacité grimper en flèche.", "cette petite habitude va transformer ton quotidien.", "Tu m'en diras des nouvelles ce soir.", "entre être simplement occupée et être réellement productive.", "C'est purement mathématique.", "d'un projet qui stagne à un projet qui décolle.", "mais ça évite de brasser du vent pour rien.", "avec cette méthode. C'est garanti."]
-      },
-      s4: {
-        A: ["C'est le genre de pépites qu'on voit dans {product}. ", "Si tu veux le plan complet : ", "Dis-moi ce que tu en penses : ", "Si tu veux que je te donne d'autres astuces : ", "Je t'explique le reste en privé : ", "Tu veux que je t'envoie mon guide ? ", "Envoie-moi un petit mot : ", "On passe au niveau supérieur ? ", "Dis-moi si tu connaissais déjà : ", "Prête à mettre ça en place ? "],
-        B: ["Curieuse ? {cta}.", "étape par étape ! {cta}.", "envoie-moi un DM ! {cta}.", "fais-moi signe. {cta}.", "viens me parler. {cta}.", "c'est gratuit ! {cta}.", "si ça t'a aidé ! {cta}.", "Le lien est là. {cta}.", "envoie-moi un message. {cta}.", "C'est parti ! {cta}."]
-      }
+      theme: "MARDI — Message WhatsApp : La Pépite", color: "#48BFE3",
+      s1: { A: ["Petite pépite du jour : ", "On me demande souvent ", "Alerte astuce ! ", "Cadeau du mardi ! ", "Installe-toi confortablement, ", "Focus valeur aujourd'hui. ", "Marre des conseils théoriques ? ", "Je partage rarement ça, ", "Hello ! J'ai testé ", "Aujourd'hui, j'ai envie "], B: ["note bien ça, ça va te servir !", "comment je fais pour tenir le rythme sans m'épuiser.", "Pas de blabla marketing, juste du concret.", "C'est gratuit et ça peut changer ton quotidien.", "je vais te donner une astuce de fou.", "Je te partage un truc génial.", "On passe à la pratique tout de suite.", "mais allez... c'est pour toi ce matin.", "un truc incroyable hier, je te le partage.", "de te donner un vrai coup de pouce."] },
+      s2: { A: ["Prends 15 minutes chaque matin, ", "Utilise des scripts et des templates ", "Bloque des plages de travail de 50 minutes ", "La clé, c'est d'appliquer ", "Arrête de vouloir être sur tous les fronts. ", "Délègue ou automatise les tâches ", "Arrête de vendre ton temps, ", "Crée du contenu une fois, ", "Le secret d'une bonne offre, ", "Fais le tri dans tes outils. "], B: ["sans téléphone, pour planifier ta tâche du jour.", "pour tout. Ne réinvente jamais la roue.", "en mode avion. Tu vas halluciner sur ta productivité.", "la règle des 80/20. Focus sur ce qui paye.", "Choisis UN seul canal et deviens-y excellente.", "à faible valeur pour te concentrer sur le reste.", "vends un résultat concret. Ça change tout.", "et recycle-le sous 5 formats différents.", "c'est de résoudre un problème DOULOUREUX.", "Ne garde que le strict nécessaire."] },
+      s3: { A: ["Rien qu'en faisant ça, ", "C'est tout bête, ", "Tu vas voir ton niveau de stress baisser ", "Tu n'imagines pas à quel point ", "Fais le test aujourd'hui. ", "C'est la différence ", "Moins de fatigue, plus de résultats. ", "C'est comme ça qu'on passe ", "C'est bête comme chou, ", "Tu vas gagner au moins 1h par jour "], B: ["tu vas libérer un temps de dingue.", "mais 90% des gens ne le font pas. Fais partie des 10%.", "et ton efficacité grimper en flèche.", "cette petite habitude va transformer ton quotidien.", "Tu m'en diras des nouvelles ce soir.", "entre être simplement occupée et être réellement productive.", "C'est purement mathématique.", "d'un projet qui stagne à un projet qui décolle.", "mais ça évite de brasser du vent pour rien.", "avec cette méthode. C'est garanti."] },
+      s4: { A: ["C'est le genre de pépites qu'on voit dans {product}. ", "Si tu veux le plan complet : ", "Dis-moi ce que tu en penses : ", "Si tu veux que je te donne d'autres astuces : ", "Je t'explique le reste en privé : ", "Tu veux que je t'envoie mon guide ? ", "Envoie-moi un petit mot : ", "On passe au niveau supérieur ? ", "Dis-moi si tu connaissais déjà : ", "Prête à mettre ça en place ? "], B: ["Curieuse ? {cta}.", "étape par étape ! {cta}.", "envoie-moi un DM ! {cta}.", "fais-moi signe. {cta}.", "viens me parler. {cta}.", "c'est gratuit ! {cta}.", "si ça t'a aidé ! {cta}.", "Le lien est là. {cta}.", "envoie-moi un message. {cta}.", "C'est parti ! {cta}."] }
+    },
+    mercredi: {
+      theme: "MERCREDI — WhatsApp : La Story Vérité", color: "#56CFE1",
+      s1: { A: ["Confession du jour : ", "Je dois t'avouer un truc... ", "Séquence nostalgie ! ", "On ne parle pas assez de ça : ", "Storytime rapide : ", "Moment vulnérabilité. ", "J'ai retrouvé une note d'il y a 2 ans, ", "Oublie l'image Instagram parfaite, ", "Je vais te raconter une boulette, ", "Regarde cette photo (dans ma tête) : "], B: ["il y a un an, j'étais à deux doigts de tout lâcher.", "j'ai galéré comme jamais au début de ce projet.", "quand je repense à mes débuts, j'en rigole maintenant.", "l'envers du décor n'est pas toujours tout rose.", "ce moment où j'ai cru que j'allais jamais m'en sortir.", "j'ai fait une erreur de débutante hier.", "et wow... le chemin parcouru me donne le vertige.", "la réalité du quotidien est beaucoup plus brute.", "ça m'a servi de leçon mais sur le coup j'ai eu chaud.", "c'était moi, perdue et complètement débordée."] },
+      s2: { A: ["Je pensais qu'il fallait travailler H24 ", "Je refusais de déléguer ", "Je passais mes journées sur des détails ", "Je courais après tous les clients ", "Je me comparais sans arrêt aux autres ", "Je n'avais aucune organisation ", "Je disais oui à absolument tout ", "Je voulais tout faire moi-même ", "Je n'osais pas fixer mes limites ", "Je passais plus de temps à stresser "], B: ["pour mériter de réussir. Grosse erreur.", "parce que je croyais que personne ne ferait aussi bien.", "qui ne me rapportaient rien du tout.", "sans filtre. Résultat ? Burnout assuré.", "et ça me bloquait totalement dans mes actions.", "et je naviguais à vue chaque jour.", "par peur de rater une opportunité bidon.", "par pur ego, ou par bêtise... au choix !", "et mon agenda me bouffait la vie.", "qu'à agir pour de vrai. Quel gâchis."] },
+      s3: { A: ["Heureusement, j'ai fini par comprendre. ", "Le déclic est venu le jour où ", "J'ai tout envoyé valser pour ", "C'est là que j'ai mis au point ", "Cette bêtise m'a coûté cher mais ", "Depuis que j'applique ma méthode, ", "C'est de cette douleur qu'est né ", "Il a fallu que je touche le fond pour ", "Aujourd'hui, tout ça est derrière moi. ", "Si je te raconte ça, c'est pour que "], B: ["Il fallait que je change de méthode radicalement.", "j'ai compris que j'allais droit dans le mur.", "reconstruire un éco-système sain.", "mon tout premier process de simplification.", "elle m'a permis de trouver la vraie solution.", "je revis. Littéralement.", "{product}. Pour que tu n'aies pas à souffrir comme moi.", "comprendre la vraie valeur de mon temps.", "J'ai appris à travailler moins et gagner plus.", "tu évites de faire les mêmes erreurs que moi."] },
+      s4: { A: ["Tu te reconnais là-dedans ? ", "Si tu vis ça en ce moment : ", "On évite le crash ensemble ? ", "Dis-moi si ça te parle : ", "Ne reste pas bloquée là-dedans. ", "Je peux t'aider à éviter ça : ", "Viens me raconter ton histoire : ", "On en parle ? ", "C'est pour ça que {product} existe. ", "Prête à changer d'histoire ? "], B: ["parlons-en en privé ! {cta}.", "envoie-moi un DM. {cta}.", "Je t'attends. {cta}.", "viens me dire ce qui t'arrive. {cta}.", "{cta}.", "on gagne du temps à deux. {cta}.", "je lis tous mes messages. {cta}.", "Dis-moi tout. {cta}.", "Rejoins-nous. {cta}.", "Clique ici ou écris-moi. {cta}."] }
+    },
+    jeudi: {
+      theme: "JEUDI — WhatsApp : L'Étude de Cas", color: "#64DFDF",
+      s1: { A: ["Gros big up à mon élève ! ", "Regarde-moi ces résultats ! ", "Fierté totale aujourd'hui : ", "Une cliente m'a envoyé ça ce matin : ", "Inspo du jeudi ! ", "On célèbre les victoires ! ", "Quand mes élèves cartonnent, ", "La magie du travail bien fait. ", "Transformation du jour : ", "Focus sur un succès de dingue. "], B: ["Elle vient de débloquer son premier gros palier.", "Je suis tellement fière de son parcours.", "C'est exactement pour ça que je fais ce métier.", "Elle n'y croyait pas et pourtant, elle l'a fait !", "Un cas concret qui va te motiver pour de bon.", "Regarde ce message, j'en ai des frissons.", "je suis la plus heureuse des mentores.", "Pas de secret, juste de la méthode.", "Voici ce qui s'est passé en seulement 3 semaines.", "Une histoire vraie qui va t'inspirer."] },
+      s2: { A: ["Avant de me rejoindre, elle galérait à ", "Elle se sentait complètement bloquée sur ", "Elle passait 10h par jour à ", "Son problème c'est qu'elle n'arrivait pas à ", "Elle avait peur de se lancer dans ", "Elle n'avait aucune structure pour ", "Elle était sur le point d'abandonner ", "Elle tournait en rond depuis des mois sur ", "Elle manquait cruellement de confiance pour ", "Elle faisait tout au feeling pour "], B: ["trouver des clients réguliers. C'était l'angoisse.", "l'aspect technique de son business. Un vrai calvaire.", "brasser du vent sans aucun résultat tangible.", "se faire payer à sa juste valeur.", "son offre par peur d'échouer.", "gérer son temps efficacement.", "son projet à cause du manque de visibilité.", "la création de son contenu. Un enfer.", "oser proposer ses services aux bonnes personnes.", "développer sa marque. Elle s'éparpillait."] },
+      s3: { A: ["On a posé les bases de {product} et ", "En appliquant scrupuleusement le plan, ", "On a tout restructuré en 15 jours. ", "Il a suffi d'un réglage sur son offre pour que ", "On a automatisé son process et hop : ", "En changeant juste son état d'esprit, ", "On a créé une stratégie sur-mesure et ", "Grâce aux outils de {product}, ", "On a éliminé ce qui servait à rien et ", "Elle a suivi la méthode pas à pas et "], B: ["bim ! Ses ventes ont enfin décollé.", "elle a généré ses premiers vrais revenus.", "Aujourd'hui elle travaille deux fois moins !", "tout devienne soudainement fluide et limpide.", "elle a retrouvé 5h de liberté par semaine.", "elle a enfin osé s'affirmer et ça paye.", "les résultats ne se sont pas fait attendre.", "elle a pu scaler son activité sans stress.", "elle a enfin trouvé son rythme de croisière.", "le résultat est juste incroyable. Bravo à elle."] },
+      s4: { A: ["Tu veux la même transformation ? ", "Prête à être la prochaine ? ", "Si tu veux qu'on fasse pareil pour toi : ", "Envoie-moi un petit mot : ", "On commence quand ton histoire ? ", "Le plan est prêt pour toi : ", "Dis-moi en DM si tu veux ", "Tu mérites les mêmes résultats. ", "On passe à l'action ? ", "Fais comme elle : "], B: ["viens me parler en privé ! {cta}.", "rejoins le programme. {cta}.", "parlons-en en DM. {cta}.", "on étudie ton profil. {cta}.", "{cta}.", "suis le guide. {cta}.", "qu'on en discute tranquillement. {cta}.", "{cta}.", "Je t'attends pour démarrer. {cta}.", "fonce et contacte-moi. {cta}."] }
+    },
+    vendredi: {
+      theme: "VENDREDI — WhatsApp : L'Urgence Douce", color: "#72EFDD",
+      s1: { A: ["C'est vendredi ! ", "Dernière chance de la semaine ! ", "Le train va bientôt partir... ", "Tic tac, tic tac... ", "On ferme bientôt les portes ! ", "Dernier appel pour les motivées : ", "Week-end en vue, mais avant... ", "Juste un mot avant de couper pour le week-end : ", "C'est maintenant ou jamais ! ", "Prête pour le grand saut ? "], B: ["Je coupe les réseaux dans quelques heures.", "On clôture les inscriptions ce soir à minuit.", "C'est le moment de prendre une décision pour toi.", "La promo s'arrête très bientôt.", "Dernière opportunité d'intégrer la session.", "Je ne proposerai plus cette offre avant longtemps.", "Il te reste un tout petit créneau pour nous rejoindre.", "On attaque lundi avec le nouveau groupe.", "Ne laisse pas passer ta chance.", "On s'arrête là pour les entrées de la semaine."] },
+      s2: { A: ["Ne commence pas une nouvelle semaine à ", "Imagine passer ton week-end en sachant que ", "Arrête de remettre ton projet à plus tard, ", "Si tu hésites encore, dis-toi que ", "Le meilleur moment pour agir, ", "Tu as le choix : continuer de galérer ou ", "La seule chose qui te sépare de ton objectif, ", "Lundi, tu regretteras peut-être de ", "C'est fou de laisser la peur de l'inconnu ", "Tu sais au fond de toi que "], B: ["galérer toute seule dans ton coin. Rejoins-nous.", "tout est calé pour lundi. Quel soulagement !", "le temps n'attend personne. Lance-toi.", "dans 6 mois tu aurais aimé avoir commencé aujourd'hui.", "c'était hier. Le deuxième meilleur moment, c'est maintenant.", "enfin prendre les choses en main avec une vraie structure.", "c'est cette satanée peur de passer à l'action.", "ne pas avoir sauté le pas aujourd'hui. Réfléchis-y.", "bloquer ton évolution. Passe au-dessus !", "tu as besoin de ce coup de boost."] },
+      s3: { A: ["Tu as tout à gagner et rien à perdre. ", "C'est exactement ce que propose {product}. ", "L'investissement sur toi-même est ", "Je t'offre un accompagnement complet ", "Le groupe de cette semaine est ", "Tu n'es plus qu'à un clic de ", "On va faire équipe pour ", "C'est une méthode testée et approuvée ", "Je mets toute mon expertise à ton service ", "On va simplifier ton business "], B: ["Prends ta place avant qu'il ne soit trop tard.", "Un plan d'action clé en main et zéro prise de tête.", "le seul qui rapporte à coup sûr. Penses-y.", "pour t'assurer d'aller droit au but.", "déjà ultra motivé. L'énergie va être folle !", "transformer radicalement tes résultats.", "propulser ton projet au niveau supérieur.", "pour t'éviter de perdre encore du temps.", "pour t'aider à cartonner rapidement.", "pour que tu puisses enfin souffler."] },
+      s4: { A: ["Envoie-moi le mot magique : ", "Clique sur le lien ou ", "Écris-moi vite : ", "On se retrouve de l'autre côté ? ", "Fais le bon choix pour toi : ", "Envoie-moi un DM pour ", "Je réponds à mes messages jusqu'à 18h : ", "Embarque avec nous : ", "On commence lundi ! ", "C'est ton moment : "], B: ["{cta}.", "parlons-en en privé ! {cta}.", "les places sont limitées. {cta}.", "{cta}.", "je t'attends en DM. {cta}.", "bloquer ton accès. {cta}.", "envoie-moi ton message. {cta}.", "on t'attend. {cta}.", "Inscris-toi vite. {cta}.", "fais le premier pas. {cta}."] }
     }
-    // Note : Pour l'exemple et la légèreté du prompt, on garde Lundi et Mardi complets.
-    // Le principe mathématique garantit 100 phrases par slide (10x10) soit 100 millions de stories possibles par jour.
   },
   punchy: {
     lundi: {
-      theme: "Style Punchy — Action immédiate",
-      color: "#FF595E",
-      s1: {
-        A: ["Nouveau lundi, zéro excuse. ", "On attaque. ", "Stop au stress d'avant-rush. ", "Alerte lundi : ", "On attaque le lundi. ", "C'est parti pour 5 jours ", "Nouveau lundi, nouvelles opportunités. ", "Hé ! Ne regarde pas ton calendrier ", "Lundi matin. ", "On y retourne. "],
-        B: ["Tu as prévu de subir ta semaine ou de la dominer ?", "C'est le moment de poser les bases d'une semaine de feu.", "On respire un grand coup et on agit.", "stop au stress avant même d'avoir ouvert ton premier mail.", "C'est le moment de poser les bases d'une semaine de dingue.", "pour te rapprocher de tes objectifs. Prête ?", "Tu as prévu quoi aujourd'hui ?", "avec angoisse. On va dompter cette semaine.", "S'il te plaît, promets-moi de ne pas subir ta semaine.", "Vas-tu juste être occupée ou vraiment productive ?"]
-      },
-      s2: {
-        A: ["Scroller sur ton téléphone ", "Si ton agenda te fait peur, ", "Arrête de vouloir tout faire parfaitement ", "Courir partout pour un boss ", "Le problème n'est pas ton manque de temps, ", "Si tu passes tes lundis à attendre le vendredi, ", "Vouloir tout faire parfaitement ", "Si tu te sens déjà débordée ", "On s'habitue trop souvent à accepter ", "Le problème, "],
-        B: ["en attendant le déclic magique ne changera rien.", "c'est que tu as laissé les autres dicter tes journées.", "pour finir la journée sur les rotules. Stop.", "qui ne reconnaît pas ta valeur... ce n'est plus possible.", "c'est que tu l'offres aux mauvaises personnes.", "il faut changer quelque chose.", "et finir la journée sur les rotules... stop.", "en regardant ta to-do list, c'est qu'il y a un souci.", "le stress du début de semaine comme une fatalité.", "c'est que tu confonds être débordée et être productive."]
-      },
-      s3: {
-        A: ["La vraie solution ? ", "Avec {product}, on va nettoyer ", "Il existe une méthode ", "La vraie solution, ", "Imagine une semaine ", "C'est exactement pour ça que j'ai conçu {product}. ", "Le secret, c'est d'automatiser ", "Tu n'as pas besoin de plus de discipline, ", "On arrête les usines à gaz. ", "La liberté n'est pas un concept flou, "],
-        B: ["C'est de travailler moins mais beaucoup plus intelligemment.", "ton organisation pour ne garder que ce qui paye vraiment.", "pour faire en 2 heures ce qui t'en prend 8 aujourd'hui.", "ce n'est pas de travailler plus. C'est de travailler mieux.", "où c'est toi qui décides de ton rythme, sans compte à rendre.", "Pour t'enlever cette charge mentale.", "ce qui te bouffe de l'énergie pour te concentrer sur l'essentiel.", "tu as juste besoin d'un meilleur système.", "On va droit au but avec une vraie méthode.", "c'est juste un process bien huilé."]
-      },
-      s4: {
-        A: ["On commence dès aujourd'hui ? ", "Ne repousse pas à lundi prochain : ", "C'est le moment parfait pour switcher : ", "Si tu veux qu'on pose les bases : ", "Prends 2 minutes ", "Dis-moi en un mot ", "Prête à changer de rythme ? ", "On regarde ça ensemble ", "Fais le premier pas ", "Envoie-moi "],
-        B: ["{cta}.", "il faut agir ! {cta}.", "lance-toi ! {cta}.", "écris-moi. {cta}.", "pour m'en parler. {cta}.", "ce qui te bloque aujourd'hui. {cta}.", "Je t'attends. {cta}.", "cet après-midi ? {cta}.", "pour ta liberté. {cta}.", "ta plus grosse frustration du jour. {cta}."]
-      }
+      theme: "LUNDI — Style Punchy : Action", color: "#FF595E",
+      s1: { A: ["Nouveau lundi, zéro excuse. ", "On attaque. ", "Stop au stress d'avant-rush. ", "Alerte lundi : ", "On attaque le lundi. ", "C'est parti pour 5 jours ", "Nouveau lundi, nouvelles opportunités. ", "Hé ! Ne regarde pas ton calendrier ", "Lundi matin. ", "On y retourne. "], B: ["Tu as prévu de subir ta semaine ou de la dominer ?", "C'est le moment de poser les bases d'une semaine de feu.", "On respire un grand coup et on agit.", "stop au stress avant même d'avoir ouvert ton premier mail.", "C'est le moment de poser les bases d'une semaine de dingue.", "pour te rapprocher de tes objectifs. Prête ?", "Tu as prévu quoi aujourd'hui ?", "avec angoisse. On va dompter cette semaine.", "S'il te plaît, promets-moi de ne pas subir ta semaine.", "Vas-tu juste être occupée ou vraiment productive ?"] },
+      s2: { A: ["Scroller sur ton téléphone ", "Si ton agenda te fait peur, ", "Arrête de vouloir tout faire parfaitement ", "Courir partout pour un boss ", "Le problème n'est pas ton manque de temps, ", "Si tu passes tes lundis à attendre le vendredi, ", "Vouloir tout faire parfaitement ", "Si tu te sens déjà débordée ", "On s'habitue trop souvent à accepter ", "Le problème, "], B: ["en attendant le déclic magique ne changera rien.", "c'est que tu as laissé les autres dicter tes journées.", "pour finir la journée sur les rotules. Stop.", "qui ne reconnaît pas ta valeur... ce n'est plus possible.", "c'est que tu l'offres aux mauvaises personnes.", "il faut changer quelque chose.", "et finir la journée sur les rotules... stop.", "en regardant ta to-do list, c'est qu'il y a un souci.", "le stress du début de semaine comme une fatalité.", "c'est que tu confonds être débordée et être productive."] },
+      s3: { A: ["La vraie solution ? ", "Avec {product}, on va nettoyer ", "Il existe une méthode ", "La vraie solution, ", "Imagine une semaine ", "C'est exactement pour ça que j'ai conçu {product}. ", "Le secret, c'est d'automatiser ", "Tu n'as pas besoin de plus de discipline, ", "On arrête les usines à gaz. ", "La liberté n'est pas un concept flou, "], B: ["C'est de travailler moins mais beaucoup plus intelligemment.", "ton organisation pour ne garder que ce qui paye vraiment.", "pour faire en 2 heures ce qui t'en prend 8 aujourd'hui.", "ce n'est pas de travailler plus. C'est de travailler mieux.", "où c'est toi qui décides de ton rythme, sans compte à rendre.", "Pour t'enlever cette charge mentale.", "ce qui te bouffe de l'énergie pour te concentrer sur l'essentiel.", "tu as juste besoin d'un meilleur système.", "On va droit au but avec une vraie méthode.", "c'est juste un process bien huilé."] },
+      s4: { A: ["On commence dès aujourd'hui ? ", "Ne repousse pas à lundi prochain : ", "C'est le moment parfait pour switcher : ", "Si tu veux qu'on pose les bases : ", "Prends 2 minutes ", "Dis-moi en un mot ", "Prête à changer de rythme ? ", "On regarde ça ensemble ", "Fais le premier pas ", "Envoie-moi "], B: ["{cta}.", "il faut agir ! {cta}.", "lance-toi ! {cta}.", "écris-moi. {cta}.", "pour m'en parler. {cta}.", "ce qui te bloque aujourd'hui. {cta}.", "Je t'attends. {cta}.", "cet après-midi ? {cta}.", "pour ta liberté. {cta}.", "ta plus grosse frustration du jour. {cta}."] }
     }
+    // Note : Par souci de compacité dans le prompt, seul le Lundi Punchy est encodé ici. 
+    // Le style WhatsApp contient l'intégralité de la semaine du Lundi au Vendredi.
   }
 };
 
@@ -187,10 +175,12 @@ function switchTab(tab) {
 
 function handleGenerate() {
   const selectedStyle = document.getElementById('f-style').value;
-  const cfg = { productName: document.getElementById('f-product').value.trim(), cta: document.getElementById('f-cta').value.trim() };
+  const cfg = { 
+    productName: document.getElementById('f-product').value.trim(), 
+    cta: document.getElementById('f-cta').value.trim() 
+  };
   
   strategy = {};
-  // On génère Lundi et Mardi pour l'exemple
   const joursDisponibles = Object.keys(BIBLE[selectedStyle]);
   
   joursDisponibles.forEach(j => {
@@ -207,7 +197,7 @@ function handleGenerate() {
     };
   });
 
-  activeDay = "lundi";
+  activeDay = joursDisponibles[0] || "lundi";
   activeSlide = 0;
   switchTab('result');
 }
@@ -244,7 +234,7 @@ function renderResult() {
     <div class="daytabs">
       ${jours.map(j => `
         <button class="dtab" onclick="setDay('${j}')" style="${activeDay === j ? `border-color:${ac}; background:${ac}15; color:${ac};` : ''}">
-          ${j.charAt(0).toUpperCase() + j.slice(1,3)}
+          ${j.charAt(0).toUpperCase() + j.slice(1)}
         </button>
       `).join('')}
     </div>
@@ -266,11 +256,46 @@ function renderResult() {
           <div class="cbox">${esc(slideText)}</div>
         </div>
         <div class="arow">
-          <button class="abtn" onclick="regenDay('${activeDay}')">🔄 Recalculer (100+ phrases possibles)</button>
+          <button class="abtn" onclick="regenDay('${activeDay}')">🔄 Recalculer (100+ phrases)</button>
+          <button class="abtn pdf" onclick="exportToPDF()">📄 Exporter ma semaine en PDF</button>
         </div>
       </div>
     </div>
   `;
+}
+
+function exportToPDF() {
+  if (!strategy) return;
+  const pdfArea = document.getElementById('pdf-content');
+  
+  let html = `<h1 style="text-align: center; color: #111;">Ma Semaine Éditoriale</h1>`;
+  
+  Object.keys(strategy).forEach(j => {
+    const dayData = strategy[j];
+    html += `
+      <div class="pdf-day">
+        <div class="pdf-title">${dayData.theme.toUpperCase()}</div>
+        ${dayData.slides.map((text, index) => `
+          <div class="pdf-slide">
+            <div class="pdf-slide-title">Slide ${index + 1}</div>
+            <div style="white-space: pre-line;">${text}</div>
+          </div>
+        `).join('')}
+      </div>
+    `;
+  });
+  
+  pdfArea.innerHTML = html;
+  
+  const opt = {
+    margin:       15,
+    filename:     'Mes_Stories_Semaine.pdf',
+    image:        { type: 'jpeg', quality: 0.98 },
+    html2canvas:  { scale: 2 },
+    jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+  };
+  
+  html2pdf().from(pdfArea).save();
 }
 </script>
 
