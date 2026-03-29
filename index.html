@@ -394,6 +394,7 @@ const BIBLE = {
     theme: "Le Storytelling & Vécu",
     angle: "Raconter une galère passée pour créer de la sympathie et de l'autorité.",
     cialdini: "Sympathie & Autorité",
+    color: "#56CFE1",
     steps: ["La Connexion", "La Galère passée", "Le Déclic", "L'Ouverture"],
     s1: [
       "On est au milieu de la semaine... Petit coup de mou ou toujours à fond ?",
@@ -422,7 +423,7 @@ const BIBLE = {
     s3: [
       "Et puis j'ai dit stop. J'ai décidé d'investir sur moi et de poser mes propres règles.",
       "Le déclic ? Quand j'ai compris que personne n'allait venir me sauver à ma place.",
-      "J'ai arrêté d'écouter les sceptiques et j'ai foncé sur le digital avec la bonne méthode.",
+      "J'ai arrêté d'écouter les sceptiques et j'ai foncé on sur le digital avec la bonne méthode.",
       "Le jour où j'ai compris que la clé était de créer un système automatisé, tout a changé.",
       "J'ai fini par trouver le bon équilibre et j'ai enfin vu mes premiers résultats tomber.",
       "J'ai tout envoyé valser et j'ai misé à 100% sur mon projet. Sans regret.",
@@ -669,7 +670,6 @@ const BIBLE = {
 const pick = a => a[Math.floor(Math.random() * a.length)];
 const esc = s => {const d = document.createElement('div'); d.textContent = s || ''; return d.innerHTML};
 
-// Remplissage des variables
 function fill(s, c) {
   return s
     .replace(/\{product\}/g, c.productName || 'mon programme')
@@ -695,7 +695,6 @@ function switchTab(tab) {
   if (tab === 'result') renderResult();
 }
 
-// MOTEUR COMBINATOIRE
 function handleGenerate() {
   const productName = document.getElementById('f-product').value.trim();
   const cta = document.getElementById('f-cta').value.trim();
@@ -706,7 +705,6 @@ function handleGenerate() {
   
   jours.forEach(j => {
     const data = BIBLE[j];
-    // Tirage aléatoire indépendant pour chaque slide = combinatoire massive
     strategy[j] = {
       theme: data.theme,
       angle: data.angle,
@@ -775,6 +773,61 @@ function copyFullWeek() {
     .then(() => showToast('🚀 Semaine complète copiée !'));
 }
 
+// FONCTION EXPORT PDF SEMAINE
+function generatePDF() {
+  if (!strategy) return;
+  const printWindow = window.open('', '_blank');
+  const jours = ["lundi", "mardi", "mercredi", "jeudi", "vendredi", "samedi", "dimanche"];
+  
+  let htmlContent = `
+    <html>
+    <head>
+      <title>Planning Éditorial Hebdomadaire</title>
+      <style>
+        body { font-family: 'Helvetica', sans-serif; color: #333; padding: 30px; }
+        h1 { text-align: center; color: #1a1a1a; margin-bottom: 30px; }
+        .day-block { page-break-inside: avoid; margin-bottom: 25px; padding: 20px; border: 1px solid #e0e0e0; border-radius: 8px; background-color: #fcfcfc; }
+        .day-title { font-size: 1.3em; font-weight: bold; color: #111; margin-bottom: 5px; border-bottom: 2px solid #e0e0e0; padding-bottom: 5px; }
+        .day-theme { font-size: 0.9em; font-style: italic; color: #666; margin-bottom: 15px; }
+        .slide-block { margin-top: 12px; }
+        .slide-label { font-weight: bold; font-size: 0.95em; color: #FF8C42; }
+        .slide-text { margin: 5px 0 15px 15px; font-size: 0.9em; white-space: pre-line; line-height: 1.4; color: #2c3e50; }
+        @media print { body { padding: 0; } .day-block { border: 1px solid #aaa; } }
+      </style>
+    </head>
+    <body>
+      <h1>🗓️ Mon Planning Éditorial de la Semaine</h1>
+  `;
+
+  jours.forEach(j => {
+    const d = strategy[j];
+    htmlContent += `
+      <div class="day-block">
+        <div class="day-title">${j.toUpperCase()} — ${d.theme}</div>
+        <div class="day-theme">🎯 Angle : ${d.angle} | 🧠 Levier : ${d.cialdini}</div>
+    `;
+    d.slides.forEach((s, i) => {
+      htmlContent += `
+        <div class="slide-block">
+          <div class="slide-label" style="color:${d.color}">Slide ${i+1} : ${d.steps[i]}</div>
+          <div class="slide-text">${s}</div>
+        </div>
+      `;
+    });
+    htmlContent += `</div>`;
+  });
+
+  htmlContent += `</body></html>`;
+  
+  printWindow.document.write(htmlContent);
+  printWindow.document.close();
+  
+  setTimeout(() => {
+    printWindow.print();
+    printWindow.close();
+  }, 500);
+}
+
 function setDay(j) { activeDay = j; activeSlide = 0; renderResult(); }
 function setSlide(s) { activeSlide = s; renderResult(); }
 
@@ -834,7 +887,11 @@ function renderResult() {
             <button class="abtn" onclick="regenDay('${activeDay}')">🔄 Changer les phrases</button>
             <button class="abtn ac" style="background:${ac}; color:#000; border-color:${ac}" onclick="copyDay('${activeDay}')">📋 Copier le jour</button>
           </div>
-          <button class="btn-large" style="background:var(--card-bg); color:var(--text); border:1px solid var(--border); margin-top:10px;" onclick="copyFullWeek()">🚀 Copier la semaine complète</button>
+          
+          <div style="margin-top: 10px; display: flex; gap: 10px;">
+            <button class="abtn" style="flex: 1; background: #3cbbb1; color: white;" onclick="copyFullWeek()">🚀 Copier la semaine</button>
+            <button class="abtn" style="flex: 1; background: #E05263; color: white;" onclick="generatePDF()">📄 PDF Semaine</button>
+          </div>
         </div>
       </div>
     </div>
