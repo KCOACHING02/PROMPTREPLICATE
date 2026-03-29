@@ -4,7 +4,6 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Générateur Stories Mono-Slide (7 Jours - 100 Combinaisons)</title>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
   <style>
     :root {
       --bg: #0c0c10;
@@ -40,38 +39,35 @@
     input { width: 100%; padding: 14px; background: var(--card-bg); border: 1px solid var(--border); border-radius: 8px; color: var(--text); box-sizing: border-box; font-size: 1rem; }
     .btn-large { width: 100%; padding: 16px; background: var(--accent); color: var(--bg); border: none; border-radius: 8px; font-size: 1.1rem; font-weight: bold; cursor: pointer; }
     .daytabs { display: flex; gap: 8px; overflow-x: auto; margin-bottom: 20px; padding-bottom: 10px; }
-    .dtab { background: var(--card-bg); color: var(--text); border: 1px solid var(--border); padding: 10px 16px; border-radius: 6px; cursor: pointer; white-space: nowrap; font-weight: bold; }
+    .dtab { background: var(--card-bg); color: var(--text); border: 1px solid var(--border); padding: 10px 16px; border-radius: 6px; cursor: pointer; font-weight: bold; }
     .dayinfo { margin-bottom: 20px; background: rgba(255,255,255,0.03); padding: 15px; border-radius: 8px; }
     .dayinfo-t { font-weight: bold; font-size: 1.2rem; }
     .clayout { display: flex; gap: 30px; flex-wrap: wrap; }
     .phonewrap { flex: 1; min-width: 280px; max-width: 320px; }
-    .phone { background: #111; border: 12px solid #222; border-radius: 36px; height: 520px; padding: 25px; display: flex; flex-direction: column; position: relative; box-sizing: border-box; justify-content: center; text-align: center; }
-    .phone-ct { font-size: 1.1rem; line-height: 1.6; white-space: pre-line; overflow-y: auto; }
+    .phone { background: #111; border: 12px solid #222; border-radius: 36px; height: 520px; padding: 25px; display: flex; flex-direction: column; justify-content: center; text-align: center; box-sizing: border-box; }
+    .phone-ct { font-size: 1.1rem; line-height: 1.6; white-space: pre-line; }
     .cpanel { flex: 2; min-width: 300px; display: flex; flex-direction: column; justify-content: space-between; }
     .cbox { background: var(--card-bg); padding: 20px; border-radius: 10px; border: 1px solid var(--border); min-height: 150px; white-space: pre-line; margin-bottom: 20px; font-size: 1.1rem; }
     .arow { display: flex; gap: 10px; flex-wrap: wrap; }
     .abtn { flex: 1; min-width: 150px; padding: 14px; border-radius: 6px; border: 1px solid var(--border); background: var(--card-bg); color: var(--text); font-weight: bold; cursor: pointer; }
     .abtn.pdf { background: #10B981; color: white; border-color: #10B981; }
     
-    /* Zone PDF - Masquée hors écran mais capturable par html2pdf */
-    #pdf-content { 
-      position: absolute;
-      left: -9999px;
-      top: -9999px;
-      width: 700px;
-      color: #333; 
-      padding: 30px;
-      background: #fff;
+    /* STYLE DÉDIÉ À L'IMPRESSION PDF */
+    #print-area { display: none; }
+    @media print {
+      body * { display: none !important; }
+      #print-area { display: block !important; color: #000 !important; background: #fff !important; font-family: sans-serif !important; padding: 20px !important; }
+      .print-day { margin-bottom: 30px; page-break-inside: avoid; border-bottom: 1px solid #ddd; padding-bottom: 15px; }
+      .print-title { font-size: 14px; font-weight: bold; text-transform: uppercase; margin-bottom: 10px; }
+      .print-text { font-size: 13px; line-height: 1.6; white-space: pre-line; }
     }
-    .pdf-day { margin-bottom: 25px; border: 1px solid #ddd; padding: 15px; border-radius: 6px; }
-    .pdf-title { font-size: 14px; font-weight: bold; margin-bottom: 8px; text-transform: uppercase; }
   </style>
 </head>
 <body>
 
 <div class="container">
   <h1>🎯 Générateur Stories Mono-Slide</h1>
-  <div class="subtitle">1 Story = 1 Slide de vente psychologique (7 jours sur 7 !)</div>
+  <div class="subtitle">7 Jours • 100 Combinaisons par jour • Sauvegarde PDF Fiable</div>
 
   <div class="tabs">
     <button class="tab-btn active" id="tab-config" onclick="switchTab('config')">⚙️ Paramètres</button>
@@ -93,7 +89,7 @@
   <div class="panel" id="panel-result"></div>
 </div>
 
-<div id="pdf-content"></div>
+<div id="print-area"></div>
 
 <script>
 const BIBLE = {
@@ -145,7 +141,7 @@ const BIBLE = {
   samedi: {
     theme: "SAMEDI — Le Storytelling (L'Héroïne)", color: "#FF9F1C",
     A: [
-      "Il y a un an jour pour jour, j'étais en larmes devant mon écran... 😢 ", "J'ai failli tout envoyer valser pour reprendre un job salarié... 💼 ", "Si on m'avait dit que je vivrais de ma passion aujourd'hui, je n'y aurais pas cru. ✨ ", "J'ai fait une erreur de débutante qui m'a coûté très cher... 📉 ", "Le jour où j'ai compris que je faisais fausse route... 💡 ", "Mon entourage m'a dit que j'étais folle de me lancer. 🗣️ ", "J'ai passé des nuits blanches à essayer de tout comprendre toute seule. 🌙 ", "La vérité sur mes débuts que je n'ai jamais racontée... 🤫 ", "J'ai cru que la réussite n'était réservée qu'aux autres. 🏆 ", "Voici l'histoire de la plus grosse claque de ma vie d'entrepreneure. 💥 "
+      "Il y a un nom jour pour jour, j'étais en larmes devant mon écran... 😢 ", "J'ai failli tout envoyer valser pour reprendre un job salarié... 💼 ", "Si on m'avait dit que je vivrais de ma passion aujourd'hui, je n'y aurais pas cru. ✨ ", "J'ai fait une erreur de débutante qui m'a coûté très cher... 📉 ", "Le jour où j'ai compris que je faisais fausse route... 💡 ", "Mon entourage m'a dit que j'étais folle de me lancer. 🗣️ ", "J'ai passé des nuits blanches à essayer de tout comprendre toute seule. 🌙 ", "La vérité sur mes débuts que je n'ai jamais racontée... 🤫 ", "J'ai cru que la réussite n'était réservée qu'aux autres. 🏆 ", "Voici l'histoire de la plus grosse claque de ma vie d'entrepreneure. 💥 "
     ],
     B: [
       "Mais j'ai trouvé la clé. Elle est dans {product}. Ne fais pas les mêmes erreurs que moi : {cta}.", "C'est de cet échec qu'est né {product}. Épargne-toi ces mois de souffrance : {cta}.", "Le secret c'est que j'ai fini par me faire accompagner. Fais de même avec {product} : {cta}.", "Aujourd'hui, j'utilise cette expérience pour t'aider dans {product}. Dis-moi si tu veux ton plan : {cta}.", "C'est possible pour toi aussi d'inverser la tendance grâce à {product}. Viens m'en parler : {cta}.", "Ne laisse personne te dire que c'est impossible. Prouve-leur le contraire avec {product} ! {cta}.", "J'aurais aimé avoir un guide comme {product} à l'époque. Écris-moi pour l'obtenir : {cta}.", "Cette histoire m'a appris à valoriser mon temps. C'est ce qu'on fait dans {product}. Fais le pas : {cta}.", "La vulnérabilité c'est une force. On reconstruit tout plus solide dans {product}. Parle-moi : {cta}.", "La solution n'est pas de travailler plus dur, mais mieux. Découvre {product} en m'envoyant : {cta}."
@@ -247,41 +243,33 @@ function renderResult() {
         </div>
         <div class="arow">
           <button class="abtn" onclick="regenDay('${activeDay}')" style="border-color:${ac}; color:${ac};">🔄 Recalculer ce jour (100 options)</button>
-          <button class="abtn pdf" onclick="exportToPDF()">📄 Exporter en PDF</button>
+          <button class="abtn pdf" onclick="exportPDF()">📄 Sauvegarder en PDF</button>
         </div>
       </div>
     </div>
   `;
 }
 
-function exportToPDF() {
+function exportPDF() {
   if (!strategy) return;
-  const pdfArea = document.getElementById('pdf-content');
+  const printArea = document.getElementById('print-area');
   
-  let html = `<h1 style="text-align: center; color: #111; font-family: sans-serif; margin-bottom: 20px;">Mes Stories de Vente Hebdomadaires</h1>`;
+  let html = `<h1 style="text-align:center; margin-bottom:30px;">Ma Semaine de Stories Copywriting</h1>`;
   
   Object.keys(strategy).forEach(j => {
-    const dayData = strategy[j];
+    const d = strategy[j];
     html += `
-      <div class="pdf-day" style="border-left: 5px solid ${dayData.color}; font-family: sans-serif;">
-        <div class="pdf-title" style="color:${dayData.color}; font-size: 14px; margin-bottom: 5px;">${dayData.theme.toUpperCase()}</div>
-        <div style="white-space: pre-line; font-size: 13px; line-height: 1.6; color: #333;">${dayData.text}</div>
+      <div class="print-day">
+        <div class="print-title" style="color:${d.color}">${d.theme}</div>
+        <div class="print-text">${d.text}</div>
       </div>
     `;
   });
   
-  pdfArea.innerHTML = html;
+  printArea.innerHTML = html;
   
-  const opt = {
-    margin:       10,
-    filename:     'Mes_Stories_Persuasion_7_Jours.pdf',
-    image:        { type: 'jpeg', quality: 0.98 },
-    html2canvas:  { scale: 2 },
-    jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
-  };
-  
-  // Exécution de l'export
-  html2pdf().set(opt).from(pdfArea).save();
+  // Utilisation de la boîte d'impression native (indestructible)
+  window.print();
 }
 </script>
 
