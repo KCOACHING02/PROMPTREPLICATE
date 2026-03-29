@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Générateur de Stories Haute Conversion</title>
+  <title>Générateur Éditorial Haute Conversion</title>
   <style>
     :root {
       --bg: #0c0c10;
@@ -13,6 +13,8 @@
       --text: #f5f0e8;
       --text-muted: #8a8aa3;
       --border: #2a2a3a;
+      --lundi: #4EA8DE; --mardi: #48BFE3; --mercredi: #56CFE1; 
+      --jeudi: #72EFDD; --vendredi: #80FFDB; --samedi: #B79CED; --dimanche: #F15BB5;
     }
     body {
       font-family: 'Inter', -apple-system, sans-serif;
@@ -30,7 +32,13 @@
     h1 {
       text-align: center;
       color: var(--text);
+      margin-bottom: 5px;
+    }
+    .subtitle {
+      text-align: center;
+      color: var(--text-muted);
       margin-bottom: 30px;
+      font-size: 0.95rem;
     }
     .tabs {
       display: flex;
@@ -42,7 +50,7 @@
       background: var(--panel-bg);
       color: var(--text-muted);
       border: 1px solid var(--border);
-      padding: 10px 20px;
+      padding: 12px 24px;
       border-radius: 8px;
       cursor: pointer;
       font-weight: bold;
@@ -73,45 +81,6 @@
       border-left: 4px solid var(--accent);
       padding-left: 10px;
     }
-    .grid-fw {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-      gap: 15px;
-      margin-bottom: 25px;
-    }
-    .fwcard {
-      background: var(--card-bg);
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 15px;
-      cursor: pointer;
-      position: relative;
-      transition: 0.2s;
-    }
-    .fwcard:hover {
-      border-color: var(--text-muted);
-    }
-    .fwcard.sel {
-      border-width: 2px;
-    }
-    .chk {
-      position: absolute;
-      top: 10px;
-      right: 10px;
-      width: 20px;
-      height: 20px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 12px;
-      border: 1px solid var(--border);
-    }
-    .fws {
-      font-size: 0.85rem;
-      color: var(--text-muted);
-      margin-top: 5px;
-    }
     .form-group {
       margin-bottom: 20px;
     }
@@ -120,9 +89,9 @@
       margin-bottom: 8px;
       font-weight: 500;
     }
-    input, select, textarea {
+    input, select {
       width: 100%;
-      padding: 12px;
+      padding: 14px;
       background: var(--card-bg);
       border: 1px solid var(--border);
       border-radius: 8px;
@@ -130,27 +99,9 @@
       box-sizing: border-box;
       font-size: 1rem;
     }
-    .tone-grid {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      margin-bottom: 25px;
-    }
-    .tonechip {
-      background: var(--card-bg);
-      border: 1px solid var(--border);
-      padding: 8px 16px;
-      border-radius: 20px;
-      cursor: pointer;
-      transition: 0.2s;
-    }
-    .tonechip.act {
-      background: var(--text);
-      color: var(--bg);
-    }
     .btn-large {
       width: 100%;
-      padding: 15px;
+      padding: 16px;
       background: var(--accent);
       color: var(--bg);
       border: none;
@@ -159,25 +110,13 @@
       font-weight: bold;
       cursor: pointer;
       transition: 0.2s;
+      margin-top: 10px;
     }
-    .btn-large:disabled {
-      background: #555;
-      cursor: not-allowed;
+    .btn-large:hover {
+      opacity: 0.9;
     }
     
     /* RESULTATS STYLES */
-    .empty {
-      text-align: center;
-      padding: 40px;
-      color: var(--text-muted);
-    }
-    .fwbadge {
-      display: flex;
-      align-items: center;
-      padding: 15px;
-      margin-bottom: 20px;
-    }
-    .bn { font-weight: bold; font-size: 1.2rem; }
     .daytabs {
       display: flex;
       gap: 8px;
@@ -189,15 +128,22 @@
       background: var(--card-bg);
       color: var(--text);
       border: 1px solid var(--border);
-      padding: 8px 12px;
+      padding: 10px 16px;
       border-radius: 6px;
       cursor: pointer;
       white-space: nowrap;
+      font-weight: 600;
     }
     .dayinfo {
       margin-bottom: 20px;
+      background: rgba(255,255,255,0.03);
+      padding: 15px;
+      border-radius: 8px;
     }
-    .dayinfo-t { font-weight: bold; font-size: 1.1rem; }
+    .dayinfo-t { font-weight: bold; font-size: 1.2rem; }
+    .dayinfo-th { font-size: 0.9rem; font-weight: bold; }
+    .dayinfo-desc { color: var(--text-muted); font-size: 0.9rem; margin-top: 5px; }
+    
     .clayout {
       display: flex;
       gap: 30px;
@@ -231,10 +177,11 @@
       cursor: pointer;
     }
     .phone-sl {
-      font-size: 0.8rem;
+      font-size: 0.75rem;
       font-weight: bold;
       margin-bottom: 10px;
       text-transform: uppercase;
+      letter-spacing: 1px;
     }
     .phone-ct {
       font-size: 0.95rem;
@@ -242,23 +189,13 @@
       white-space: pre-line;
       overflow-y: auto;
     }
+    
     .cpanel {
       flex: 2;
       min-width: 300px;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
-    }
-    .sbrow {
-      display: flex;
-      justify-content: space-between;
-      margin-bottom: 15px;
-    }
-    .sbadge {
-      padding: 4px 10px;
-      border-radius: 4px;
-      font-size: 0.8rem;
-      font-weight: bold;
     }
     .cbox {
       background: var(--card-bg);
@@ -268,6 +205,8 @@
       min-height: 150px;
       white-space: pre-line;
       margin-bottom: 20px;
+      font-size: 1.05rem;
+      line-height: 1.6;
     }
     .arow {
       display: flex;
@@ -275,7 +214,7 @@
     }
     .abtn {
       flex: 1;
-      padding: 12px;
+      padding: 14px;
       border-radius: 6px;
       border: 1px solid var(--border);
       background: var(--card-bg);
@@ -309,49 +248,28 @@
 <body>
 
 <div class="container">
-  <h1>🚀 Générateur de Stories Vendeuses</h1>
+  <h1>🎯 Générateur Éditorial Intelligent</h1>
+  <div class="subtitle">Des stories conversationnelles basées sur la psychologie humaine et Cialdini</div>
 
   <div class="tabs">
-    <button class="tab-btn active" id="tab-config" onclick="switchTab('config')">⚙️ Configuration</button>
+    <button class="tab-btn active" id="tab-config" onclick="switchTab('config')">⚙️ Paramètres</button>
     <button class="tab-btn" id="tab-result" onclick="switchTab('result')">📱 Mes Stories</button>
   </div>
 
   <div class="panel active" id="panel-config">
-    <div class="section-title">1. Choisis ta méthode (Framework)</div>
-    <div class="grid-fw" id="fwgrid"></div>
-    <div id="fwinfo-box"></div>
-
-    <div class="section-title" style="margin-top:25px;">2. Détails de ton offre</div>
+    <div class="section-title">Personnalise ton offre</div>
+    
     <div class="form-group">
       <label>Nom de ton produit ou service</label>
-      <input type="text" id="f-product" placeholder="Ex: Masterclass Instagram, Coaching Scale..." value="mon programme">
+      <input type="text" id="f-product" placeholder="Ex: Masterclass Instagram, Accompagnement..." value="mon programme">
     </div>
+    
     <div class="form-group">
       <label>Ton appel à l'action (CTA)</label>
-      <input type="text" id="f-cta" placeholder="Ex: Écris 'GO' en DM, Clique sur le lien..." value="Lien dans ma bio">
+      <input type="text" id="f-cta" placeholder="Ex: Écris 'GO' en DM, Clique sur le lien..." value="Écris-moi 'GO' en DM">
     </div>
 
-    <div class="form-group">
-      <label>Cible / Audience</label>
-      <select id="f-audience"></select>
-      <div id="f-audience-custom-wrap" style="display:none; margin-top:10px;">
-        <input type="text" id="f-audience-custom" placeholder="Précise ton audience personnalisée...">
-      </div>
-    </div>
-
-    <div class="form-group">
-      <label>Problème principal résolu</label>
-      <select id="f-problem"></select>
-      <div id="f-problem-custom-wrap" style="display:none; margin-top:10px;">
-        <input type="text" id="f-problem-custom" placeholder="Précise le problème personnalisé...">
-      </div>
-    </div>
-
-    <div class="section-title">3. Tonalité de communication</div>
-    <div class="tone-grid" id="tonegrid"></div>
-    <div id="tonedesc" style="color:var(--text-muted); margin-bottom:25px; font-size:0.9rem;"></div>
-
-    <button class="btn-large" id="btn-gen" disabled onclick="handleGenerate()">🎯 GÉNÉRER MA SEMAINE DE STORIES</button>
+    <button class="btn-large" onclick="handleGenerate()">🚀 CRÉER MA SEMAINE DE STORIES</button>
   </div>
 
   <div class="panel" id="panel-result"></div>
@@ -360,335 +278,567 @@
 <div id="toast"></div>
 
 <script>
-const FRAMEWORKS=[
-  {
-    id:"charniere_4",
-    name:"Charnière 4 Slides",
-    icon:"🌉",
-    color:"#E8A838",
-    steps:["Moment de vie","Charnière","Offre / Témoignage","Lien"],
-    power:"La Spontanée (Crée un pont invisible entre ta vie et ton offre).",
-    when:"Idéal pour les jours où tu veux vendre de manière très naturelle, sans avoir l'air de forcer."
+// LA BIBLE COMBINATOIRE (DES DIZAINES DE MILLIERS DE COMBINAISONS POSSIBLES)
+const BIBLE = {
+  lundi: {
+    theme: "Le Boost & Anti-Surcharge",
+    angle: "Réveiller l'ambition sans assommer l'audience en plein rush.",
+    cialdini: "Engagement & Cohérence",
+    color: "#4EA8DE",
+    steps: ["L'Accroche", "Le Problème (Agitation)", "La Solution", "Le Passage à l'action"],
+    s1: [
+      "Hé, bon lundi ! J'espère que tu as la pêche pour attaquer cette nouvelle semaine.",
+      "C'est reparti pour un tour ! Prête à tout déchirer cette semaine ?",
+      "On est lundi matin. S'il te plaît, promets-moi de ne pas subir ta semaine.",
+      "Alerte lundi : stop au stress avant même d'avoir ouvert ton premier mail.",
+      "Hello toi ! Nouveau départ, nouvelle semaine. Tu l'abordes comment ce matin ?",
+      "On attaque le lundi. C'est le moment de poser les bases d'une semaine de feu.",
+      "Café chaud, téléphone en main... C'est le début d'une semaine incroyable si tu le décides.",
+      "Bon pied, bon œil ! C'est parti pour 5 jours pour te rapprocher de tes objectifs.",
+      "Nouveau lundi, nouvelles opportunités. Tu as prévu quoi de beau aujourd'hui ?",
+      "Hé ! Ne regarde pas ton calendrier avec angoisse. On va dompter cette semaine ensemble."
+    ],
+    s2: [
+      "Si tu te sens déjà débordée en regardant ta to-do list, c'est qu'il y a un souci.",
+      "Courir partout pour un boss qui ne reconnaît pas ta valeur... ce n'est plus possible.",
+      "Le lundi c'est souvent le gros rush, et le problème c'est qu'on s'oublie un peu là-dedans.",
+      "Passer ta journée à éteindre des incendies pour les autres au lieu d'avancer sur TES projets...",
+      "Tu connais cette sensation d'être déjà fatiguée alors qu'on est que lundi matin ?",
+      "Si ton agenda ressemble à un Tetris hyper stressant, c'est le moment de dire stop.",
+      "On s'habitue trop souvent à accepter le stress du début de semaine comme une fatalité.",
+      "Le problème n'est pas ton manque de temps, c'est que tu l'offres aux mauvaises personnes.",
+      "Si tu passes tes lundis à attendre impatiemment le vendredi, il faut changer quelque chose.",
+      "Vouloir tout faire parfaitement et finir la journée sur les rotules... stop."
+    ],
+    s3: [
+      "La vraie solution, ce n'est pas de travailler plus. C'est de travailler plus intelligemment.",
+      "Imagine une semaine où c'est toi qui décides de ton rythme, sans compte à rendre.",
+      "J'ai créé un système simple pour t'aider à reprendre le contrôle de ton temps.",
+      "C'est exactement pour ça que j'ai conçu {product}. Pour t'enlever cette charge mentale.",
+      "Aujourd'hui, j'aimerais t'aider à poser un cadre pour que tes journées t'appartiennent.",
+      "Tu as le droit d'avoir un business ou un job qui s'adapte à ta vie, pas l'inverse.",
+      "Le secret, c'est d'automatiser ce qui te bouffe de l'énergie pour te concentrer sur l'essentiel.",
+      "Avec {product}, on va nettoyer ton organisation pour ne garder que ce qui paye.",
+      "Il existe une méthode pour faire en 2 heures ce qui t'en prend 8 aujourd'hui.",
+      "Tu n'as pas besoin de plus de discipline, tu as juste besoin d'un meilleur système."
+    ],
+    s4: [
+      "On commence dès aujourd'hui ? {cta}.",
+      "Si tu veux qu'on pose les bases ensemble cette semaine : {cta}.",
+      "Prends 2 minutes pour m'en parler. {cta}.",
+      "Ne repousse pas à lundi prochain. {cta}.",
+      "Dis-moi en un mot ce qui te bloque aujourd'hui. {cta}.",
+      "Prête à changer de rythme ? {cta}.",
+      "On regarde ça ensemble cet après-midi ? {cta}.",
+      "Fais le premier pas pour ta liberté. {cta}.",
+      "Envoie-moi ta plus grosse frustration du jour. {cta}.",
+      "C'est le moment parfait pour switcher. {cta}."
+    ]
   },
-  {
-    id:"aida",
-    name:"AIDA",
-    icon:"🧲",
-    color:"#E05263",
-    steps:["Attention","Intérêt","Désir","Action"],
-    power:"La Captivante (Le grand classique pour capter l'attention et donner envie).",
-    when:"Parfait pour présenter un nouveau produit ou une offre phare de ta semaine."
+  mardi: {
+    theme: "L'Éducation & Valeur",
+    angle: "Distribuer une astuce en or pour créer de la réciprocité.",
+    cialdini: "Réciprocité",
+    color: "#48BFE3",
+    steps: ["L'Accroche", "La Pépite Gratuite", "L'Impact concret", "La Transition discrète"],
+    s1: [
+      "Aujourd'hui, j'ai envie de te donner un vrai coup de pouce. Marre des secrets bien gardés.",
+      "Petite pépite du jour pour toi. Note bien ça, ça va te servir.",
+      "On me demande souvent en DM comment je fais pour tenir le rythme sans m'épuiser. Voici la réponse.",
+      "Focus valeur aujourd'hui. Je te partage un truc que j'aurais aimé savoir il y a 2 ans.",
+      "Alerte astuce ! Pas de blabla, juste du concret pour ta journée.",
+      "Aujourd'hui, je casse un mythe et je te donne la vraie méthode.",
+      "Installe-toi confortablement, je vais te donner une astuce qui va te faire gagner des heures.",
+      "Cadeau du mardi ! C'est gratuit et ça peut littéralement changer ton business.",
+      "Je partage rarement ça publiquement, mais allez... c'est pour toi ce matin.",
+      "Marre des conseils théoriques ? On passe à la pratique tout de suite."
+    ],
+    s2: [
+      "La clé, c'est d'appliquer la règle des 80/20. Focus uniquement sur ce qui apporte du résultat.",
+      "Arrête de vouloir être sur tous les fronts. Choisis UN seul canal et deviens-y excellente.",
+      "Prends 15 minutes chaque matin, sans téléphone, pour planifier ta SEULE grosse tâche du jour.",
+      "Utilise des scripts et des templates pour tout. Ne réinvente jamais la roue à chaque fois.",
+      "Bloque des plages de travail de 50 minutes en mode avion. Tu vas halluciner sur ta productivité.",
+      "Délègue ou automatise les tâches à moins de 10€ de valeur horaire pour te concentrer sur le reste.",
+      "Arrête de vendre ton temps, vends un résultat concret. C'est ça qui change la donne.",
+      "Crée du contenu une fois, et recycle-le sous 5 formats différents. Travaille moins, diffuse plus.",
+      "Le secret d'une bonne offre, c'est de résoudre un problème DOULOUREUX, pas juste sympa.",
+      "Fais le tri dans tes abonnements et tes outils. Ne garde que le strict nécessaire."
+    ],
+    s3: [
+      "Rien qu'en faisant ça, tu vas libérer un temps de dingue dans tes journées.",
+      "C'est bête comme chou, mais 90% des gens ne le font pas. Fais partie des 10%.",
+      "Tu vas voir ton niveau de stress baisser et ton efficacité grimper en flèche.",
+      "C'est le meilleur moyen d'arrêter de brasser de l'air et de voir enfin des résultats.",
+      "En appliquant ça cette semaine, tu auras déjà une longueur d'avance.",
+      "Tu n'imagines pas à quel point cette petite habitude va transformer ton quotidien.",
+      "Fais le test aujourd'hui. Tu m'en diras des nouvelles ce soir.",
+      "C'est la différence entre être simplement occupée et être réellement productive.",
+      "Moins de fatigue, plus de résultats. C'est mathématique.",
+      "C'est comme ça qu'on passe d'un projet qui stagne à un projet qui décolle."
+    ],
+    s4: [
+      "Si tu veux que je te donne d'autres astuces de ce genre adaptées à ton projet : {cta}.",
+      "C'est le genre de pépites qu'on approfondit dans {product}. Curieuse ? {cta}.",
+      "Dis-moi en DM si tu connaissais déjà cette astuce ! {cta}.",
+      "Je t'explique le reste en privé si tu veux. {cta}.",
+      "Si tu veux le plan complet étape par étape : {cta}.",
+      "Tu veux que je t'envoie mon guide complet gratuitement ? {cta}.",
+      "Envoie-moi un petit mot si ça t'a aidé ! {cta}.",
+      "On passe au niveau supérieur ensemble ? {cta}.",
+      "Dis-moi ce que tu en penses en DM. {cta}.",
+      "Prête à mettre ça en place ? {cta}."
+    ]
   },
-  {
-    id:"pas",
-    name:"PAS",
-    icon:"💊",
-    color:"#3CBBB1",
-    steps:["Problème","Agitation","Solution"],
-    power:"La Résolutive (Appuie là où ça fait mal pour proposer le remède).",
-    when:"À utiliser quand ton audience procrastine ou n'a pas conscience de l'urgence de son problème."
+  mercredi: {
+    theme: "Le Storytelling & Vécu",
+    angle: "Raconter une galère passée pour créer de la sympathie et de l'autorité.",
+    cialdini: "Sympathie & Autorité",
+    steps: ["La Connexion", "La Galère passée", "Le Déclic", "L'Ouverture"],
+    s1: [
+      "On est au milieu de la semaine... Petit coup de mou ou toujours à fond ?",
+      "Aujourd'hui, j'ai envie d'être 100% transparente avec toi. Pas de filtre.",
+      "Il y a un an, à la même heure, j'étais au bout du rouleau. Vraiment.",
+      "Parfois j'oublie d'où je viens. Alors ce matin, petit retour en arrière nécessaire.",
+      "On montre souvent les victoires sur Insta. Mais la réalité est souvent plus brute.",
+      "Hé, j'ai une petite confession à te faire ce matin. Entre nous.",
+      "On arrive au milieu de la semaine, et j'ai repensé à une période pas si lointaine...",
+      "Aujourd'hui, j'ai envie de te raconter une histoire vraie. Pas du storytelling de cinéma.",
+      "Tu me vois épanouie aujourd'hui, mais ça n'a pas toujours été le cas du tout.",
+      "Parfois, il faut toucher le fond pour enfin décider de remonter."
+    ],
+    s2: [
+      "Je n'avais pas de diplôme spécifique, pas de réseau, et surtout une peur bleue de l'échec.",
+      "Je passais mes journées à échanger mon temps contre des clopinettes, épuisée.",
+      "Je pensais que la liberté financière et de temps, c'était réservé aux autres, aux génies.",
+      "Je me levais le matin avec la boule au ventre, sans aucun sens dans ce que je faisais.",
+      "J'accumulais les formations sans jamais rien oser lancer. Le syndrome de l'imposteur à fond.",
+      "J'avais zéro soutien autour de moi. On me disait de trouver un 'vrai travail' stable.",
+      "Mon compte en banque était dans le rouge et mon moral n'était pas beaucoup plus haut.",
+      "Je travaillais 70 heures par semaine pour un salaire de misère. Un vrai esclavage moderne.",
+      "Je passais à côté de ma vie de famille, toujours sur les nerfs et fatiguée.",
+      "J'ai tout essayé : les petits boulots, l'intérim... rien ne me faisait vibrer."
+    ],
+    s3: [
+      "Et puis j'ai dit stop. J'ai décidé d'investir sur moi et de poser mes propres règles.",
+      "Le déclic ? Quand j'ai compris que personne n'allait venir me sauver à ma place.",
+      "J'ai arrêté d'écouter les sceptiques et j'ai foncé sur le digital avec la bonne méthode.",
+      "Le jour où j'ai compris que la clé était de créer un système automatisé, tout a changé.",
+      "J'ai fini par trouver le bon équilibre et j'ai enfin vu mes premiers résultats tomber.",
+      "J'ai tout envoyé valser et j'ai misé à 100% sur mon projet. Sans regret.",
+      "La méthode que j'ai créée à ce moment-là est devenue la base de tout mon succès.",
+      "Quand j'ai fait ma première vente automatique en dormant, j'ai compris que c'était possible.",
+      "Le jour où j'ai posé ma démission a été le plus beau jour de ma vie.",
+      "J'ai arrêté de chercher la perfection et j'ai simplement commencé à agir."
+    ],
+    s4: [
+      "Si tu te reconnais là-dedans, sache que tu n'es pas seule. Parlons-en en DM : {cta}.",
+      "C'est pour t'éviter ces erreurs que j'ai créé {product}. Envie d'en savoir plus ? {cta}.",
+      "Dis-moi si ça te parle ! {cta}.",
+      "On peut changer les choses ensemble. {cta}.",
+      "Si tu veux que je t'aide à avoir ton propre déclic : {cta}.",
+      "Envoie-moi un petit emoji pour me dire si tu vis ça en ce moment. {cta}.",
+      "Le changement commence par une décision. {cta}.",
+      "Tu mérites tellement mieux que de subir. {cta}.",
+      "On en discute tranquillement en privé ? {cta}.",
+      "Raconte-moi ton histoire en DM. {cta}."
+    ]
   },
-  {
-    id:"ppn",
-    name:"Preuve → Projection",
-    icon:"🔮",
-    color:"#9B5DE5",
-    steps:["Preuve","Projection","Normalisation"],
-    power:"La Rassurante (Montre des résultats concrets pour lever les peurs).",
-    when:"Le top quand tu as un super témoignage client ou un chiffre fort à partager."
+  jeudi: {
+    theme: "Les Objections & Croyances",
+    angle: "Démonter une excuse fréquente pour asseoir son autorité.",
+    cialdini: "Autorité",
+    color: "#72EFDD",
+    steps: ["Le Mythe", "Le Recadrage", "La Preuve", "L'Appel"],
+    s1: [
+      "On va briser un gros tabou aujourd'hui. Accroche-toi bien.",
+      "Je reçois souvent ce message : 'J'adorerais me lancer mais je n'ai pas le temps'.",
+      "La vérité qui pique un peu mais qui va te faire du bien : arrête de te chercher des excuses.",
+      "On me dit souvent que le marché est saturé. Laisse-moi rire deux minutes.",
+      "Tu penses qu'il faut être une experte en technique pour réussir en ligne ? C'est faux.",
+      "La plus grosse bêtise que j'entends sur la vente de produits digitaux c'est...",
+      "Aujourd'hui, on va parler de la peur d'investir sur soi. Sujet sensible.",
+      "Tu crois qu'il faut des milliers d'abonnés pour vivre de ton business ? Absolument pas.",
+      "On va dégonfler une grosse croyance limitante aujourd'hui. Tu es prête ?",
+      "Si tu penses que c'est trop tard pour te lancer, lis attentivement ce qui suit."
+    ],
+    s2: [
+      "La réalité, c'est que tu as le temps. C'est juste une question de priorités dans tes journées.",
+      "Le marché n'est pas saturé de bonnes personnes. Il y a de la place pour ton authenticité.",
+      "Les outils d'aujourd'hui sont tellement simples qu'un enfant de 10 ans pourrait s'en servir.",
+      "Garder ton argent sur un livret A qui ne rapporte rien, c'est ça le vrai risque.",
+      "Mes premiers clients sont arrivés quand j'avais à peine 300 abonnés. Vraiment.",
+      "Ce n'est jamais trop tard. Le meilleur moment c'était il y a un an, le deuxième meilleur c'est aujourd'hui.",
+      "Ceux qui réussissent n'ont pas plus de talent que toi, ils passent juste à l'action.",
+      "La perfection est l'ennemie du bien. Fais-le imparfaitement, mais fais-le.",
+      "Tu n'as pas besoin d'un gros budget, tu as besoin d'une grosse détermination.",
+      "La peur ne t'évitera pas le danger, elle t'empêchera juste de vivre."
+    ],
+    s3: [
+      "En changeant simplement cet angle de vue, tu vas voir tes résultats exploser.",
+      "C'est ce switch mental qui a tout débloqué chez mes élèves cette année.",
+      "Arrête de te sous-estimer. Tu as tout ce qu'il faut pour réussir ici.",
+      "Regarde autour de toi : d'autres le font avec moins de compétences que toi.",
+      "C'est le moment d'arrêter de regarder les autres réussir et de prendre ta part.",
+      "En levant ce blocage, tu t'ouvres les portes d'une toute nouvelle vie.",
+      "Une fois que tu auras compris ça, plus rien ne pourra t'arrêter.",
+      "C'est exactement cette prise de conscience qui a changé ma vie.",
+      "N'attends pas que toutes les étoiles soient alignées pour oser.",
+      "Le risque le plus grand, c'est de ne pas en prendre."
+    ],
+    s4: [
+      "Dis-moi en DM quelle est TA plus grosse peur en ce moment : {cta}.",
+      "C'est exactement ce qu'on travaille au tout début de {product} : {cta}.",
+      "Prête à dépasser tes limites ? {cta}.",
+      "On en parle en privé si tu veux débloquer ça. {cta}.",
+      "Envoie-moi 'ACTION' et on regarde ça ensemble. {cta}.",
+      "Ne laisse pas tes doutes décider de ton avenir. {cta}.",
+      "Dis-moi ce qui te bloque encore. {cta}.",
+      "On casse tes croyances ensemble ? {cta}.",
+      "Envoie-moi ta plus grande excuse, on va la démonter. {cta}.",
+      "Fais le premier pas aujourd'hui. {cta}."
+    ]
   },
-  {
-    id:"avant_apres",
-    name:"Avant / Après",
-    icon:"🔄",
-    color:"#FF6B6B",
-    steps:["Le Passé","Le Déclic","Le Présent","L'Appel"],
-    power:"La Transformatrice (Le choc visuel et émotionnel du changement).",
-    when:"Idéal pour vendre un accompagnement ou un programme de transformation."
+  vendredi: {
+    theme: "La Preuve & Résultats",
+    angle: "Montrer des résultats clients ou personnels pour rassurer.",
+    cialdini: "Preuve Sociale",
+    color: "#80FFDB",
+    steps: ["La Célébration", "Le Résultat concret", "La Normalisation", "Le CTA"],
+    s1: [
+      "Regarde ce que j'ai reçu ce matin dans mes DM... Je suis trop fière !",
+      "C'est vendredi, et le vendredi, on célèbre les victoires de la communauté !",
+      "La preuve en image que ma méthode fonctionne. No fake, juste du travail.",
+      "Quand mes élèves m'envoient ce genre de message, ça donne un sens à tout.",
+      "Encore une transformation incroyable cette semaine. Regarde bien ça.",
+      "Rien ne me rend plus heureuse que de voir mes clients réussir.",
+      "Alerte pluie de résultats aujourd'hui ! C'est juste incroyable.",
+      "Ce matin, j'ai envie de mettre en lumière la réussite de l'une d'entre vous.",
+      "La méthode parle d'elle-même. Regarde ce retour d'expérience.",
+      "On finit la semaine en beauté avec des chiffres qui font plaisir."
+    ],
+    s2: [
+      "Une de mes élèves a généré ses premières ventes en seulement 15 jours.",
+      "On a dépassé les 10 000€ de chiffre d'affaires avec ce tout petit produit.",
+      "Elle est passée de 0 à un complément de revenu stable en moins d'un mois.",
+      "Elle a pu quitter son CDI pour vivre pleinement de sa passion grâce à ça.",
+      "Son carnet de commandes est complet pour les 3 prochains mois.",
+      "Elle a automatisé 90% de son business et travaille deux fois moins.",
+      "Elle a enfin osé lancer son offre et les retours sont juste dingues.",
+      "Grâce à {product}, elle a retrouvé un sommeil paisible et des revenus stables.",
+      "Elle a multiplié son audience par 4 sans dépenser un seul euro en pub.",
+      "Elle a généré plus de ventes en une semaine qu'en un mois auparavant."
+    ],
+    s3: [
+      "Et le plus beau ? Elle n'avait aucune expérience au départ. Rien.",
+      "Ce n'est pas un coup de chance, c'est l'application rigoureuse du système.",
+      "Si elle l'a fait avec son emploi du temps de maman débordée, tu peux le faire.",
+      "C'est la preuve que quand on s'en donne les moyens, tout est possible.",
+      "La seule différence entre elle et toi ? Elle a osé franchir le pas.",
+      "Pas besoin d'être un génie du web, juste besoin de suivre la carte.",
+      "Elle était exactement au même point que toi il y a quelques semaines.",
+      "C'est accessible à tout le monde, peu importe ton point de départ.",
+      "Il n'y a aucune magie là-dedans, juste de la bonne stratégie.",
+      "Sa victoire d'aujourd'hui peut être la tienne demain."
+    ],
+    s4: [
+      "Tu veux obtenir les mêmes résultats ? {cta}.",
+      "Rejoins la bande et écris ta propre story à succès : {cta}.",
+      "Les accès à {product} sont encore ouverts pour quelques jours : {cta}.",
+      "Dis-moi en DM si tu veux voir d'autres témoignages ! {cta}.",
+      "Prête à être ma prochaine success story ? {cta}.",
+      "Envoie-moi un message pour qu'on commence dès lundi. {cta}.",
+      "Tu attends quoi pour avoir tes propres résultats ? {cta}.",
+      "Le train passe maintenant. {cta}.",
+      "Viens poser tes questions en privé ! {cta}.",
+      "Rejoins le mouvement. {cta}."
+    ]
   },
-  {
-    id:"story_5",
-    name:"5 Étapes Vente",
-    icon:"🎯",
-    color:"#06D6A0",
-    steps:["Accroche","Problème","Solution","Preuve","CTA"],
-    power:"La Complète (Le tunnel de vente condensé en quelques slides).",
-    when:"La méthode forte à sortir pour un jour de gros lancement ou une offre limitée."
+  samedi: {
+    theme: "Les Coulisses & Lifestyle",
+    angle: "Montrer la liberté gagnée pour donner envie (sans paillettes).",
+    cialdini: "Sympathie",
+    color: "#B79CED",
+    steps: ["La Vie réelle", "Le Contraste soft", "Le Message de fond", "L'Ouverture"],
+    s1: [
+      "Week-end ! Pas de réveil ce matin, et ça, ça n'a pas de prix.",
+      "Petit aperçu de mes coulisses aujourd'hui. Mode chill activé.",
+      "Travailler d'où je veux, quand je veux... C'est ça ma vraie richesse.",
+      "Samedi matin dans mon cocon. Je savoure ce calme avant d'attaquer la journée.",
+      "Pas de rush aujourd'hui. Je prends le temps de vivre, tout simplement.",
+      "Hello toi ! Tu fais quoi de beau de ton week-end ?",
+      "Aujourd'hui, c'est déconnexion presque totale. Ça fait du bien.",
+      "Un petit café, un bon livre... la définition d'un samedi parfait pour moi.",
+      "Je te partage un petit bout de ma vie hors business aujourd'hui.",
+      "Le week-end est là ! On souffle un bon coup."
+    ],
+    s2: [
+      "Pendant des années, le samedi c'était juste le moment pour récupérer de ma semaine épuisante.",
+      "Je me rappelle quand je devais bosser le week-end pour arrondir les fins de mois difficiles.",
+      "Avant, mon esprit était encore pollué par le boulot même pendant mes jours de repos.",
+      "J'ai longtemps cru que travailler dur signifiait sacrifier tous mes week-ends.",
+      "Je passais mes samedis à faire les corvées que je n'avais pas le temps de faire la semaine.",
+      "Le stress ne me quittait jamais vraiment, même le samedi en famille.",
+      "J'étais tellement fatiguée que je n'arrivais même pas à profiter de mes proches.",
+      "Mes samedis étaient juste une parenthèse artificielle avant de replonger dans le stress.",
+      "Je n'avais plus aucune énergie pour mes propres passions ou loisirs.",
+      "Le travail prenait toute la place, ne me laissant que des miettes de temps."
+    ],
+    s3: [
+      "Aujourd'hui, mon business tourne en fond pendant que je profite de mes proches.",
+      "C'est cette liberté-là que je veux t'aider à construire. Pas juste faire de l'argent.",
+      "Le digital permet de créer une vie sur mesure. Ne passe pas à côté de ça.",
+      "Je ne dis pas ça pour me vanter, mais pour te montrer que c'est possible pour toi aussi.",
+      "La vraie richesse, c'est d'être maître de son temps. Le reste suivra.",
+      "Aujourd'hui, je choisis quand je travaille et quand je me repose. C'est le luxe ultime.",
+      "Mon téléphone travaille pour moi, et pas l'inverse. C'est ça la clé.",
+      "Je veux que tu puisses vivre des samedis aussi sereins que les miens.",
+      "C'est fou comme la vie change quand on a le bon système en place.",
+      "La sérénité n'a pas de prix. C'est mon plus bel accomplissement."
+    ],
+    s4: [
+      "Profite bien de ton week-end ! On reparle business lundi ? {cta}.",
+      "Si tu veux savoir comment j'ai automatisé tout ça : {cta}.",
+      "Dis-moi en DM quel est ton samedi idéal ! {cta}.",
+      "Passe un bon moment et repose-toi bien. {cta}.",
+      "Envie de créer cette même liberté pour toi ? {cta}.",
+      "On se retrouve en privé pour papoter si tu t'ennuies ! {cta}.",
+      "N'oublie pas de prendre du temps pour toi aujourd'hui. {cta}.",
+      "Je reste dispo en DM si tu as besoin. {cta}.",
+      "Dis-moi ce qui te ferait le plus kiffer ce week-end. {cta}.",
+      "Prends soin de toi. {cta}."
+    ]
+  },
+  dimanche: {
+    theme: "Le Blues vs La Liberté",
+    angle: "Appuyer sur le contraste du dimanche soir et créer l'urgence.",
+    cialdini: "Rareté & Contraste",
+    color: "#F15BB5",
+    steps: ["L'Empathie", "Le Contraste fort", "L'Urgence (Cialdini)", "Le CTA"],
+    s1: [
+      "Tu as cette petite boule au ventre qui monte là ? Le classique du dimanche soir...",
+      "Pendant que d'autres stressent pour le réveil de demain, moi je savoure ma soirée.",
+      "Le dimanche soir a longtemps été le moment le plus angoissant de ma semaine.",
+      "Bientôt l'heure du dodo... et l'angoisse du lundi qui pointe son nez pour beaucoup.",
+      "Dimanche soir au calme. Mais je sais que pour beaucoup, c'est le stress qui monte.",
+      "Hé, j'espère que tu as passé un bon week-end et que tu ne stresses pas trop pour demain.",
+      "Ce moment précis où le week-end s'achève... Tu te sens comment là tout de suite ?",
+      "Le dimanche soir, c'est le moment parfait pour faire le point sur ce qu'on veut vraiment.",
+      "J'ai une pensée pour toutes celles qui redoutent le réveil de demain matin.",
+      "Fin de week-end. L'ambiance change doucement, tu as remarqué ?"
+    ],
+    s2: [
+      "Demain matin, je me lève quand je veux. Je bosse depuis mon canapé et à mon rythme.",
+      "J'ai banni le réveil strident de ma vie depuis des mois. Et c'est un pur bonheur.",
+      "Je n'ai plus de patron sur le dos pour me dire quoi faire de mes journées.",
+      "Ma semaine de travail commence quand JE le décide, pas selon une convention.",
+      "Je peux décider de partir sur un coup de tête demain si j'en ai envie.",
+      "Le lundi est devenu un de mes jours préférés parce que je l'organise sur mesure.",
+      "Finie la course contre la montre et les transports bondés à l'aube.",
+      "Je choisis mes projets et mes clients avec le cœur, pas par obligation.",
+      "Ma liberté n'est plus négociable. J'ai créé mon propre écosystème.",
+      "Je savoure chaque minute de mes soirées sans penser au stress du lendemain."
+    ],
+    s3: [
+      "Ce n'est pas de la magie, c'est de la stratégie. Et c'est accessible à tout le monde.",
+      "Je ferme définitivement les accès à {product} ce soir à minuit. C'est maintenant.",
+      "Il ne reste que 3 places disponibles pour transformer tes dimanches soirs.",
+      "Le prix augmente dès demain. C'est ta dernière chance d'en profiter à ce tarif.",
+      "Arrête de remettre ta liberté à plus tard. Le bon moment n'existe pas, crée-le.",
+      "La seule chose qui te sépare de cette vie, c'est ta décision de ce soir.",
+      "J'arrête les inscriptions dans quelques heures pour chouchouter la nouvelle promo.",
+      "C'est l'offre de l'année et elle se termine ce soir. Ne rate pas le coche.",
+      "Des dizaines de personnes ont déjà sauté le pas ce week-end. Et toi ?",
+      "Ne laisse pas un autre dimanche soir gâché par le stress du travail."
+    ],
+    s4: [
+      "Écris-moi 'LIBERTÉ' en DM si tu veux en être avant qu'il ne soit trop tard : {cta}.",
+      "Clique sur le lien dans ma bio ou écris-moi ici directement : {cta}.",
+      "On commence dès demain matin ensemble ? {cta}.",
+      "Fais le bon choix pour ton avenir ce soir. {cta}.",
+      "Envoie-moi tes questions avant la fermeture ! {cta}.",
+      "Prête à ne plus jamais avoir la boule au ventre le dimanche ? {cta}.",
+      "Prends ta place maintenant. {cta}.",
+      "C'est le moment ou jamais. {cta}.",
+      "Rends-toi service et passe à l'action. {cta}.",
+      "On se retrouve de l'autre côté ! {cta}."
+    ]
   }
-];
-
-const DAY_THEMES=[
-  {jour:"Lundi",theme:"Mindset & Motivation",emoji:"🔥",angle:"Réveiller l'ambition en début de semaine"},
-  {jour:"Mardi",theme:"Éducation & Valeur",emoji:"📚",angle:"Enseigner quelque chose d'utile et concret"},
-  {jour:"Mercredi",theme:"Storytelling & Vécu",emoji:"🎬",angle:"Raconter un moment vrai, une expérience"},
-  {jour:"Jeudi",theme:"Objections & Croyances",emoji:"🧱",angle:"Casser une croyance limitante"},
-  {jour:"Vendredi",theme:"Preuve & Résultats",emoji:"🏆",angle:"Montrer des résultats concrets"},
-  {jour:"Samedi",theme:"Coulisses & Lifestyle",emoji:"☀️",angle:"Montrer ta vie, ton cadre, ton quotidien"},
-  {jour:"Dimanche",theme:"Offre & Urgence",emoji:"🚀",angle:"Vente directe avec rareté"},
-];
-
-const AUDIENCES=["Salariés qui veulent se lancer à côté","Freelances qui veulent scaler","Mamans qui veulent un revenu depuis la maison","Étudiants qui veulent un side hustle","Personnes en reconversion professionnelle","Entrepreneurs débutants","Diaspora francophone","Coachs et consultants","Créateurs de contenu","Autre (personnalisé)"];
-const PROBLEMS=["Coincé(e) dans un job qui ne correspond plus","Dépendant(e) d'un seul revenu","Pas assez de temps pour soi et sa famille","Ne sait pas par où commencer en ligne","A déjà essayé sans résultat","Manque de confiance pour se lancer","Trop de distractions, pas de système","Peur de l'échec ou du jugement","Autre (personnalisé)"];
-
-const TONES=[
-  {id:"amical",label:"👋 Amical",desc:"Comme si tu parlais à une amie"},
-  {id:"motivant",label:"🔥 Motivant",desc:"Énergie et enthousiasme"},
-  {id:"direct",label:"💥 Direct",desc:"Cash, sans détour"},
-  {id:"inspirant",label:"✨ Inspirant",desc:"Doux et aspirationnel"},
-  {id:"provocateur",label:"🎤 Provocateur",desc:"Secouer les croyances"},
-];
-
-const TONE_MOD={
-  amical:{pre:["Hé,","Écoute,","Entre nous,","Tu sais quoi ?","Allez,"],suf:["💛","😊","🤗","❤️","✨"]},
-  motivant:{pre:["LET'S GO !","C'est TON moment.","Tu es CAPABLE.","Réveille-toi !","MAINTENANT."],suf:["🔥","💪","⚡","🚀","🎯"]},
-  direct:{pre:["Stop.","La vérité :","Soyons clairs.","Je vais être cash.","Point."],suf:["","Point final.","C'est comme ça.","Voilà.",""]},
-  inspirant:{pre:["Imagine un instant...","Et si c'était possible ?","Il y a une autre voie...","Respire.","Ferme les yeux une seconde."],suf:["✨","🌟","💫","🦋","🌙"]},
-  provocateur:{pre:["Ça va piquer.","Tu veux la vérité ?","Personne ne te dira ça.","Wake up.","Regarde-toi."],suf:["😏","💣","🎤","⚡","🔥"]},
 };
 
-const DB={
-  moments_vie:["Ce matin, café en terrasse. Le soleil est à peine levé.","Balade ce matin. Pas de réveil, pas de rush, pas de patron.","Je regarde mon téléphone. Notification : vente pendant que je dormais.","Assis dans un café. Mon laptop est fermé. Et c'est un choix.","Aujourd'hui j'ai décidé de ne pas travailler. Et c'est OK."],
-  charnieres:["Parce que ce business, je le gère d'où je veux.","C'est ça que j'ai construit. Et ça n'a rien de magique.","Ce genre de matin — je les choisis maintenant.","J'ai construit quelque chose qui tourne même quand je ne bosse pas."],
-  accroches:["STOP. Avant de scroller…","Tu lis ces stories depuis ton canapé ou depuis ton bureau ?","Si t'es au même point qu'il y a 6 mois, lis ça.","La vérité que personne ne te dit sur l'argent en ligne."],
-  problemes:["Tu te sens coincé(e) dans un quotidien qui ne te ressemble plus.","Tu dépends d'un seul revenu. Et ça te stresse.","Tu scrolles des « méthodes » mais rien ne change concrètement."],
-  agitations:["Et chaque mois qui passe, c'est un mois de perdu.","Le pire ? C'est que tu le sais. Et tu ne fais rien.","Imagine dans 5 ans. Même job. Même salaire. Même frustration."],
-  solutions:["C'est le système étape par étape pour construire ta liberté.","J'ai créé {product} pour ceux qui veulent un PLAN, pas des promesses.","{product} : la méthode pour générer des revenus depuis n'importe où."],
-  preuves:["Des ventes à 3h du matin. Pendant que je dors.","+{n} personnes ont déjà rejoint le programme.","[Prénom] a fait ses premières ventes en 3 semaines."],
-  projections:["Imagine te réveiller demain sans alarme. Et que ce soit normal.","Dans 90 jours, tu pourrais recevoir ta première vente automatique.","Visualise : ton téléphone sonne. C'est une notification de paiement."],
-  normalisations:["C'est pas réservé aux génies. C'est pour ceux qui décident.","Des centaines de personnes l'ont fait. Avec moins d'expérience que toi.","La seule différence entre toi et eux ? Ils ont commencé."],
-  ctas:["👉 Lien dans ma bio.","👉 Écris-moi en DM.","👉 Clique sur le lien. C'est maintenant."],
-  temoignages:["« J'étais sceptique. 3 semaines après, ma première vente. »","« Grâce à la méthode, j'ai quitté mon CDI en 4 mois. »"],
-  objections:["« J'ai pas le temps. » → Tu as le temps de scroller. Tu as le temps de commencer.","« C'est trop tard. » → Il n'est jamais trop tard quand on a la bonne méthode."],
-  urgences:["⏰ Les inscriptions ferment bientôt.","🔥 Plus que quelques places.","⚠️ Le prix augmente bientôt."],
-  transformations:{
-    douleur:["Il y a un an, je comptais chaque euro à la fin du mois. Stress permanent.","Avant, le dimanche soir rimait avec boule au ventre. Routine métro-boulot-dodo."],
-    declic:["Et puis j'ai dit stop. J'ai arrêté d'attendre et j'ai mis en place un système.","Le jour où j'ai compris que le digital n'était pas réservé aux experts, j'ai sauté le pas."],
-    victoire:["Aujourd'hui, je vis mes journées selon mes propres règles. Sans patron.","Maintenant, mon téléphone travaille pour moi, pas l'inverse."]
-  }
-};
+const pick = a => a[Math.floor(Math.random() * a.length)];
+const esc = s => {const d = document.createElement('div'); d.textContent = s || ''; return d.innerHTML};
 
-const pick=a=>a[Math.floor(Math.random()*a.length)];
-const esc=s=>{const d=document.createElement('div');d.textContent=s||'';return d.innerHTML};
-
+// Remplissage des variables
 function fill(s, c) {
-  const n = String(Math.floor(Math.random() * 300) + 50);
-  const montant = String(Math.floor(Math.random() * 3000) + 500);
   return s
     .replace(/\{product\}/g, c.productName || 'mon programme')
-    .replace(/\{cta\}/g, c.cta || 'Lien en bio')
-    .replace(/\{audience\}/g, c.audience || 'mon audience')
-    .replace(/\{problem\}/g, c.problem || 'les blocages')
-    .replace(/\{n\}/g, n)
-    .replace(/\{montant\}/g, montant);
+    .replace(/\{cta\}/g, c.cta || 'Écris-moi en DM');
 }
 
-function applyTone(t,id){
-  const m=TONE_MOD[id];if(!m)return t;
-  const l=t.split('\n').filter(x=>x.trim());
-  if(l.length&&Math.random()>.35)l[0]=pick(m.pre)+' '+l[0];
-  if(m.suf&&Math.random()>.4){const s=pick(m.suf);if(s)l[l.length-1]+=' '+s}
-  return l.join('\n\n')
+let strategy = null;
+let activeDay = "lundi";
+let activeSlide = 0;
+
+function showToast(m) {
+  const t = document.getElementById('toast');
+  t.textContent = m;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2200);
 }
 
-function getCfg(){
-  let audValue = document.getElementById('f-audience').value;
-  if(audValue === 'Autre (personnalisé)') audValue = document.getElementById('f-audience-custom').value.trim();
-  let probValue = document.getElementById('f-problem').value;
-  if(probValue === 'Autre (personnalisé)') probValue = document.getElementById('f-problem-custom').value.trim();
-
-  return {
-    productName: document.getElementById('f-product').value.trim(),
-    cta: document.getElementById('f-cta').value.trim(),
-    audience: audValue,
-    problem: probValue,
-    tone: currentTone
-  }
+function switchTab(tab) {
+  document.getElementById('tab-config').classList.toggle('active', tab === 'config');
+  document.getElementById('tab-result').classList.toggle('active', tab === 'result');
+  document.getElementById('panel-config').classList.toggle('active', tab === 'config');
+  document.getElementById('panel-result').classList.toggle('active', tab === 'result');
+  if (tab === 'result') renderResult();
 }
 
-function genSlides(fwId,cfg){
-  const f = s => fill(s, cfg), t = s => applyTone(s, cfg.tone);
-  const dynamicProblem = cfg.problem ? `Je sais que tu te sens ${cfg.problem.toLowerCase()}.` : pick(DB.problemes);
-  const dynamicIntro = cfg.audience ? `Si tu fais partie des ${cfg.audience.toLowerCase()} : reste ici.` : pick(DB.accroches);
+// MOTEUR COMBINATOIRE
+function handleGenerate() {
+  const productName = document.getElementById('f-product').value.trim();
+  const cta = document.getElementById('f-cta').value.trim();
+  const cfg = { productName, cta };
 
-  return({
-    charniere_4:()=>[t(f(pick(DB.moments_vie))),t(f(pick(DB.charnieres))),t(f(Math.random()>.5?pick(DB.temoignages):pick(DB.solutions))),t(f(cfg.cta?'👉 '+cfg.cta:pick(DB.ctas)))],
-    aida:()=>[t(f(dynamicIntro)),t(f(dynamicProblem+'\n\n'+pick(DB.agitations))),t(f(pick(DB.solutions)+'\n\n'+pick(DB.projections))),t(f(pick(DB.urgences)+'\n\n'+(cfg.cta?'👉 '+cfg.cta:pick(DB.ctas))))],
-    pas:()=>[t(f(dynamicIntro+'\n\n'+dynamicProblem)),t(f(pick(DB.agitations)+'\n\n'+pick(DB.objections))),t(f(pick(DB.solutions)+'\n\n'+(cfg.cta?'👉 '+cfg.cta:pick(DB.ctas))))],
-    ppn:()=>[t(f(pick(DB.preuves)+'\n\n'+pick(DB.temoignages))),t(f(pick(DB.projections)+'\n\n'+pick(DB.charnieres))),t(f(pick(DB.normalisations)+'\n\n'+(cfg.cta?'👉 '+cfg.cta:pick(DB.ctas))))],
-    avant_apres:()=>[t(f(pick(DB.transformations.douleur))),t(f(pick(DB.transformations.declic))),t(f(pick(DB.transformations.victoire))),t(f(pick(DB.solutions)+'\n\n'+(cfg.cta?'👉 '+cfg.cta:pick(DB.ctas))))],
-    story_5:()=>[t(f(dynamicIntro)),t(f(dynamicProblem+'\n\n'+pick(DB.agitations))),t(f(pick(DB.solutions))),t(f(pick(DB.preuves)+'\n\n'+pick(DB.temoignages))),t(f(pick(DB.urgences)+'\n\n'+(cfg.cta?'👉 '+cfg.cta:pick(DB.ctas))))],
-  })[fwId]();
-}
-
-let currentFw=null,currentTone='amical',strategy=null,activeDay=0,activeSlide=0;
-
-function showToast(m){const t=document.getElementById('toast');t.textContent=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2200)}
-
-(function init(){
-  const grid=document.getElementById('fwgrid');
-  FRAMEWORKS.forEach(f=>{
-    const c=document.createElement('div');c.className='fwcard';c.dataset.id=f.id;
-    c.innerHTML='<div class="chk">✓</div><div><span style="font-size:14px">'+f.icon+'</span> <span class="fwn">'+f.name+'</span></div><div class="fws">'+f.steps.join(' → ')+'</div>';
-    c.addEventListener('click',()=>selectFw(f.id));
-    grid.appendChild(c);
-  });
-
-  const tg=document.getElementById('tonegrid');
-  TONES.forEach(t=>{
-    const c=document.createElement('div');c.className='tonechip'+(t.id===currentTone?' act':'');c.dataset.id=t.id;c.textContent=t.label;
-    c.addEventListener('click',()=>selectTone(t.id));
-    tg.appendChild(c);
-  });
-
-  const aud=document.getElementById('f-audience');
-  AUDIENCES.forEach(a=>{const o=document.createElement('option');o.value=a;o.textContent=a;aud.appendChild(o)});
-  aud.addEventListener('change',()=>{document.getElementById('f-audience-custom-wrap').style.display=aud.value==='Autre (personnalisé)'?'block':'none'});
-
-  const prob=document.getElementById('f-problem');
-  PROBLEMS.forEach(p=>{const o=document.createElement('option');o.value=p;o.textContent=p;prob.appendChild(o)});
-  prob.addEventListener('change',()=>{document.getElementById('f-problem-custom-wrap').style.display=prob.value==='Autre (personnalisé)'?'block':'none'});
-})();
-
-function selectFw(id){
-  currentFw=id;
-  document.querySelectorAll('.fwcard').forEach(c=>{
-    const s=c.dataset.id===id,fw=FRAMEWORKS.find(f=>f.id===c.dataset.id);
-    c.classList.toggle('sel',s);
-    c.style.borderColor=s?fw.color+'60':'';c.style.background=s?fw.color+'0a':'';
-    const chk=c.querySelector('.chk');chk.style.background=s?fw.color:'';chk.style.borderColor=s?fw.color:'';chk.style.color=s?'var(--bg)':'transparent';
-    c.querySelector('.fwn').style.color=s?fw.color:'';
-  });
-  const fw=FRAMEWORKS.find(f=>f.id===id);
+  strategy = {};
+  const jours = ["lundi", "mardi", "mercredi", "jeudi", "vendredi", "samedi", "dimanche"];
   
-  // Affichage ultra guidé sans jargon
-  document.getElementById('fwinfo-box').innerHTML=`
-    <div style="border: 1px solid #2a2a3a; padding: 15px; border-radius: 8px; margin-top: 10px; background: #1a1a26;">
-      <div style="margin-bottom: 8px;">${fw.icon} <strong>Méthode ${fw.name}</strong></div>
-      <div style="font-size: 0.9rem; margin-bottom: 5px;"><span style="color: var(--text-muted);">Son super-pouvoir :</span> ${fw.power}</div>
-      <div style="font-size: 0.9rem;"><span style="color: var(--text-muted);">Quand l'utiliser :</span> ${fw.when}</div>
-    </div>
-  `;
-  document.getElementById('btn-gen').disabled=false;
-}
+  jours.forEach(j => {
+    const data = BIBLE[j];
+    // Tirage aléatoire indépendant pour chaque slide = combinatoire massive
+    strategy[j] = {
+      theme: data.theme,
+      angle: data.angle,
+      cialdini: data.cialdini,
+      color: data.color,
+      steps: data.steps,
+      slides: [
+        fill(pick(data.s1), cfg),
+        fill(pick(data.s2), cfg),
+        fill(pick(data.s3), cfg),
+        fill(pick(data.s4), cfg)
+      ]
+    };
+  });
 
-function selectTone(id){
-  currentTone=id;
-  document.querySelectorAll('.tonechip').forEach(c=>c.classList.toggle('act',c.dataset.id===id));
-}
-
-function switchTab(tab){
-  document.getElementById('tab-config').classList.toggle('active',tab==='config');
-  document.getElementById('tab-result').classList.toggle('active',tab==='result');
-  document.getElementById('panel-config').classList.toggle('active',tab==='config');
-  document.getElementById('panel-result').classList.toggle('active',tab==='result');
-  if(tab==='result')renderResult();
-}
-
-function handleGenerate(){
-  if(!currentFw)return;
-  const cfg=getCfg();
-  strategy=DAY_THEMES.map(dt=>({...dt,slides:genSlides(currentFw,cfg)}));
-  activeDay=0;activeSlide=0;
+  activeDay = "lundi";
+  activeSlide = 0;
   switchTab('result');
-  showToast('✨ Stratégie générée !');
+  showToast('✨ Semaine générée avec succès !');
 }
 
-function regenDay(i){if(!strategy)return;strategy[i].slides=genSlides(currentFw,getCfg());activeSlide=0;renderResult();showToast('🔄 Jour régénéré !')}
+function regenDay(j) {
+  if (!strategy) return;
+  const productName = document.getElementById('f-product').value.trim();
+  const cta = document.getElementById('f-cta').value.trim();
+  const cfg = { productName, cta };
+  
+  const data = BIBLE[j];
+  strategy[j].slides = [
+    fill(pick(data.s1), cfg),
+    fill(pick(data.s2), cfg),
+    fill(pick(data.s3), cfg),
+    fill(pick(data.s4), cfg)
+  ];
+  activeSlide = 0;
+  renderResult();
+  showToast('🔄 Stories du jour renouvelées !');
+}
 
-function copyDay(i){
-  if(!strategy)return;const d=strategy[i],fw=FRAMEWORKS.find(f=>f.id===currentFw);
-  const t=d.slides.map((s,j)=>'── '+(fw.steps[j]||'Slide '+(j+1))+' ──\n'+s).join('\n\n');
-  navigator.clipboard.writeText('📅 '+d.jour+' — '+d.theme+'\n\n'+t).then(()=>showToast('📋 Copié !'));
+function copyDay(j) {
+  if (!strategy) return;
+  const d = strategy[j];
+  const text = d.slides.map((s, i) => `Slide ${i+1} [${d.steps[i]}] :\n${s}`).join('\n\n');
+  navigator.clipboard.writeText(`📅 ${j.toUpperCase()} - ${d.theme}\nLevier : ${d.cialdini}\n\n${text}`)
+    .then(() => showToast('📋 Copié dans le presse-papier !'));
 }
 
 function copyFullWeek() {
-  if(!strategy) return;
-  const fw=FRAMEWORKS.find(f=>f.id===currentFw);
-  let text = `🗓️ STRATÉGIE DE CONTENU SEMAINE - ${fw.name.toUpperCase()}\n\n`;
-  strategy.forEach(d => {
-    text += `==========================================\n`;
-    text += `📅 ${d.jour.toUpperCase()} - ${d.theme}\n`;
-    text += `==========================================\n\n`;
-    d.slides.forEach((s, j) => {
-      text += `[Slide ${j+1} : ${fw.steps[j] || 'Suite'}]\n${s}\n\n`;
+  if (!strategy) return;
+  let fullText = "🗓️ PLANNING ÉDITORIAL DE LA SEMAINE\n\n";
+  const jours = ["lundi", "mardi", "mercredi", "jeudi", "vendredi", "samedi", "dimanche"];
+  
+  jours.forEach(j => {
+    const d = strategy[j];
+    fullText += `==========================================\n`;
+    fullText += `📅 ${j.toUpperCase()} - ${d.theme}\n`;
+    fullText += `🧠 Levier Cialdini : ${d.cialdini}\n`;
+    fullText += `==========================================\n\n`;
+    d.slides.forEach((s, i) => {
+      fullText += `[Slide ${i+1} : ${d.steps[i]}]\n${s}\n\n`;
     });
-    text += `\n`;
+    fullText += `\n`;
   });
-  navigator.clipboard.writeText(text).then(() => showToast('🚀 Semaine complète copiée !'));
+  
+  navigator.clipboard.writeText(fullText)
+    .then(() => showToast('🚀 Semaine complète copiée !'));
 }
 
-function generatePDF() {
-  if(!strategy) return;
-  const fw=FRAMEWORKS.find(f=>f.id===currentFw);
-  const printWindow = window.open('', '_blank');
-  
-  let htmlContent = `
-    <html>
-    <head>
-      <title>Stratégie Hebdomadaire - ${fw.name}</title>
-      <style>
-        body { font-family: 'Helvetica', sans-serif; color: #333; padding: 30px; }
-        h1 { text-align: center; color: #1a1a1a; margin-bottom: 30px; }
-        .day-block { page-break-inside: avoid; margin-bottom: 25px; padding: 20px; border: 1px solid #e0e0e0; border-radius: 8px; background-color: #fcfcfc; }
-        .day-title { font-size: 1.3em; font-weight: bold; color: #111; margin-bottom: 10px; border-bottom: 2px solid #e0e0e0; padding-bottom: 5px; }
-        .day-theme { font-size: 0.9em; font-style: italic; color: #666; margin-bottom: 15px; }
-        .slide-block { margin-top: 12px; }
-        .slide-label { font-weight: bold; color: ${fw.color}; font-size: 0.95em; }
-        .slide-text { margin: 5px 0 15px 15px; font-size: 0.9em; white-space: pre-line; line-height: 1.4; color: #2c3e50; }
-        @media print { body { padding: 0; } .day-block { border: 1px solid #aaa; } }
-      </style>
-    </head>
-    <body>
-      <h1>🗓️ Stratégie de Stories - Méthode ${fw.name}</h1>
-  `;
+function setDay(j) { activeDay = j; activeSlide = 0; renderResult(); }
+function setSlide(s) { activeSlide = s; renderResult(); }
 
-  strategy.forEach(d => {
-    htmlContent += `
-      <div class="day-block">
-        <div class="day-title">${d.emoji} ${d.jour} — ${d.theme}</div>
-        <div class="day-theme">🎯 Angle : ${d.angle}</div>
-    `;
-    d.slides.forEach((s, j) => {
-      htmlContent += `
-        <div class="slide-block">
-          <div class="slide-label">Slide ${j+1} : ${fw.steps[j] || 'Suite'}</div>
-          <div class="slide-text">${s}</div>
+function renderResult() {
+  const p = document.getElementById('panel-result');
+  if (!strategy) {
+    p.innerHTML = '<div style="text-align:center; padding:40px; color:var(--text-muted);"><p>Renseigne les infos de ton offre pour générer ton planning.</p></div>';
+    return;
+  }
+  
+  const jours = ["lundi", "mardi", "mercredi", "jeudi", "vendredi", "samedi", "dimanche"];
+  const d = strategy[activeDay];
+  const slideText = d.slides[activeSlide] || '';
+  const ac = d.color;
+  
+  p.innerHTML = `
+    <div class="daytabs">
+      ${jours.map(j => `
+        <button class="dtab" onclick="setDay('${j}')" style="${activeDay === j ? `border-color:${ac}; background:${ac}15; color:${ac};` : ''}">
+          ${j.charAt(0).toUpperCase() + j.slice(1,3)}
+        </button>
+      `).join('')}
+    </div>
+    
+    <div class="dayinfo">
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+        <span class="dayinfo-t" style="color:${ac}">${activeDay.toUpperCase()} — ${d.theme}</span>
+        <span class="dayinfo-th" style="color:var(--text-muted)">🧠 ${d.cialdini}</span>
+      </div>
+      <div class="dayinfo-desc">🎯 ${d.angle}</div>
+    </div>
+    
+    <div class="clayout">
+      <div class="phonewrap">
+        <div class="phone">
+          <div class="phone-bars">
+            ${d.slides.map((_, i) => `
+              <div class="phone-bar" onclick="setSlide(${i})" style="background:${i <= activeSlide ? ac : '#2a2a30'}"></div>
+            `).join('')}
+          </div>
+          <div class="phone-sl" style="color:${ac}">${d.steps[activeSlide] || ''}</div>
+          <div class="phone-ct">${esc(slideText)}</div>
         </div>
-      `;
-    });
-    htmlContent += `</div>`;
-  });
-
-  htmlContent += `</body></html>`;
-  
-  printWindow.document.write(htmlContent);
-  printWindow.document.close();
-  
-  setTimeout(() => {
-    printWindow.print();
-    printWindow.close();
-  }, 500);
-}
-
-function setDay(d){activeDay=d;activeSlide=0;renderResult()}
-function setSlide(s){activeSlide=s;renderResult()}
-
-function renderResult(){
-  const p=document.getElementById('panel-result');
-  if(!strategy||!currentFw){p.innerHTML='<div class="empty"><p>Configure ton produit pour générer ta stratégie.</p></div>';return}
-  const fw=FRAMEWORKS.find(f=>f.id===currentFw),ac=fw.color,day=strategy[activeDay],slide=day.slides[activeSlide]||'';
-  p.innerHTML=
-    '<div class="fwbadge" style="background:'+ac+'0c;border:1px solid '+ac+'20;border-radius:10px"><div><div class="bn" style="color:'+ac+'">'+fw.icon+' '+fw.name+'</div></div></div>'+
-    '<div class="daytabs">'+DAY_THEMES.map((dt,i)=>'<button class="dtab'+(activeDay===i?' act':'')+'" onclick="setDay('+i+')" style="'+(activeDay===i?'border-color:'+ac+'40;background:'+ac+'12;color:'+ac:'')+'">'+dt.emoji+' '+dt.jour.slice(0,3)+'</button>').join('')+'</div>'+
-    '<div class="dayinfo"><div class="dayinfo-top"><span class="dayinfo-t">'+day.emoji+' '+day.jour+'</span> — <span class="dayinfo-th" style="color:'+ac+'">'+day.theme.toUpperCase()+'</span></div></div>'+
-    '<div class="clayout"><div class="phonewrap"><div class="phone"><div class="phone-bars">'+day.slides.map(function(_,i){return'<div class="phone-bar" onclick="setSlide('+i+')" style="background:'+(i<=activeSlide?ac:'#2a2a30')+'"></div>'}).join('')+'</div><div class="phone-sl" style="color:'+ac+'">'+(fw.steps[activeSlide]||'')+'</div><div class="phone-ct">'+esc(slide)+'</div></div></div>'+
-    '<div class="cpanel"><div class="sbrow"><span class="sbadge" style="color:'+ac+';background:'+ac+'18;border:1px solid '+ac+'30">'+(fw.steps[activeSlide]||'')+'</span><span class="scount">Slide '+(activeSlide+1)+'/'+day.slides.length+'</span></div>'+
-    '<div class="cbox"><div class="cbox-t">'+esc(slide)+'</div></div>'+
-    '<div class="arow"><button class="abtn" onclick="regenDay('+activeDay+')">🔄 Régénérer</button><button class="abtn ac" onclick="copyDay('+activeDay+')">📋 Copier le jour</button></div>'+
-    '<div style="margin-top: 15px; display: flex; gap: 10px;">'+
-      '<button class="abtn" style="flex: 1; background: #3cbbb1; color: white;" onclick="copyFullWeek()">🚀 Copier la semaine</button>'+
-      '<button class="abtn" style="flex: 1; background: #E05263; color: white;" onclick="generatePDF()">📄 PDF Semaine</button>'+
-    '</div></div></div>';
+      </div>
+      
+      <div class="cpanel">
+        <div>
+          <div style="display:flex; justify-content:space-between; margin-bottom:15px; font-weight:bold;">
+            <span style="color:${ac}">${d.steps[activeSlide] || ''}</span>
+            <span style="color:var(--text-muted)">Slide ${activeSlide + 1} / ${d.slides.length}</span>
+          </div>
+          <div class="cbox">${esc(slideText)}</div>
+        </div>
+        
+        <div>
+          <div class="arow">
+            <button class="abtn" onclick="regenDay('${activeDay}')">🔄 Changer les phrases</button>
+            <button class="abtn ac" style="background:${ac}; color:#000; border-color:${ac}" onclick="copyDay('${activeDay}')">📋 Copier le jour</button>
+          </div>
+          <button class="btn-large" style="background:var(--card-bg); color:var(--text); border:1px solid var(--border); margin-top:10px;" onclick="copyFullWeek()">🚀 Copier la semaine complète</button>
+        </div>
+      </div>
+    </div>
+  `;
 }
 </script>
 
