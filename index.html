@@ -13,8 +13,6 @@
       --text: #f5f0e8;
       --text-muted: #8a8aa3;
       --border: #2a2a3a;
-      --lundi: #4EA8DE; --mardi: #48BFE3; --mercredi: #56CFE1; 
-      --jeudi: #72EFDD; --vendredi: #80FFDB; --samedi: #B79CED; --dimanche: #F15BB5;
     }
     body {
       font-family: 'Inter', -apple-system, sans-serif;
@@ -112,9 +110,7 @@
       transition: 0.2s;
       margin-top: 10px;
     }
-    .btn-large:hover {
-      opacity: 0.9;
-    }
+    .btn-large:hover { opacity: 0.9; }
     
     /* RESULTATS STYLES */
     .daytabs {
@@ -141,7 +137,6 @@
       border-radius: 8px;
     }
     .dayinfo-t { font-weight: bold; font-size: 1.2rem; }
-    .dayinfo-th { font-size: 0.9rem; font-weight: bold; }
     .dayinfo-desc { color: var(--text-muted); font-size: 0.9rem; margin-top: 5px; }
     
     .clayout {
@@ -229,7 +224,6 @@
       border-color: var(--accent);
     }
     
-    /* Toast */
     #toast {
       position: fixed;
       bottom: 20px;
@@ -249,7 +243,7 @@
 
 <div class="container">
   <h1>🎯 Générateur Éditorial Intelligent</h1>
-  <div class="subtitle">Des stories conversationnelles basées sur la psychologie humaine et Cialdini</div>
+  <div class="subtitle">Des stories conversationnelles basées sur la psychologie humaine</div>
 
   <div class="tabs">
     <button class="tab-btn active" id="tab-config" onclick="switchTab('config')">⚙️ Paramètres</button>
@@ -259,6 +253,15 @@
   <div class="panel active" id="panel-config">
     <div class="section-title">Personnalise ton offre</div>
     
+    <div class="form-group">
+      <label>Quel style d'écriture veux-tu aujourd'hui ?</label>
+      <select id="f-style">
+        <option value="whatsapp">💬 Style WhatsApp (Spontané & Brut)</option>
+        <option value="punchy">⚡ Style Punchy (Incisif & Direct)</option>
+        <option value="intime">🕯️ Style Intime (Storytelling & Émotion)</option>
+      </select>
+    </div>
+
     <div class="form-group">
       <label>Nom de ton produit ou service</label>
       <input type="text" id="f-product" placeholder="Ex: Masterclass Instagram, Accompagnement..." value="mon programme">
@@ -278,392 +281,180 @@
 <div id="toast"></div>
 
 <script>
-// LA BIBLE COMBINATOIRE (DES DIZAINES DE MILLIERS DE COMBINAISONS POSSIBLES)
 const BIBLE = {
-  lundi: {
-    theme: "Le Boost & Anti-Surcharge",
-    angle: "Réveiller l'ambition sans assommer l'audience en plein rush.",
-    cialdini: "Engagement & Cohérence",
-    color: "#4EA8DE",
-    steps: ["L'Accroche", "Le Problème (Agitation)", "La Solution", "Le Passage à l'action"],
-    s1: [
-      "Hé, bon lundi ! J'espère que tu as la pêche pour attaquer cette nouvelle semaine.",
-      "C'est reparti pour un tour ! Prête à tout déchirer cette semaine ?",
-      "On est lundi matin. S'il te plaît, promets-moi de ne pas subir ta semaine.",
-      "Alerte lundi : stop au stress avant même d'avoir ouvert ton premier mail.",
-      "Hello toi ! Nouveau départ, nouvelle semaine. Tu l'abordes comment ce matin ?",
-      "On attaque le lundi. C'est le moment de poser les bases d'une semaine de feu.",
-      "Café chaud, téléphone en main... C'est le début d'une semaine incroyable si tu le décides.",
-      "Bon pied, bon œil ! C'est parti pour 5 jours pour te rapprocher de tes objectifs.",
-      "Nouveau lundi, nouvelles opportunités. Tu as prévu quoi de beau aujourd'hui ?",
-      "Hé ! Ne regarde pas ton calendrier avec angoisse. On va dompter cette semaine ensemble."
-    ],
-    s2: [
-      "Si tu te sens déjà débordée en regardant ta to-do list, c'est qu'il y a un souci.",
-      "Courir partout pour un boss qui ne reconnaît pas ta valeur... ce n'est plus possible.",
-      "Le lundi c'est souvent le gros rush, et le problème c'est qu'on s'oublie un peu là-dedans.",
-      "Passer ta journée à éteindre des incendies pour les autres au lieu d'avancer sur TES projets...",
-      "Tu connais cette sensation d'être déjà fatiguée alors qu'on est que lundi matin ?",
-      "Si ton agenda ressemble à un Tetris hyper stressant, c'est le moment de dire stop.",
-      "On s'habitue trop souvent à accepter le stress du début de semaine comme une fatalité.",
-      "Le problème n'est pas ton manque de temps, c'est que tu l'offres aux mauvaises personnes.",
-      "Si tu passes tes lundis à attendre impatiemment le vendredi, il faut changer quelque chose.",
-      "Vouloir tout faire parfaitement et finir la journée sur les rotules... stop."
-    ],
-    s3: [
-      "La vraie solution, ce n'est pas de travailler plus. C'est de travailler plus intelligemment.",
-      "Imagine une semaine où c'est toi qui décides de ton rythme, sans compte à rendre.",
-      "J'ai créé un système simple pour t'aider à reprendre le contrôle de ton temps.",
-      "C'est exactement pour ça que j'ai conçu {product}. Pour t'enlever cette charge mentale.",
-      "Aujourd'hui, j'aimerais t'aider à poser un cadre pour que tes journées t'appartiennent.",
-      "Tu as le droit d'avoir un business ou un job qui s'adapte à ta vie, pas l'inverse.",
-      "Le secret, c'est d'automatiser ce qui te bouffe de l'énergie pour te concentrer sur l'essentiel.",
-      "Avec {product}, on va nettoyer ton organisation pour ne garder que ce qui paye.",
-      "Il existe une méthode pour faire en 2 heures ce qui t'en prend 8 aujourd'hui.",
-      "Tu n'as pas besoin de plus de discipline, tu as juste besoin d'un meilleur système."
-    ],
-    s4: [
-      "On commence dès aujourd'hui ? {cta}.",
-      "Si tu veux qu'on pose les bases ensemble cette semaine : {cta}.",
-      "Prends 2 minutes pour m'en parler. {cta}.",
-      "Ne repousse pas à lundi prochain. {cta}.",
-      "Dis-moi en un mot ce qui te bloque aujourd'hui. {cta}.",
-      "Prête à changer de rythme ? {cta}.",
-      "On regarde ça ensemble cet après-midi ? {cta}.",
-      "Fais le premier pas pour ta liberté. {cta}.",
-      "Envoie-moi ta plus grosse frustration du jour. {cta}.",
-      "C'est le moment parfait pour switcher. {cta}."
-    ]
+  whatsapp: {
+    lundi: {
+      theme: "Message WhatsApp — Le Boost & Anti-Surcharge",
+      color: "#4EA8DE",
+      s1: ["Coucou toi ! J'espère que tu as passé un bon week-end ? Prête pour attaquer la semaine ?", "Alerte lundi... Je viens de regarder ma to-do list et j'ai eu un mini vertige 😅", "Hello ! S'il te plaît, promets-moi de ne pas subir ta semaine ce coup-ci !"],
+      s2: ["Franchement, courir partout pour un projet qui n'avance pas, ce n'est plus possible.", "Le lundi c'est souvent le gros rush, et le problème c'est qu'on s'oublie un peu là-dedans...", "Si ton agenda ressemble à un Tetris hyper stressant dès 9h, c'est le moment de dire stop."],
+      s3: ["J'ai créé un système super simple pour t'aider à reprendre le contrôle de ton temps.", "C'est exactement pour ça que j'ai conçu {product}. Pour t'enlever cette charge mentale.", "Le secret, c'est d'automatiser ce qui te bouffe de l'énergie pour te concentrer sur l'essentiel."],
+      s4: ["On commence dès aujourd'hui ? {cta}.", "Prends 2 minutes pour m'en parler en DM : {cta}.", "Dis-moi en un mot ce qui te bloque aujourd'hui ! {cta}."]
+    },
+    mardi: {
+      theme: "Message WhatsApp — La Pépite Gratuite",
+      color: "#48BFE3",
+      s1: ["Petite pépite du jour pour toi. Note bien ça, ça va te servir !", "On me demande souvent en DM comment je fais pour tenir le rythme sans m'épuiser. Voici la réponse.", "Alerte astuce ! Pas de blabla marketing, juste du concret pour ta journée."],
+      s2: ["Prends 15 minutes chaque matin, sans téléphone, pour planifier ta SEULE grosse tâche du jour.", "Utilise des scripts et des templates pour tout. Ne réinvente jamais la roue à chaque fois.", "Bloque des plages de travail de 50 minutes en mode avion. Tu vas halluciner sur ta productivité."],
+      s3: ["Rien qu'en faisant ça, tu vas libérer un temps de dingue dans tes journées.", "C'est tout bête, mais 90% des gens ne le font pas. Fais partie des 10%.", "Tu vas voir ton niveau de stress baisser et ton efficacité grimper en flèche."],
+      s4: ["C'est le genre de pépites qu'on approfondit dans {product}. Curieuse ? {cta}.", "Si tu veux le plan complet étape par étape : {cta}.", "Dis-moi ce que tu en penses en DM ! {cta}."]
+    },
+    mercredi: {
+      theme: "Message WhatsApp — Le Storytelling Réel",
+      color: "#56CFE1",
+      s1: ["Aujourd'hui, j'ai envie d'être 100% transparente avec toi. Pas de filtre.", "Il y a un an, à la même heure, j'étais au bout du rouleau. Vraiment.", "Hé, j'ai une petite confession à te faire ce matin. Entre nous."],
+      s2: ["Je passais mes journées à échanger mon temps contre des clopinettes, épuisée.", "Je me levais le matin avec la boule au ventre, sans aucun sens dans ce que je faisais.", "J'accumulais les formations sans jamais rien oser lancer. Le syndrome de l'imposteur à fond."],
+      s3: ["Et puis j'ai dit stop. J'ai décidé d'investir sur moi et de poser mes propres règles.", "Le déclic ? Quand j'ai compris que personne n'allait venir me sauver à ma place.", "J'ai fini par trouver le bon équilibre et j'ai enfin vu mes premiers résultats tomber."],
+      s4: ["Si tu te reconnais là-dedans, sache que tu n'es pas seule. Parlons-en en DM : {cta}.", "C'est pour t'éviter ces erreurs que j'ai créé {product}. Envie d'en savoir plus ? {cta}.", "Envoie-moi un petit emoji pour me dire si tu vis ça en ce moment : {cta}."]
+    },
+    jeudi: {
+      theme: "Message WhatsApp — On casse les croyances",
+      color: "#72EFDD",
+      s1: ["On va briser un gros tabou aujourd'hui. Accroche-toi bien !", "Je reçois souvent ce message : 'J'adorerais me lancer mais je n'ai pas le temps'.", "Tu penses qu'il faut être une experte en technique pour réussir en ligne ? C'est archi faux."],
+      s2: ["La réalité, c'est que tu as le temps. C'est juste une question de priorités dans tes journées.", "Les outils d'aujourd'hui sont tellement simples qu'un enfant de 10 ans pourrait s'en servir.", "Mes premiers clients sont arrivés quand j'avais à peine 300 abonnés. Vraiment."],
+      s3: ["En changeant simplement cet angle de vue, tu vas voir tes résultats exploser.", "C'est ce switch mental qui a tout débloqué chez mes élèves cette année.", "Arrête de te sous-estimer. Tu as tout ce qu'il faut pour réussir ici."],
+      s4: ["Dis-moi en DM quelle est TA plus grosse peur en ce moment : {cta}.", "C'est exactement ce qu'on travaille au tout début de {product} : {cta}.", "On en parle en privé si tu veux débloquer ça : {cta}."]
+    },
+    vendredi: {
+      theme: "Message WhatsApp — Preuve Sociale",
+      color: "#80FFDB",
+      s1: ["Regarde ce que j'ai reçu ce matin dans mes DM... Je suis trop fière !", "C'est vendredi, et le vendredi, on célèbre les victoires de la communauté !", "Quand mes élèves m'envoient ce genre de message, ça donne un sens à tout."],
+      s2: ["Une de mes élèves a généré ses premières ventes en seulement 15 jours.", "Elle est passée de 0 à un complément de revenu stable en moins d'un mois.", "Grâce à {product}, elle a retrouvé un sommeil paisible et des revenus stables."],
+      s3: ["Et le plus beau ? Elle n'avait aucune expérience au départ. Rien.", "Si elle l'a fait avec son emploi du temps de maman débordée, tu peux le faire.", "La seule différence entre elle et toi ? Elle a osé franchir le pas."],
+      s4: ["Tu veux obtenir les mêmes résultats ? {cta}.", "Rejoins la bande et écris ta propre story à succès : {cta}.", "Prête à être ma prochaine success story ? {cta}."]
+    },
+    samedi: {
+      theme: "Message WhatsApp — Coulisses & Vie Réelle",
+      color: "#B79CED",
+      s1: ["Week-end ! Pas de réveil ce matin, et ça, ça n'a pas de prix.", "Petit aperçu de mes coulisses aujourd'hui. Mode chill activé.", "Hello toi ! Tu fais quoi de beau de ton week-end ?"],
+      s2: ["Pendant des années, le samedi c'était juste le moment pour récupérer de ma semaine épuisante.", "Je passais mes samedis à faire les corvées que je n'avais pas le temps de faire la semaine.", "Le stress ne me quittait jamais vraiment, même le samedi en famille."],
+      s3: ["Aujourd'hui, mon business tourne en fond pendant que je profite de mes proches.", "C'est cette liberté-là que je veux t'aider à construire. Pas juste faire de l'argent.", "Mon téléphone travaille pour moi, et pas l'inverse. C'est ça la clé."],
+      s4: ["Profite bien de ton week-end ! On reparle business lundi ? {cta}.", "Dis-moi en DM quel est ton samedi idéal ! {cta}.", "N'oublie pas de prendre du temps pour toi aujourd'hui : {cta}."]
+    },
+    dimanche: {
+      theme: "Message WhatsApp — Blues du dimanche",
+      color: "#F15BB5",
+      s1: ["Tu as cette petite boule au ventre qui monte là ? Le classique du dimanche soir...", "Bientôt l'heure du dodo... et l'angoisse du lundi qui pointe son nez pour beaucoup.", "Fin de week-end. L'ambiance change doucement, tu as remarqué ?"],
+      s2: ["Demain matin, je me lève quand je veux. Je bosse depuis mon canapé et à mon rythme.", "Ma liberté n'est plus négociable. J'ai créé mon propre écosystème.", "Je savoure chaque minute de mes soirées sans penser au stress du lendemain."],
+      s3: ["Je ferme définitivement les accès à {product} ce soir à minuit. C'est maintenant.", "Il ne reste que 3 places disponibles pour transformer tes dimanches soirs.", "C'est l'offre de l'année et elle se termine ce soir. Ne rate pas le coche."],
+      s4: ["Écris-moi 'LIBERTÉ' en DM si tu veux en être avant qu'il ne soit trop tard : {cta}.", "On commence dès demain matin ensemble ? {cta}.", "Fais le bon choix pour ton avenir ce soir : {cta}."]
+    }
   },
-  mardi: {
-    theme: "L'Éducation & Valeur",
-    angle: "Distribuer une astuce en or pour créer de la réciprocité.",
-    cialdini: "Réciprocité",
-    color: "#48BFE3",
-    steps: ["L'Accroche", "La Pépite Gratuite", "L'Impact concret", "La Transition discrète"],
-    s1: [
-      "Aujourd'hui, j'ai envie de te donner un vrai coup de pouce. Marre des secrets bien gardés.",
-      "Petite pépite du jour pour toi. Note bien ça, ça va te servir.",
-      "On me demande souvent en DM comment je fais pour tenir le rythme sans m'épuiser. Voici la réponse.",
-      "Focus valeur aujourd'hui. Je te partage un truc que j'aurais aimé savoir il y a 2 ans.",
-      "Alerte astuce ! Pas de blabla, juste du concret pour ta journée.",
-      "Aujourd'hui, je casse un mythe et je te donne la vraie méthode.",
-      "Installe-toi confortablement, je vais te donner une astuce qui va te faire gagner des heures.",
-      "Cadeau du mardi ! C'est gratuit et ça peut littéralement changer ton business.",
-      "Je partage rarement ça publiquement, mais allez... c'est pour toi ce matin.",
-      "Marre des conseils théoriques ? On passe à la pratique tout de suite."
-    ],
-    s2: [
-      "La clé, c'est d'appliquer la règle des 80/20. Focus uniquement sur ce qui apporte du résultat.",
-      "Arrête de vouloir être sur tous les fronts. Choisis UN seul canal et deviens-y excellente.",
-      "Prends 15 minutes chaque matin, sans téléphone, pour planifier ta SEULE grosse tâche du jour.",
-      "Utilise des scripts et des templates pour tout. Ne réinvente jamais la roue à chaque fois.",
-      "Bloque des plages de travail de 50 minutes en mode avion. Tu vas halluciner sur ta productivité.",
-      "Délègue ou automatise les tâches à moins de 10€ de valeur horaire pour te concentrer sur le reste.",
-      "Arrête de vendre ton temps, vends un résultat concret. C'est ça qui change la donne.",
-      "Crée du contenu une fois, et recycle-le sous 5 formats différents. Travaille moins, diffuse plus.",
-      "Le secret d'une bonne offre, c'est de résoudre un problème DOULOUREUX, pas juste sympa.",
-      "Fais le tri dans tes abonnements et tes outils. Ne garde que le strict nécessaire."
-    ],
-    s3: [
-      "Rien qu'en faisant ça, tu vas libérer un temps de dingue dans tes journées.",
-      "C'est bête comme chou, mais 90% des gens ne le font pas. Fais partie des 10%.",
-      "Tu vas voir ton niveau de stress baisser et ton efficacité grimper en flèche.",
-      "C'est le meilleur moyen d'arrêter de brasser de l'air et de voir enfin des résultats.",
-      "En appliquant ça cette semaine, tu auras déjà une longueur d'avance.",
-      "Tu n'imagines pas à quel point cette petite habitude va transformer ton quotidien.",
-      "Fais le test aujourd'hui. Tu m'en diras des nouvelles ce soir.",
-      "C'est la différence entre être simplement occupée et être réellement productive.",
-      "Moins de fatigue, plus de résultats. C'est mathématique.",
-      "C'est comme ça qu'on passe d'un projet qui stagne à un projet qui décolle."
-    ],
-    s4: [
-      "Si tu veux que je te donne d'autres astuces de ce genre adaptées à ton projet : {cta}.",
-      "C'est le genre de pépites qu'on approfondit dans {product}. Curieuse ? {cta}.",
-      "Dis-moi en DM si tu connaissais déjà cette astuce ! {cta}.",
-      "Je t'explique le reste en privé si tu veux. {cta}.",
-      "Si tu veux le plan complet étape par étape : {cta}.",
-      "Tu veux que je t'envoie mon guide complet gratuitement ? {cta}.",
-      "Envoie-moi un petit mot si ça t'a aidé ! {cta}.",
-      "On passe au niveau supérieur ensemble ? {cta}.",
-      "Dis-moi ce que tu en penses en DM. {cta}.",
-      "Prête à mettre ça en place ? {cta}."
-    ]
+  punchy: {
+    lundi: {
+      theme: "Style Punchy — Action immédiate",
+      color: "#FF595E",
+      s1: ["Nouveau lundi, zéro excuse. Tu as prévu de subir ta semaine ou de la dominer ?", "On attaque. C'est le moment de poser les bases d'une semaine de feu.", "Stop au stress d'avant-rush. On respire un grand coup et on agit."],
+      s2: ["Scroller sur ton téléphone en attendant le déclic magique ne changera rien à ton business.", "Si ton agenda te fait peur en l'ouvrant, c'est que tu as laissé les autres dicter tes journées.", "Arrête de vouloir tout faire parfaitement pour finir la journée sur les rotules. Stop."],
+      s3: ["La vraie solution ? C'est de travailler moins mais beaucoup plus intelligemment.", "Avec {product}, on va nettoyer ton organisation pour ne garder que ce qui paye vraiment.", "Il existe une méthode pour faire en 2 heures ce qui t'en prend 8 aujourd'hui. Testé et approuvé."],
+      s4: ["On commence dès aujourd'hui ? {cta}.", "Ne repousse pas à lundi prochain : {cta}.", "C'est le moment parfait pour switcher : {cta}."]
+    },
+    mardi: {
+      theme: "Style Punchy — La Claque de Valeur",
+      color: "#FFCA3A",
+      s1: ["Focus valeur aujourd'hui. Je te partage un truc que j'aurais aimé savoir il y a 2 ans.", "Marre des conseils théoriques ? On passe à la pratique tout de suite. Écoute bien.", "Je partage rarement ça publiquement, mais allez... c'est pour toi ce matin."],
+      s2: ["Arrête de vouloir être sur tous les fronts. Choisis UN seul canal et deviens-y excellente.", "Délègue ou automatise les tâches à moins de 10€ de valeur horaire pour te concentrer sur le reste.", "Arrête de vendre ton temps, vends un résultat concret. C'est ça qui change la donne."],
+      s3: ["C'est le meilleur moyen d'arrêter de brasser de l'air et de voir enfin des résultats.", "C'est la différence entre être simplement occupée et être réellement productive.", "Moins de fatigue, plus de résultats. C'est mathématique."],
+      s4: ["Tu veux le plan complet ? {cta}.", "On passe au niveau supérieur ensemble : {cta}.", "Prête à mettre ça en place ? {cta}."]
+    },
+    mercredi: {
+      theme: "Style Punchy — Le Déclic Cash",
+      color: "#8AC926",
+      s1: ["On montre souvent les victoires sur Insta. Mais la réalité est souvent plus brute. Parlons vrai.", "Parfois j'oublie d'où je viens. Alors ce matin, petit retour en arrière nécessaire.", "Parfois, il faut toucher le fond pour enfin décider de remonter. C'est mon histoire."],
+      s2: ["Je travaillais 70 heures par semaine pour un salaire de misère. Un vrai esclavage moderne.", "Mon compte en banque était dans le rouge et mon moral n'était pas beaucoup plus haut.", "Je passais à côté de ma vie de famille, toujours sur les nerfs et fatiguée. Un désastre."],
+      s3: ["Le déclic ? Quand j'ai compris que personne n'allait venir me sauver à ma place.", "J'ai arrêté d'écouter les sceptiques et j'ai foncé sur le digital avec la bonne méthode.", "Quand j'ai fait ma première vente automatique en dormant, j'ai compris que c'était possible."],
+      s4: ["On en discute tranquillement en privé ? {cta}.", "Le changement commence par une décision : {cta}.", "Tu mérites tellement mieux que de subir : {cta}."]
+    },
+    jeudi: {
+      theme: "Style Punchy — Stop aux excuses",
+      color: "#1982C4",
+      s1: ["La vérité qui pique un peu mais qui va te faire du bien : arrête de te chercher des excuses.", "On me dit souvent que le marché est saturé. Laisse-moi rire deux minutes !", "Si tu penses que c'est trop tard pour te lancer, lis attentivement ce qui suit."],
+      s2: ["Le marché n'est pas saturé de bonnes personnes. Il y a de la place pour ton authenticité.", "Garder ton argent sur un livret A qui ne rapporte rien, c'est ça le vrai risque.", "Ceux qui réussissent n'ont pas plus de talent que toi, ils passent juste à l'action."],
+      s3: ["C'est le moment d'arrêter de regarder les autres réussir et de prendre ta part.", "Une fois que tu auras compris ça, plus rien ne pourra t'arrêter.", "Le risque le plus grand, c'est de ne pas en prendre."],
+      s4: ["Envoie-moi ta plus grande excuse, on va la démonter : {cta}.", "Fais le premier pas aujourd'hui : {cta}.", "Tu attends quoi pour changer ? {cta}."]
+    },
+    vendredi: {
+      theme: "Style Punchy — Preuve par les chiffres",
+      color: "#6A4C93",
+      s1: ["La preuve en image que ma méthode fonctionne. No fake, juste du travail.", "On finit la semaine en beauté avec des chiffres qui font plaisir.", "La méthode parle d'elle-même. Regarde ce retour d'expérience."],
+      s2: ["Une de mes élèves a dépassé les 10 000€ de chiffre d'affaires avec ce produit.", "Son carnet de commandes est complet pour les 3 prochains mois.", "Elle a généré plus de ventes en une semaine qu'en un mois auparavant."],
+      s3: ["Ce n'est pas un coup de chance, c'est l'application rigoureuse du système.", "Pas besoin d'être un génie du web, juste besoin de suivre la carte.", "Sa victoire d'aujourd'hui peut être la tienne demain."],
+      s4: ["Tu attends quoi pour avoir tes propres résultats ? {cta}.", "Le train passe maintenant : {cta}.", "Rejoins le mouvement : {cta}."]
+    },
+    samedi: {
+      theme: "Style Punchy — La Liberté Réelle",
+      color: "#F15BB5",
+      s1: ["Travailler d'où je veux, quand je veux... C'est ça ma vraie richesse.", "Pas de rush aujourd'hui. Je prends le temps de vivre, tout simplement.", "Je te partage un petit bout de ma vie hors business aujourd'hui."],
+      s2: ["Je me rappelle quand je devais bosser le week-end pour arrondir les fins de mois difficiles.", "J'ai longtemps cru que travailler dur signifiait sacrifier tous mes week-ends.", "Mes samedis étaient juste une parenthèse artificielle avant de replonger dans le stress."],
+      s3: ["C'est cette liberté-là que je veux t'aider à construire. Pas juste faire de l'argent.", "La sérénité n'a pas de prix. C'est mon plus bel accomplissement.", "Je veux que tu puisses vivre des samedis aussi sereins que les miens."],
+      s4: ["Envie de créer cette même liberté pour toi ? {cta}.", "Je reste dispo en DM si tu as besoin : {cta}.", "Prends soin de toi : {cta}."]
+    },
+    dimanche: {
+      theme: "Style Punchy — L'Urgence Cash",
+      color: "#EE964B",
+      s1: ["Pendant que d'autres stressent pour le réveil de demain, moi je savoure ma soirée.", "Le dimanche soir a longtemps été le moment le plus angoissant de ma semaine.", "J'ai une pensée pour toutes celles qui redoutent le réveil de demain matin."],
+      s2: ["Demain matin, je me lève quand je veux. Je bosse depuis mon canapé et à mon rythme.", "J'ai banni le réveil strident de ma vie depuis des mois. Et c'est un pur bonheur.", "Finie la course contre la montre et les transports bondés à l'aube."],
+      s3: ["Le prix augmente dès demain. C'est ta dernière chance d'en profiter à ce tarif.", "La seule chose qui te sépare de cette vie, c'est ta décision de ce soir.", "Ne laisse pas un autre dimanche soir gâché par le stress du travail."],
+      s4: ["Clique sur le lien dans ma bio ou écris-moi ici directement : {cta}.", "Prends ta place maintenant : {cta}.", "On se retrouve de l'autre côté ! {cta}."]
+    }
   },
-  mercredi: {
-    theme: "Le Storytelling & Vécu",
-    angle: "Raconter une galère passée pour créer de la sympathie et de l'autorité.",
-    cialdini: "Sympathie & Autorité",
-    color: "#56CFE1",
-    steps: ["La Connexion", "La Galère passée", "Le Déclic", "L'Ouverture"],
-    s1: [
-      "On est au milieu de la semaine... Petit coup de mou ou toujours à fond ?",
-      "Aujourd'hui, j'ai envie d'être 100% transparente avec toi. Pas de filtre.",
-      "Il y a un an, à la même heure, j'étais au bout du rouleau. Vraiment.",
-      "Parfois j'oublie d'où je viens. Alors ce matin, petit retour en arrière nécessaire.",
-      "On montre souvent les victoires sur Insta. Mais la réalité est souvent plus brute.",
-      "Hé, j'ai une petite confession à te faire ce matin. Entre nous.",
-      "On arrive au milieu de la semaine, et j'ai repensé à une période pas si lointaine...",
-      "Aujourd'hui, j'ai envie de te raconter une histoire vraie. Pas du storytelling de cinéma.",
-      "Tu me vois épanouie aujourd'hui, mais ça n'a pas toujours été le cas du tout.",
-      "Parfois, il faut toucher le fond pour enfin décider de remonter."
-    ],
-    s2: [
-      "Je n'avais pas de diplôme spécifique, pas de réseau, et surtout une peur bleue de l'échec.",
-      "Je passais mes journées à échanger mon temps contre des clopinettes, épuisée.",
-      "Je pensais que la liberté financière et de temps, c'était réservé aux autres, aux génies.",
-      "Je me levais le matin avec la boule au ventre, sans aucun sens dans ce que je faisais.",
-      "J'accumulais les formations sans jamais rien oser lancer. Le syndrome de l'imposteur à fond.",
-      "J'avais zéro soutien autour de moi. On me disait de trouver un 'vrai travail' stable.",
-      "Mon compte en banque était dans le rouge et mon moral n'était pas beaucoup plus haut.",
-      "Je travaillais 70 heures par semaine pour un salaire de misère. Un vrai esclavage moderne.",
-      "Je passais à côté de ma vie de famille, toujours sur les nerfs et fatiguée.",
-      "J'ai tout essayé : les petits boulots, l'intérim... rien ne me faisait vibrer."
-    ],
-    s3: [
-      "Et puis j'ai dit stop. J'ai décidé d'investir sur moi et de poser mes propres règles.",
-      "Le déclic ? Quand j'ai compris que personne n'allait venir me sauver à ma place.",
-      "J'ai arrêté d'écouter les sceptiques et j'ai foncé on sur le digital avec la bonne méthode.",
-      "Le jour où j'ai compris que la clé était de créer un système automatisé, tout a changé.",
-      "J'ai fini par trouver le bon équilibre et j'ai enfin vu mes premiers résultats tomber.",
-      "J'ai tout envoyé valser et j'ai misé à 100% sur mon projet. Sans regret.",
-      "La méthode que j'ai créée à ce moment-là est devenue la base de tout mon succès.",
-      "Quand j'ai fait ma première vente automatique en dormant, j'ai compris que c'était possible.",
-      "Le jour où j'ai posé ma démission a été le plus beau jour de ma vie.",
-      "J'ai arrêté de chercher la perfection et j'ai simplement commencé à agir."
-    ],
-    s4: [
-      "Si tu te reconnais là-dedans, sache que tu n'es pas seule. Parlons-en en DM : {cta}.",
-      "C'est pour t'éviter ces erreurs que j'ai créé {product}. Envie d'en savoir plus ? {cta}.",
-      "Dis-moi si ça te parle ! {cta}.",
-      "On peut changer les choses ensemble. {cta}.",
-      "Si tu veux que je t'aide à avoir ton propre déclic : {cta}.",
-      "Envoie-moi un petit emoji pour me dire si tu vis ça en ce moment. {cta}.",
-      "Le changement commence par une décision. {cta}.",
-      "Tu mérites tellement mieux que de subir. {cta}.",
-      "On en discute tranquillement en privé ? {cta}.",
-      "Raconte-moi ton histoire en DM. {cta}."
-    ]
-  },
-  jeudi: {
-    theme: "Les Objections & Croyances",
-    angle: "Démonter une excuse fréquente pour asseoir son autorité.",
-    cialdini: "Autorité",
-    color: "#72EFDD",
-    steps: ["Le Mythe", "Le Recadrage", "La Preuve", "L'Appel"],
-    s1: [
-      "On va briser un gros tabou aujourd'hui. Accroche-toi bien.",
-      "Je reçois souvent ce message : 'J'adorerais me lancer mais je n'ai pas le temps'.",
-      "La vérité qui pique un peu mais qui va te faire du bien : arrête de te chercher des excuses.",
-      "On me dit souvent que le marché est saturé. Laisse-moi rire deux minutes.",
-      "Tu penses qu'il faut être une experte en technique pour réussir en ligne ? C'est faux.",
-      "La plus grosse bêtise que j'entends sur la vente de produits digitaux c'est...",
-      "Aujourd'hui, on va parler de la peur d'investir sur soi. Sujet sensible.",
-      "Tu crois qu'il faut des milliers d'abonnés pour vivre de ton business ? Absolument pas.",
-      "On va dégonfler une grosse croyance limitante aujourd'hui. Tu es prête ?",
-      "Si tu penses que c'est trop tard pour te lancer, lis attentivement ce qui suit."
-    ],
-    s2: [
-      "La réalité, c'est que tu as le temps. C'est juste une question de priorités dans tes journées.",
-      "Le marché n'est pas saturé de bonnes personnes. Il y a de la place pour ton authenticité.",
-      "Les outils d'aujourd'hui sont tellement simples qu'un enfant de 10 ans pourrait s'en servir.",
-      "Garder ton argent sur un livret A qui ne rapporte rien, c'est ça le vrai risque.",
-      "Mes premiers clients sont arrivés quand j'avais à peine 300 abonnés. Vraiment.",
-      "Ce n'est jamais trop tard. Le meilleur moment c'était il y a un an, le deuxième meilleur c'est aujourd'hui.",
-      "Ceux qui réussissent n'ont pas plus de talent que toi, ils passent juste à l'action.",
-      "La perfection est l'ennemie du bien. Fais-le imparfaitement, mais fais-le.",
-      "Tu n'as pas besoin d'un gros budget, tu as besoin d'une grosse détermination.",
-      "La peur ne t'évitera pas le danger, elle t'empêchera juste de vivre."
-    ],
-    s3: [
-      "En changeant simplement cet angle de vue, tu vas voir tes résultats exploser.",
-      "C'est ce switch mental qui a tout débloqué chez mes élèves cette année.",
-      "Arrête de te sous-estimer. Tu as tout ce qu'il faut pour réussir ici.",
-      "Regarde autour de toi : d'autres le font avec moins de compétences que toi.",
-      "C'est le moment d'arrêter de regarder les autres réussir et de prendre ta part.",
-      "En levant ce blocage, tu t'ouvres les portes d'une toute nouvelle vie.",
-      "Une fois que tu auras compris ça, plus rien ne pourra t'arrêter.",
-      "C'est exactement cette prise de conscience qui a changé ma vie.",
-      "N'attends pas que toutes les étoiles soient alignées pour oser.",
-      "Le risque le plus grand, c'est de ne pas en prendre."
-    ],
-    s4: [
-      "Dis-moi en DM quelle est TA plus grosse peur en ce moment : {cta}.",
-      "C'est exactement ce qu'on travaille au tout début de {product} : {cta}.",
-      "Prête à dépasser tes limites ? {cta}.",
-      "On en parle en privé si tu veux débloquer ça. {cta}.",
-      "Envoie-moi 'ACTION' et on regarde ça ensemble. {cta}.",
-      "Ne laisse pas tes doutes décider de ton avenir. {cta}.",
-      "Dis-moi ce qui te bloque encore. {cta}.",
-      "On casse tes croyances ensemble ? {cta}.",
-      "Envoie-moi ta plus grande excuse, on va la démonter. {cta}.",
-      "Fais le premier pas aujourd'hui. {cta}."
-    ]
-  },
-  vendredi: {
-    theme: "La Preuve & Résultats",
-    angle: "Montrer des résultats clients ou personnels pour rassurer.",
-    cialdini: "Preuve Sociale",
-    color: "#80FFDB",
-    steps: ["La Célébration", "Le Résultat concret", "La Normalisation", "Le CTA"],
-    s1: [
-      "Regarde ce que j'ai reçu ce matin dans mes DM... Je suis trop fière !",
-      "C'est vendredi, et le vendredi, on célèbre les victoires de la communauté !",
-      "La preuve en image que ma méthode fonctionne. No fake, juste du travail.",
-      "Quand mes élèves m'envoient ce genre de message, ça donne un sens à tout.",
-      "Encore une transformation incroyable cette semaine. Regarde bien ça.",
-      "Rien ne me rend plus heureuse que de voir mes clients réussir.",
-      "Alerte pluie de résultats aujourd'hui ! C'est juste incroyable.",
-      "Ce matin, j'ai envie de mettre en lumière la réussite de l'une d'entre vous.",
-      "La méthode parle d'elle-même. Regarde ce retour d'expérience.",
-      "On finit la semaine en beauté avec des chiffres qui font plaisir."
-    ],
-    s2: [
-      "Une de mes élèves a généré ses premières ventes en seulement 15 jours.",
-      "On a dépassé les 10 000€ de chiffre d'affaires avec ce tout petit produit.",
-      "Elle est passée de 0 à un complément de revenu stable en moins d'un mois.",
-      "Elle a pu quitter son CDI pour vivre pleinement de sa passion grâce à ça.",
-      "Son carnet de commandes est complet pour les 3 prochains mois.",
-      "Elle a automatisé 90% de son business et travaille deux fois moins.",
-      "Elle a enfin osé lancer son offre et les retours sont juste dingues.",
-      "Grâce à {product}, elle a retrouvé un sommeil paisible et des revenus stables.",
-      "Elle a multiplié son audience par 4 sans dépenser un seul euro en pub.",
-      "Elle a généré plus de ventes en une semaine qu'en un mois auparavant."
-    ],
-    s3: [
-      "Et le plus beau ? Elle n'avait aucune expérience au départ. Rien.",
-      "Ce n'est pas un coup de chance, c'est l'application rigoureuse du système.",
-      "Si elle l'a fait avec son emploi du temps de maman débordée, tu peux le faire.",
-      "C'est la preuve que quand on s'en donne les moyens, tout est possible.",
-      "La seule différence entre elle et toi ? Elle a osé franchir le pas.",
-      "Pas besoin d'être un génie du web, juste besoin de suivre la carte.",
-      "Elle était exactement au même point que toi il y a quelques semaines.",
-      "C'est accessible à tout le monde, peu importe ton point de départ.",
-      "Il n'y a aucune magie là-dedans, juste de la bonne stratégie.",
-      "Sa victoire d'aujourd'hui peut être la tienne demain."
-    ],
-    s4: [
-      "Tu veux obtenir les mêmes résultats ? {cta}.",
-      "Rejoins la bande et écris ta propre story à succès : {cta}.",
-      "Les accès à {product} sont encore ouverts pour quelques jours : {cta}.",
-      "Dis-moi en DM si tu veux voir d'autres témoignages ! {cta}.",
-      "Prête à être ma prochaine success story ? {cta}.",
-      "Envoie-moi un message pour qu'on commence dès lundi. {cta}.",
-      "Tu attends quoi pour avoir tes propres résultats ? {cta}.",
-      "Le train passe maintenant. {cta}.",
-      "Viens poser tes questions en privé ! {cta}.",
-      "Rejoins le mouvement. {cta}."
-    ]
-  },
-  samedi: {
-    theme: "Les Coulisses & Lifestyle",
-    angle: "Montrer la liberté gagnée pour donner envie (sans paillettes).",
-    cialdini: "Sympathie",
-    color: "#B79CED",
-    steps: ["La Vie réelle", "Le Contraste soft", "Le Message de fond", "L'Ouverture"],
-    s1: [
-      "Week-end ! Pas de réveil ce matin, et ça, ça n'a pas de prix.",
-      "Petit aperçu de mes coulisses aujourd'hui. Mode chill activé.",
-      "Travailler d'où je veux, quand je veux... C'est ça ma vraie richesse.",
-      "Samedi matin dans mon cocon. Je savoure ce calme avant d'attaquer la journée.",
-      "Pas de rush aujourd'hui. Je prends le temps de vivre, tout simplement.",
-      "Hello toi ! Tu fais quoi de beau de ton week-end ?",
-      "Aujourd'hui, c'est déconnexion presque totale. Ça fait du bien.",
-      "Un petit café, un bon livre... la définition d'un samedi parfait pour moi.",
-      "Je te partage un petit bout de ma vie hors business aujourd'hui.",
-      "Le week-end est là ! On souffle un bon coup."
-    ],
-    s2: [
-      "Pendant des années, le samedi c'était juste le moment pour récupérer de ma semaine épuisante.",
-      "Je me rappelle quand je devais bosser le week-end pour arrondir les fins de mois difficiles.",
-      "Avant, mon esprit était encore pollué par le boulot même pendant mes jours de repos.",
-      "J'ai longtemps cru que travailler dur signifiait sacrifier tous mes week-ends.",
-      "Je passais mes samedis à faire les corvées que je n'avais pas le temps de faire la semaine.",
-      "Le stress ne me quittait jamais vraiment, même le samedi en famille.",
-      "J'étais tellement fatiguée que je n'arrivais même pas à profiter de mes proches.",
-      "Mes samedis étaient juste une parenthèse artificielle avant de replonger dans le stress.",
-      "Je n'avais plus aucune énergie pour mes propres passions ou loisirs.",
-      "Le travail prenait toute la place, ne me laissant que des miettes de temps."
-    ],
-    s3: [
-      "Aujourd'hui, mon business tourne en fond pendant que je profite de mes proches.",
-      "C'est cette liberté-là que je veux t'aider à construire. Pas juste faire de l'argent.",
-      "Le digital permet de créer une vie sur mesure. Ne passe pas à côté de ça.",
-      "Je ne dis pas ça pour me vanter, mais pour te montrer que c'est possible pour toi aussi.",
-      "La vraie richesse, c'est d'être maître de son temps. Le reste suivra.",
-      "Aujourd'hui, je choisis quand je travaille et quand je me repose. C'est le luxe ultime.",
-      "Mon téléphone travaille pour moi, et pas l'inverse. C'est ça la clé.",
-      "Je veux que tu puisses vivre des samedis aussi sereins que les miens.",
-      "C'est fou comme la vie change quand on a le bon système en place.",
-      "La sérénité n'a pas de prix. C'est mon plus bel accomplissement."
-    ],
-    s4: [
-      "Profite bien de ton week-end ! On reparle business lundi ? {cta}.",
-      "Si tu veux savoir comment j'ai automatisé tout ça : {cta}.",
-      "Dis-moi en DM quel est ton samedi idéal ! {cta}.",
-      "Passe un bon moment et repose-toi bien. {cta}.",
-      "Envie de créer cette même liberté pour toi ? {cta}.",
-      "On se retrouve en privé pour papoter si tu t'ennuies ! {cta}.",
-      "N'oublie pas de prendre du temps pour toi aujourd'hui. {cta}.",
-      "Je reste dispo en DM si tu as besoin. {cta}.",
-      "Dis-moi ce qui te ferait le plus kiffer ce week-end. {cta}.",
-      "Prends soin de toi. {cta}."
-    ]
-  },
-  dimanche: {
-    theme: "Le Blues vs La Liberté",
-    angle: "Appuyer sur le contraste du dimanche soir et créer l'urgence.",
-    cialdini: "Rareté & Contraste",
-    color: "#F15BB5",
-    steps: ["L'Empathie", "Le Contraste fort", "L'Urgence (Cialdini)", "Le CTA"],
-    s1: [
-      "Tu as cette petite boule au ventre qui monte là ? Le classique du dimanche soir...",
-      "Pendant que d'autres stressent pour le réveil de demain, moi je savoure ma soirée.",
-      "Le dimanche soir a longtemps été le moment le plus angoissant de ma semaine.",
-      "Bientôt l'heure du dodo... et l'angoisse du lundi qui pointe son nez pour beaucoup.",
-      "Dimanche soir au calme. Mais je sais que pour beaucoup, c'est le stress qui monte.",
-      "Hé, j'espère que tu as passé un bon week-end et que tu ne stresses pas trop pour demain.",
-      "Ce moment précis où le week-end s'achève... Tu te sens comment là tout de suite ?",
-      "Le dimanche soir, c'est le moment parfait pour faire le point sur ce qu'on veut vraiment.",
-      "J'ai une pensée pour toutes celles qui redoutent le réveil de demain matin.",
-      "Fin de week-end. L'ambiance change doucement, tu as remarqué ?"
-    ],
-    s2: [
-      "Demain matin, je me lève quand je veux. Je bosse depuis mon canapé et à mon rythme.",
-      "J'ai banni le réveil strident de ma vie depuis des mois. Et c'est un pur bonheur.",
-      "Je n'ai plus de patron sur le dos pour me dire quoi faire de mes journées.",
-      "Ma semaine de travail commence quand JE le décide, pas selon une convention.",
-      "Je peux décider de partir sur un coup de tête demain si j'en ai envie.",
-      "Le lundi est devenu un de mes jours préférés parce que je l'organise sur mesure.",
-      "Finie la course contre la montre et les transports bondés à l'aube.",
-      "Je choisis mes projets et mes clients avec le cœur, pas par obligation.",
-      "Ma liberté n'est plus négociable. J'ai créé mon propre écosystème.",
-      "Je savoure chaque minute de mes soirées sans penser au stress du lendemain."
-    ],
-    s3: [
-      "Ce n'est pas de la magie, c'est de la stratégie. Et c'est accessible à tout le monde.",
-      "Je ferme définitivement les accès à {product} ce soir à minuit. C'est maintenant.",
-      "Il ne reste que 3 places disponibles pour transformer tes dimanches soirs.",
-      "Le prix augmente dès demain. C'est ta dernière chance d'en profiter à ce tarif.",
-      "Arrête de remettre ta liberté à plus tard. Le bon moment n'existe pas, crée-le.",
-      "La seule chose qui te sépare de cette vie, c'est ta décision de ce soir.",
-      "J'arrête les inscriptions dans quelques heures pour chouchouter la nouvelle promo.",
-      "C'est l'offre de l'année et elle se termine ce soir. Ne rate pas le coche.",
-      "Des dizaines de personnes ont déjà sauté le pas ce week-end. Et toi ?",
-      "Ne laisse pas un autre dimanche soir gâché par le stress du travail."
-    ],
-    s4: [
-      "Écris-moi 'LIBERTÉ' en DM si tu veux en être avant qu'il ne soit trop tard : {cta}.",
-      "Clique sur le lien dans ma bio ou écris-moi ici directement : {cta}.",
-      "On commence dès demain matin ensemble ? {cta}.",
-      "Fais le bon choix pour ton avenir ce soir. {cta}.",
-      "Envoie-moi tes questions avant la fermeture ! {cta}.",
-      "Prête à ne plus jamais avoir la boule au ventre le dimanche ? {cta}.",
-      "Prends ta place maintenant. {cta}.",
-      "C'est le moment ou jamais. {cta}.",
-      "Rends-toi service et passe à l'action. {cta}.",
-      "On se retrouve de l'autre côté ! {cta}."
-    ]
+  intime: {
+    lundi: {
+      theme: "Style Intime — Connexion du matin",
+      color: "#A2D2FF",
+      s1: ["Nouveau lundi, nouvelles opportunités. Tu as prévu quoi de beau aujourd'hui ?", "Hello toi ! Nouveau départ, nouvelle semaine. Tu l'abordes comment ce matin ?", "Café chaud, téléphone en main... C'est le début d'une semaine incroyable si tu le décides."],
+      s2: ["On s'habitue trop souvent à accepter le stress du début de semaine comme une fatalité.", "Vouloir tout faire parfaitement et finir la journée sur les rotules... stop.", "Le problème n'est pas ton manque de temps, c'est que tu l'offres aux mauvaises personnes."],
+      s3: ["Aujourd'hui, j'aimerais t'aider à poser un cadre pour que tes journées t'appartiennent.", "Tu as le droit d'avoir un business ou un job qui s'adapte à ta vie, pas l'inverse.", "Imagine une semaine où c'est toi qui décides de ton rythme, sans compte à rendre."],
+      s4: ["Fais le premier pas pour ta liberté : {cta}.", "On regarde ça ensemble cet après-midi ? {cta}.", "Prête à changer de rythme ? {cta}."]
+    },
+    mardi: {
+      theme: "Style Intime — Le Partage d'Expérience",
+      color: "#BDE0FE",
+      s1: ["Aujourd'hui, j'ai envie de te donner un vrai coup de pouce. Marre des secrets bien gardés.", "Installe-toi confortablement, je vais te donner une astuce qui va te faire gagner des heures.", "Cadeau du mardi ! C'est gratuit et ça peut littéralement changer ton quotidien."],
+      s2: ["La clé, c'est d'appliquer la règle des 80/20. Focus uniquement sur ce qui apporte du résultat.", "Crée du contenu une fois, et recycle-le sous 5 formats différents. Travaille moins, diffuse plus.", "Fais le tri dans tes abonnements et tes outils. Ne garde que le strict nécessaire."],
+      s3: ["Tu n'imagines pas à quel point cette petite habitude va transformer ton quotidien.", "Fais le test aujourd'hui. Tu m'en diras des nouvelles ce soir.", "C'est comme ça qu'on passe d'un projet qui stagne à un projet qui décolle."],
+      s4: ["Envoie-moi un petit mot si ça t'a aidé ! {cta}.", "On en discute tranquillement en privé ? {cta}.", "Dis-moi ce que tu en penses en DM : {cta}."]
+    },
+    mercredi: {
+      theme: "Style Intime — L'Histoire Vraie",
+      color: "#FFC6FF",
+      s1: ["Aujourd'hui, j'ai envie de te raconter une histoire vraie. Pas du storytelling de cinéma.", "Tu me vois épanouie aujourd'hui, mais ça n'a pas toujours été le cas du tout.", "On arrive au milieu de la semaine, et j'ai repensé à une période pas si lointaine..."],
+      s2: ["Je n'avais pas de diplôme spécifique, pas de réseau, et surtout une peur bleue de l'échec.", "J'avais zéro soutien autour de moi. On me disait de trouver un 'vrai travail' stable.", "Je pensais que la liberté financière et de temps, c'était réservé aux autres, aux génies."],
+      s3: ["J'ai arrêté de chercher la perfection et j'ai simplement commencé à agir.", "La méthode que j'ai créée à ce moment-là est devenue la base de tout mon succès.", "Le jour où j'ai posé ma démission a été le plus beau jour de ma vie."],
+      s4: ["Si tu veux que je t'aide à avoir ton propre déclic : {cta}.", "Raconte-moi ton histoire en DM : {cta}.", "On peut changer les choses ensemble : {cta}."]
+    },
+    jeudi: {
+      theme: "Style Intime — Dégonfler les croyances",
+      color: "#CAFFBF",
+      s1: ["On va dégonfler une grosse croyance limitante aujourd'hui. Tu es prête ?", "Aujourd'hui, on va parler de la peur d'investir sur soi. Sujet sensible.", "Tu croyais qu'il fallait des milliers d'abonnés pour vivre de ton business ? Absolument pas."],
+      s2: ["Ce n'est jamais trop tard. Le meilleur moment c'était il y a un an, le deuxième meilleur c'est aujourd'hui.", "Tu n'as pas besoin d'un gros budget, tu as besoin d'une grosse détermination.", "La peur ne t'évitera pas le danger, elle t'empêchera juste de vivre pleinement."],
+      s3: ["C'est exactement cette prise de conscience qui a changé ma vie.", "Regarde autour de toi : d'autres le font avec moins de compétences que toi.", "En levant ce blocage, tu t'ouvres les portes d'une toute nouvelle vie."],
+      s4: ["Ne laisse pas tes doutes décider de ton avenir : {cta}.", "On casse tes croyances ensemble ? {cta}.", "Dis-moi ce qui te bloque encore : {cta}."]
+    },
+    vendredi: {
+      theme: "Style Intime — Célébrer l'humain",
+      color: "#FFADAD",
+      s1: ["Rien qu'en y repensant j'ai des frissons... Regarde ce message d'une de mes clientes.", "Ce matin, j'ai envie de mettre en lumière la réussite de l'une d'entre vous.", "Encore une transformation incroyable cette semaine. Regarde bien ça."],
+      s2: ["Elle est passée de 0 à un complément de revenu stable en moins d'un mois.", "Elle a pu quitter son CDI pour vivre pleinement de sa passion grâce à ça.", "Elle a enfin osé lancer son offre et les retours sont juste dingues."],
+      s3: ["C'est accessible à tout le monde, peu importe ton point de départ.", "Elle était exactement au même point que toi il y a quelques semaines.", "Il n'y a aucune magie là-dedans, juste de la bonne stratégie humaine."],
+      s4: ["Envoie-moi un message pour qu'on commence dès lundi : {cta}.", "Viens poser tes questions en privé ! {cta}.", "Rejoins le mouvement : {cta}."]
+    },
+    samedi: {
+      theme: "Style Intime — Mon Cocon",
+      color: "#FFD6A5",
+      s1: ["Samedi matin dans mon cocon. Je savoure ce calme avant d'attaquer la journée.", "Un petit café, un bon livre... la définition d'un samedi parfait pour moi.", "Le week-end est là ! On souffle un bon coup."],
+      s2: ["Avant, mon esprit était encore pollué par le boulot même pendant mes jours de repos.", "Je n'avais plus aucune énergie pour mes propres passions ou loisirs.", "Le travail prenait toute la place, ne me laissant que des miettes de temps."],
+      s3: ["Aujourd'hui, je choisis quand je travaille et quand je me repose. C'est le luxe ultime.", "La vraie richesse, c'est d'être maître de son temps. Le reste suivra.", "Je veux que tu puisses vivre des samedis aussi sereins que les miens."],
+      s4: ["Dis-moi ce qui te ferait le plus kiffer ce week-end : {cta}.", "Passe un bon moment et repose-toi bien : {cta}.", "Dis-moi en DM quel est ton samedi idéal ! {cta}."]
+    },
+    dimanche: {
+      theme: "Style Intime — Écouter son cœur",
+      color: "#CAFFBF",
+      s1: ["Le dimanche soir, c'est le moment parfait pour faire le point sur ce qu'on veut vraiment.", "Dimanche soir au calme. Mais je sais que pour beaucoup, c'est le stress qui monte.", "Hé, j'espère que tu as passé un bon week-end et que tu ne stresses pas trop pour demain."],
+      s2: ["Je choisis mes projets et mes clients avec le cœur, pas par obligation.", "Ma liberté n'est plus négociable. J'ai créé mon propre écosystème.", "Je savoure chaque minute de mes soirées sans penser au stress du lendemain."],
+      s3: ["Arrête de remettre ta liberté à plus tard. Le bon moment n'existe pas, crée-le.", "Ce n'est pas de la magie, c'est de la stratégie. Et c'est accessible à tout le monde.", "La seule chose qui te sépare de cette vie, c'est ta décision de ce soir."],
+      s4: ["Prête à ne plus jamais avoir la boule au ventre le dimanche ? {cta}.", "Fais le bon choix pour ton avenir ce soir : {cta}.", "Rends-toi service et passe à l'action : {cta}."]
+    }
   }
 };
 
@@ -696,6 +487,7 @@ function switchTab(tab) {
 }
 
 function handleGenerate() {
+  const selectedStyle = document.getElementById('f-style').value;
   const productName = document.getElementById('f-product').value.trim();
   const cta = document.getElementById('f-cta').value.trim();
   const cfg = { productName, cta };
@@ -704,13 +496,10 @@ function handleGenerate() {
   const jours = ["lundi", "mardi", "mercredi", "jeudi", "vendredi", "samedi", "dimanche"];
   
   jours.forEach(j => {
-    const data = BIBLE[j];
+    const data = BIBLE[selectedStyle][j];
     strategy[j] = {
       theme: data.theme,
-      angle: data.angle,
-      cialdini: data.cialdini,
       color: data.color,
-      steps: data.steps,
       slides: [
         fill(pick(data.s1), cfg),
         fill(pick(data.s2), cfg),
@@ -728,11 +517,12 @@ function handleGenerate() {
 
 function regenDay(j) {
   if (!strategy) return;
+  const selectedStyle = document.getElementById('f-style').value;
   const productName = document.getElementById('f-product').value.trim();
   const cta = document.getElementById('f-cta').value.trim();
   const cfg = { productName, cta };
   
-  const data = BIBLE[j];
+  const data = BIBLE[selectedStyle][j];
   strategy[j].slides = [
     fill(pick(data.s1), cfg),
     fill(pick(data.s2), cfg),
@@ -747,8 +537,8 @@ function regenDay(j) {
 function copyDay(j) {
   if (!strategy) return;
   const d = strategy[j];
-  const text = d.slides.map((s, i) => `Slide ${i+1} [${d.steps[i]}] :\n${s}`).join('\n\n');
-  navigator.clipboard.writeText(`📅 ${j.toUpperCase()} - ${d.theme}\nLevier : ${d.cialdini}\n\n${text}`)
+  const text = d.slides.map((s, i) => `Slide ${i+1} :\n${s}`).join('\n\n');
+  navigator.clipboard.writeText(`📅 ${j.toUpperCase()} - ${d.theme}\n\n${text}`)
     .then(() => showToast('📋 Copié dans le presse-papier !'));
 }
 
@@ -761,10 +551,9 @@ function copyFullWeek() {
     const d = strategy[j];
     fullText += `==========================================\n`;
     fullText += `📅 ${j.toUpperCase()} - ${d.theme}\n`;
-    fullText += `🧠 Levier Cialdini : ${d.cialdini}\n`;
     fullText += `==========================================\n\n`;
     d.slides.forEach((s, i) => {
-      fullText += `[Slide ${i+1} : ${d.steps[i]}]\n${s}\n\n`;
+      fullText += `[Slide ${i+1}]\n${s}\n\n`;
     });
     fullText += `\n`;
   });
@@ -773,7 +562,6 @@ function copyFullWeek() {
     .then(() => showToast('🚀 Semaine complète copiée !'));
 }
 
-// FONCTION EXPORT PDF SEMAINE
 function generatePDF() {
   if (!strategy) return;
   const printWindow = window.open('', '_blank');
@@ -787,12 +575,11 @@ function generatePDF() {
         body { font-family: 'Helvetica', sans-serif; color: #333; padding: 30px; }
         h1 { text-align: center; color: #1a1a1a; margin-bottom: 30px; }
         .day-block { page-break-inside: avoid; margin-bottom: 25px; padding: 20px; border: 1px solid #e0e0e0; border-radius: 8px; background-color: #fcfcfc; }
-        .day-title { font-size: 1.3em; font-weight: bold; color: #111; margin-bottom: 5px; border-bottom: 2px solid #e0e0e0; padding-bottom: 5px; }
-        .day-theme { font-size: 0.9em; font-style: italic; color: #666; margin-bottom: 15px; }
+        .day-title { font-size: 1.3em; font-weight: bold; color: #111; margin-bottom: 15px; border-bottom: 2px solid #e0e0e0; padding-bottom: 5px; }
         .slide-block { margin-top: 12px; }
-        .slide-label { font-weight: bold; font-size: 0.95em; color: #FF8C42; }
+        .slide-label { font-weight: bold; font-size: 0.95em; }
         .slide-text { margin: 5px 0 15px 15px; font-size: 0.9em; white-space: pre-line; line-height: 1.4; color: #2c3e50; }
-        @media print { body { padding: 0; } .day-block { border: 1px solid #aaa; } }
+        @media print { body { padding: 0; } }
       </style>
     </head>
     <body>
@@ -804,12 +591,11 @@ function generatePDF() {
     htmlContent += `
       <div class="day-block">
         <div class="day-title">${j.toUpperCase()} — ${d.theme}</div>
-        <div class="day-theme">🎯 Angle : ${d.angle} | 🧠 Levier : ${d.cialdini}</div>
     `;
     d.slides.forEach((s, i) => {
       htmlContent += `
         <div class="slide-block">
-          <div class="slide-label" style="color:${d.color}">Slide ${i+1} : ${d.steps[i]}</div>
+          <div class="slide-label" style="color:${d.color}">Slide ${i+1}</div>
           <div class="slide-text">${s}</div>
         </div>
       `;
@@ -853,11 +639,7 @@ function renderResult() {
     </div>
     
     <div class="dayinfo">
-      <div style="display:flex; justify-content:space-between; align-items:center;">
-        <span class="dayinfo-t" style="color:${ac}">${activeDay.toUpperCase()} — ${d.theme}</span>
-        <span class="dayinfo-th" style="color:var(--text-muted)">🧠 ${d.cialdini}</span>
-      </div>
-      <div class="dayinfo-desc">🎯 ${d.angle}</div>
+      <span class="dayinfo-t" style="color:${ac}">${d.theme}</span>
     </div>
     
     <div class="clayout">
@@ -868,7 +650,7 @@ function renderResult() {
               <div class="phone-bar" onclick="setSlide(${i})" style="background:${i <= activeSlide ? ac : '#2a2a30'}"></div>
             `).join('')}
           </div>
-          <div class="phone-sl" style="color:${ac}">${d.steps[activeSlide] || ''}</div>
+          <div class="phone-sl" style="color:${ac}">Slide ${activeSlide + 1}</div>
           <div class="phone-ct">${esc(slideText)}</div>
         </div>
       </div>
@@ -876,8 +658,8 @@ function renderResult() {
       <div class="cpanel">
         <div>
           <div style="display:flex; justify-content:space-between; margin-bottom:15px; font-weight:bold;">
-            <span style="color:${ac}">${d.steps[activeSlide] || ''}</span>
-            <span style="color:var(--text-muted)">Slide ${activeSlide + 1} / ${d.slides.length}</span>
+            <span style="color:${ac}">Slide ${activeSlide + 1}</span>
+            <span style="color:var(--text-muted)">Aperçu de la story</span>
           </div>
           <div class="cbox">${esc(slideText)}</div>
         </div>
