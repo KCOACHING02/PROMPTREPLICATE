@@ -314,11 +314,16 @@ function handleGenerate() {
     strategy[j] = {
       theme: data.theme, color: data.color, hook: pick(HOOKS), body: pick(data.B),
       yPos: 50, textColor: '#ffffff', textBg: false,
-      fullDraft: "" // Stockage du texte final corrigé
+      fullDraft: "" 
     };
     strategy[j].fullDraft = strategy[j].hook + fill(strategy[j].body, cfg);
   });
   activeDay = "lundi";
+  
+  // Correction ici : On ne force la sauvegarde du texte tapé que s'il existe déjà
+  const textInput = document.getElementById('story-text');
+  if (textInput) strategy[activeDay].fullDraft = textInput.value;
+  
   saveToLocalStorage();
   switchTab('result');
 }
@@ -425,13 +430,11 @@ function renderResult() {
   `;
 }
 
-// Mise à jour temps réel sur le téléphone
 function updateMirrorText(textarea) {
   document.getElementById('phone-mirror-text').innerText = textarea.value;
   strategy[activeDay].fullDraft = textarea.value;
 }
 
-// Drag logic
 let isDragging = false, startY;
 function startDrag(e) {
   isDragging = true;
@@ -462,7 +465,6 @@ function stopDrag() {
   }
 }
 
-// Compression d'image pour éviter les saturations de stockage
 function handleBgUpload(input) {
   if (input.files && input.files[0]) {
     const file = input.files[0];
@@ -471,11 +473,8 @@ function handleBgUpload(input) {
     reader.onload = function(e) {
       const img = new Image();
       img.onload = function() {
-        // Redimensionnement de l'image sur un canvas
         const canvas = document.createElement('canvas');
         let width = img.width, height = img.height;
-        
-        // On limite à 800px max pour l'outil
         const max_size = 800;
         if (width > height && width > max_size) { height *= max_size / width; width = max_size; }
         else if (height > max_size) { width *= max_size / height; height = max_size; }
@@ -484,7 +483,6 @@ function handleBgUpload(input) {
         const ctx = canvas.getContext('2d');
         ctx.drawImage(img, 0, 0, width, height);
         
-        // Export en qualité JPEG moyenne pour économiser le stockage
         const compressedDataUrl = canvas.toDataURL('image/jpeg', 0.6);
         
         strategy[activeDay].bgImage = compressedDataUrl;
@@ -556,11 +554,10 @@ function copyPepite(index, btn) {
 }
 function deletePepite(index) { if(confirm("Supprimer cette pépite ?")) { pepites.splice(index, 1); saveToLocalStorage(); updatePepitesCount(); renderPepitesList(); } }
 
-// --- MODULE : EXPORT PDF SUR-MESURE (Prend le texte corrigé) ---
+// --- MODULE : EXPORT PDF SUR-MESURE ---
 function exportPDF() {
   if (!strategy) return;
   
-  // Sauvegarde impérative de l'élément courant avant d'exporter
   if (document.getElementById('story-text')) {
     strategy[activeDay].fullDraft = document.getElementById('story-text').value;
     saveToLocalStorage();
@@ -580,7 +577,6 @@ function exportPDF() {
     </div>
   `;
   
-  // On liste les 7 jours en prenant le texte EN DIRECT dans la stratégie (donc les corrections de l'utilisateur)
   const jours = Object.keys(strategy);
   jours.forEach(j => {
     const d = strategy[j];
