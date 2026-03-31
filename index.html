@@ -301,7 +301,7 @@
 //  BANQUE DE DONNÉES — Variables dynamiques
 // ══════════════════════════════════════════════════════════════════
 
-const PRENOMS = ['Sara','Nora','Amira','Leila','Fatou','Yasmine','Malika','Rania','Dina','Imane','Zineb','Hanane','Bouchra','Salma','Karima','Wafa','Jihane','Lamia','Sofia','Meriem','Houda','Nassima','Sabrina','Rima','Soraya','Asma','Noura','Dounia','Laïla','Nawal','Syrine','Meryem','Lynda','Amina','Sonia','Hafida','Khadija','Rachida','Nadia','Ilhem'];
+const PRENOMS = ['Lucie','Camille','Julie','Sophie','Claire','Marine','Aurélie','Émilie','Pauline','Céline','Mathilde','Charlotte','Léa','Laura','Sarah','Anaïs','Marie','Alice','Manon','Inès','Chloé','Margot','Elisa','Justine','Laure','Amélie','Sandrine','Nathalie','Valérie','Isabelle','Stéphanie','Virginie','Delphine','Florence','Karine','Laurène','Noémie','Mélanie','Audrey','Vanessa'];
 
 const MONTANTS_PETITS  = ['340 €','480 €','520 €','650 €','720 €','800 €','380 €','410 €','560 €','490 €'];
 const MONTANTS_MOYENS  = ['1 200 €','1 500 €','1 800 €','2 100 €','2 400 €','1 650 €','1 350 €','1 900 €','2 200 €','1 750 €'];
@@ -821,15 +821,18 @@ function generateStory() {
   if (format === 1) {
     slides = [template[0]]; // hook only
   } else if (format === 7) {
-    // Expand to 7 by repeating middle slides
+    // 7 slides distincts : Hook / Douleur / Amplification / Tournant / Solution / Preuve / Décision
+    const hook   = template[0];
+    const middle = template[1] || template[0];
+    const proof  = template[2] || template[1] || template[0];
     slides = [
-      template[0],
-      { type: 'Identification', text: template[0]?.text || '' },
-      template[1] || template[0],
-      { type: 'Amplification', text: 'Et pendant ce temps-là, chaque jour qui passe sans agir coûte quelque chose. Pas forcément de l\'argent. Du temps. De l\'énergie. De la confiance en toi.' },
-      template[1] || template[0],
-      template[2] || template[1],
-      template[2] || template[1],
+      hook,
+      { type: 'Douleur',       text: 'Tu te reconnais là-dedans ?\nCette situation — elle dure depuis trop longtemps.\nEt le pire c\'est que tu ne vois pas vraiment comment en sortir.\nTu cherches. Mais tu ne trouves pas encore le bon chemin.' },
+      { type: 'Amplification', text: 'Chaque semaine qui passe sans changer quelque chose,\nc\'est une semaine de plus dans la même case.\nPas forcément une catastrophe. Juste une lente usure.\nEt l\'usure, ça finit par coûter cher.' },
+      { type: 'Tournant',      text: middle.text },
+      { type: 'Solution',      text: 'Ce n\'est pas une méthode magique.\nC\'est une structure. Des étapes dans le bon ordre.\nAvec les bons outils. Le bon rythme.\nPas parfait dès le début — mais concret dès le départ.' },
+      proof,
+      { type: 'Décision',      text: 'Tu peux continuer à attendre le bon moment.\nOu tu peux décider que maintenant, c\'est suffisamment bon pour commencer.\nLe bon moment n\'existe pas.\nIl y a juste le moment où tu choisis d\'agir.' },
     ];
   } else {
     slides = template.slice(0, 3);
