@@ -1,1001 +1,195 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Générateur de Stories — Brille & Vibre</title>
-  <meta name="description" content="Génère des stories Instagram et TikTok qui convertissent — gratuit, sans inscription."/>
-  <link rel="preconnect" href="https://fonts.googleapis.com"/>
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
-  <style>
-    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-    :root{
-      --gold:#C9A84C;--gold-dim:#A8883A;--gold-pale:#F5EDD8;--gold-glow:rgba(201,168,76,0.15);
-      --cream:#FAF7F2;--cream-deep:#F2EDE4;--ink:#141210;--ink-mid:#3D3830;--ink-soft:#7A7060;
-      --white:#FFFFFF;--border:rgba(201,168,76,0.22);--border-soft:rgba(0,0,0,0.07);
-      --shadow-sm:0 2px 12px rgba(20,18,16,0.06);--shadow-md:0 8px 32px rgba(20,18,16,0.10);
-      --r-sm:10px;--r-md:16px;--r-lg:22px;
-    }
-    html{scroll-behavior:smooth}
-    body{font-family:'Outfit',sans-serif;background:var(--cream);color:var(--ink);min-height:100vh;overflow-x:hidden;line-height:1.6}
-    body::before{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.025'/%3E%3C/svg%3E");pointer-events:none;z-index:0}
-
-    /* HEADER */
-    .site-header{position:sticky;top:0;z-index:100;background:rgba(20,18,16,0.97);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid rgba(201,168,76,0.28);padding:0 clamp(16px,5vw,48px);height:60px;display:flex;align-items:center;justify-content:space-between;gap:12px}
-    .logo{font-family:'Cormorant Garamond',serif;font-size:clamp(17px,2.5vw,21px);font-weight:600;color:var(--gold);letter-spacing:.04em;text-decoration:none;display:flex;align-items:center;gap:7px;white-space:nowrap}
-    .logo em{color:#fff;font-style:italic}
-    .header-right{display:flex;align-items:center;gap:14px}
-    .counter-badge{display:flex;align-items:center;gap:6px;color:rgba(255,255,255,0.45);font-size:12px;white-space:nowrap}
-    .counter-badge strong{color:var(--gold);font-size:17px;font-family:'Cormorant Garamond',serif;font-weight:700;min-width:20px}
-    .header-pill{background:linear-gradient(135deg,var(--gold),#E8C96A);color:var(--ink);font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:4px 12px;border-radius:30px;white-space:nowrap}
-    @media(max-width:500px){.header-pill{display:none}}
-
-    /* HERO */
-    .hero{text-align:center;padding:clamp(40px,7vw,88px) clamp(20px,5vw,48px) clamp(28px,4vw,52px);position:relative;z-index:1}
-    .hero-eyebrow{display:inline-flex;align-items:center;gap:7px;font-size:10.5px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--gold);margin-bottom:18px;padding:5px 14px;border:1px solid var(--border);border-radius:30px;background:var(--gold-glow)}
-    .hero h1{font-family:'Cormorant Garamond',serif;font-size:clamp(34px,6.5vw,68px);font-weight:700;line-height:1.1;letter-spacing:-.01em;margin-bottom:14px}
-    .hero h1 em{font-style:italic;color:var(--gold)}
-    .hero h1 span{display:block;font-weight:400;font-style:italic}
-    .hero-sub{font-size:clamp(14px,1.8vw,16px);color:var(--ink-soft);max-width:500px;margin:0 auto;font-weight:300;line-height:1.75}
-
-    /* LAYOUT */
-    .app-layout{max-width:1040px;margin:0 auto;padding:0 clamp(14px,3.5vw,28px) 80px;position:relative;z-index:1;display:grid;grid-template-columns:360px 1fr;gap:22px;align-items:start}
-    @media(max-width:840px){.app-layout{grid-template-columns:1fr}}
-
-    /* CONFIG PANEL */
-    .config-panel{background:var(--white);border-radius:var(--r-lg);border:1px solid var(--border-soft);box-shadow:var(--shadow-sm);overflow:hidden;position:sticky;top:72px}
-    @media(max-width:840px){.config-panel{position:static}}
-    .panel-head{background:var(--ink);padding:18px 22px;display:flex;align-items:center;gap:10px}
-    .panel-head-icon{width:30px;height:30px;background:var(--gold-glow);border:1px solid var(--border);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0}
-    .panel-head-title{font-size:13px;font-weight:600;color:#fff}
-    .panel-head-sub{font-size:11px;color:rgba(255,255,255,0.38);margin-top:1px}
-    .panel-body{padding:22px}
-
-    /* FIELDS */
-    .field{margin-bottom:17px}
-    .field:last-child{margin-bottom:0}
-    .field-label{display:block;font-size:10.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-soft);margin-bottom:7px}
-    select{width:100%;font-family:'Outfit',sans-serif;font-size:13.5px;color:var(--ink);background:var(--cream);border:1.5px solid var(--border-soft);border-radius:var(--r-sm);padding:10px 30px 10px 13px;transition:border-color .2s,box-shadow .2s,background .2s;appearance:none;-webkit-appearance:none;outline:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%23C9A84C' stroke-width='1.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 11px center;cursor:pointer}
-    select:focus{border-color:var(--gold);background-color:var(--white);box-shadow:0 0 0 3px var(--gold-glow)}
-
-    /* CHIPS */
-    .chips{display:flex;flex-wrap:wrap;gap:6px}
-    .chip{padding:6px 12px;border-radius:30px;border:1.5px solid var(--border-soft);background:var(--cream);font-family:'Outfit',sans-serif;font-size:12px;color:var(--ink-mid);cursor:pointer;transition:all .18s;user-select:none;font-weight:400;white-space:nowrap}
-    .chip:hover{border-color:var(--gold);color:var(--ink);background:var(--gold-glow)}
-    .chip.on{background:var(--gold);border-color:var(--gold);color:var(--ink);font-weight:600;box-shadow:0 2px 8px rgba(201,168,76,0.28)}
-
-    .sep{height:1px;background:var(--border-soft);margin:17px 0}
-
-    /* GENERATE BTN */
-    .btn-gen{width:100%;padding:14px 20px;background:var(--ink);color:#fff;border:2px solid var(--ink);border-radius:var(--r-sm);font-family:'Outfit',sans-serif;font-size:14.5px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:9px;transition:all .25s;position:relative;overflow:hidden;letter-spacing:.01em}
-    .btn-gen::after{content:'';position:absolute;inset:0;background:linear-gradient(135deg,var(--gold),#E8C96A);transform:translateX(-101%);transition:transform .3s ease;z-index:0}
-    .btn-gen:hover::after{transform:translateX(0)}
-    .btn-gen:hover{color:var(--ink);border-color:var(--gold)}
-    .btn-gen>*{position:relative;z-index:1}
-    .btn-icon{font-size:16px;transition:transform .3s}
-    .btn-gen:hover .btn-icon{transform:rotate(18deg) scale(1.1)}
-
-    /* TIPS */
-    .tips-card{background:linear-gradient(135deg,var(--ink),#252018);border-radius:var(--r-lg);padding:22px;margin-top:18px}
-    .tips-head{font-family:'Cormorant Garamond',serif;font-size:17px;font-weight:600;color:var(--gold);margin-bottom:13px}
-    .tip{display:flex;align-items:flex-start;gap:9px;margin-bottom:9px;font-size:12px;color:rgba(255,255,255,0.62);line-height:1.6}
-    .tip:last-child{margin-bottom:0}
-    .tip-dot{width:5px;height:5px;background:var(--gold);border-radius:50%;margin-top:6px;flex-shrink:0}
-
-    /* RIGHT COL */
-    .right-col{display:flex;flex-direction:column;gap:18px}
-
-    /* EMPTY */
-    .empty-state{background:var(--white);border-radius:var(--r-lg);border:1.5px dashed rgba(201,168,76,0.32);padding:clamp(36px,5vw,64px) 28px;text-align:center;display:flex;flex-direction:column;align-items:center;gap:14px}
-    .empty-icon{font-size:46px;animation:float 4s ease-in-out infinite}
-    @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-7px)}}
-    .empty-title{font-family:'Cormorant Garamond',serif;font-size:21px;font-weight:600;color:var(--ink)}
-    .empty-sub{font-size:13.5px;color:var(--ink-soft);max-width:300px;line-height:1.7}
-    .empty-steps{display:flex;flex-direction:column;gap:8px;width:100%;max-width:320px;margin-top:6px}
-    .step{display:flex;align-items:center;gap:11px;background:var(--cream);border-radius:var(--r-sm);padding:9px 13px;text-align:left;font-size:12.5px;color:var(--ink-mid)}
-    .step-num{width:22px;height:22px;background:var(--gold);color:var(--ink);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10.5px;font-weight:700;flex-shrink:0}
-
-    /* RESULT */
-    .result-card{display:none;background:var(--white);border-radius:var(--r-lg);border:1px solid var(--border-soft);box-shadow:var(--shadow-md);overflow:hidden;animation:riseIn .45s cubic-bezier(.22,1,.36,1) both}
-    .result-card.show{display:block}
-    @keyframes riseIn{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
-    .result-head{background:linear-gradient(135deg,var(--ink),#252018);padding:18px 22px}
-    .result-label{font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);margin-bottom:8px}
-    .result-tags{display:flex;flex-wrap:wrap;gap:5px}
-    .result-tag{font-size:11px;padding:3px 9px;border-radius:20px;background:rgba(255,255,255,0.07);color:rgba(255,255,255,0.6);border:1px solid rgba(255,255,255,0.09);font-weight:500}
-
-    /* PSYCHO BAR */
-    .psycho-bar{display:flex;background:var(--cream-deep);border-bottom:1px solid var(--border-soft);overflow-x:auto;scrollbar-width:none}
-    .psycho-bar::-webkit-scrollbar{display:none}
-    .psycho-item{flex:1;min-width:max-content;text-align:center;padding:9px 10px;font-size:9.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;border-right:1px solid var(--border-soft)}
-    .psycho-item:last-child{border-right:none}
-    .psycho-item span{display:block;font-size:13px;margin-bottom:2px}
-    .pi-1{color:#9A6B00}.pi-2{color:#1A6A3A}.pi-3{color:#8A1A1A}.pi-4{color:#2A3A9A}.pi-5{color:#2A7A1A}
-
-    /* SLIDES */
-    .slides-wrap{padding:18px 18px 0;display:flex;flex-direction:column;gap:9px}
-    .slide{display:flex;border-radius:var(--r-sm);overflow:hidden;border:1px solid var(--border-soft);animation:slideIn .4s ease both}
-    @keyframes slideIn{from{opacity:0;transform:translateX(-8px)}to{opacity:1;transform:translateX(0)}}
-    .slide:nth-child(1){animation-delay:.04s}.slide:nth-child(2){animation-delay:.11s}.slide:nth-child(3){animation-delay:.18s}
-    .slide:nth-child(4){animation-delay:.25s}.slide:nth-child(5){animation-delay:.32s}.slide:nth-child(6){animation-delay:.39s}.slide:nth-child(7){animation-delay:.46s}
-    .slide-num{background:var(--ink);color:var(--gold);font-family:'Cormorant Garamond',serif;font-size:19px;font-weight:700;min-width:42px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
-    .slide-inner{flex:1;background:var(--cream);padding:13px 15px}
-    .slide-type-label{font-size:9px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--gold-dim);margin-bottom:5px;display:block}
-    .slide-text{font-size:13.5px;line-height:1.75;color:var(--ink);white-space:pre-wrap}
-
-    /* FOOTER ACTIONS */
-    .result-footer{padding:14px 18px 18px;display:flex;gap:7px;flex-wrap:wrap}
-    .btn-action{display:flex;align-items:center;gap:6px;padding:9px 16px;border-radius:var(--r-sm);font-family:'Outfit',sans-serif;font-size:12.5px;font-weight:600;cursor:pointer;transition:all .2s;border:1.5px solid}
-    .btn-copy{background:var(--gold);border-color:var(--gold);color:var(--ink);flex:1;justify-content:center}
-    .btn-copy:hover{background:var(--gold-dim);border-color:var(--gold-dim)}
-    .btn-copy.ok{background:#1A6A3A;border-color:#1A6A3A;color:#fff}
-    .btn-regen{background:transparent;border-color:var(--border-soft);color:var(--ink-mid)}
-    .btn-regen:hover{border-color:var(--ink);color:var(--ink)}
-    .btn-save{background:transparent;border-color:var(--border-soft);color:var(--ink-mid)}
-    .btn-save:hover{border-color:var(--gold);color:var(--gold)}
-    .btn-save.ok{border-color:#1A6A3A;color:#1A6A3A}
-    @media(max-width:480px){.result-footer{flex-direction:column}.btn-copy,.btn-regen,.btn-save{width:100%;justify-content:center}}
-
-    /* HISTORY */
-    .history-card{display:none;background:var(--white);border-radius:var(--r-lg);border:1px solid var(--border-soft);box-shadow:var(--shadow-sm);overflow:hidden}
-    .history-card.show{display:block}
-    .history-head{padding:12px 18px;background:var(--cream-deep);border-bottom:1px solid var(--border-soft);display:flex;align-items:center;justify-content:space-between}
-    .history-title{font-size:10.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-soft)}
-    .history-clear{font-size:11px;color:var(--ink-soft);cursor:pointer;background:none;border:none;font-family:'Outfit',sans-serif;padding:0;transition:color .18s}
-    .history-clear:hover{color:#8A1A1A}
-    .history-list{padding:8px;display:flex;flex-direction:column;gap:5px}
-    .hist-item{display:flex;align-items:center;gap:9px;padding:9px 11px;border-radius:var(--r-sm);border:1px solid transparent;cursor:pointer;transition:all .18s;background:var(--cream)}
-    .hist-item:hover{border-color:var(--gold);background:var(--gold-pale)}
-    .hist-num{font-family:'Cormorant Garamond',serif;font-size:17px;font-weight:700;color:var(--gold);min-width:20px;text-align:center;flex-shrink:0}
-    .hist-text{flex:1;font-size:12px;color:var(--ink-mid);line-height:1.4;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
-    .hist-arrow{font-size:12px;color:var(--ink-soft);flex-shrink:0;transition:transform .18s}
-    .hist-item:hover .hist-arrow{transform:translateX(3px);color:var(--gold)}
-
-    /* TOAST */
-    .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--ink);color:#fff;padding:12px 22px;border-radius:10px;font-size:13.5px;font-weight:500;z-index:9999;box-shadow:var(--shadow-md);transition:transform .3s cubic-bezier(.22,1,.36,1),opacity .3s;opacity:0;pointer-events:none;white-space:nowrap}
-    .toast.show{transform:translateX(-50%) translateY(0);opacity:1}
-
-    /* FOOTER */
-    .site-footer{background:var(--ink);border-top:1px solid rgba(201,168,76,0.18);padding:22px clamp(16px,5vw,48px);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;position:relative;z-index:1}
-    .footer-brand{font-family:'Cormorant Garamond',serif;font-size:15px;color:var(--gold);font-weight:600}
-    .footer-note{font-size:11.5px;color:rgba(255,255,255,0.28)}
-    @media(max-width:480px){.site-footer{flex-direction:column;text-align:center}}
-    ::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:rgba(201,168,76,0.28);border-radius:3px}
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Générateur de Stories - Moteur de Scénarios Cohérents</title>
+    <style>
+        :root {
+            --bg-color: #fcfbfa;
+            --text-color: #1c1c1c;
+            --accent-color: #b5835a;
+            --card-bg: #ffffff;
+            --border-color: #edeae4;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 15px;
+        }
+        h1 {
+            font-weight: 500;
+            font-size: 1.8rem;
+            letter-spacing: -0.5px;
+            margin-bottom: 5px;
+        }
+        .controls {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 30px;
+        }
+        button {
+            background-color: var(--text-color);
+            color: #fff;
+            border: none;
+            padding: 16px 32px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1.1rem;
+            font-weight: 600;
+            width: 100%;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            transition: background-color 0.2s;
+        }
+        button:hover {
+            background-color: #333;
+        }
+        .story-container {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 30px;
+            margin-bottom: 20px;
+        }
+        .slide {
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #f5f2eb;
+        }
+        .slide:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+        .slide-number {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--accent-color);
+            font-weight: 700;
+            display: block;
+            margin-bottom: 5px;
+        }
+        .slide-content {
+            font-size: 1.2rem;
+            white-space: pre-line;
+        }
+        .theme-tag {
+            display: inline-block;
+            background-color: #f5f2eb;
+            color: #555;
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+    </style>
 </head>
 <body>
 
-<header class="site-header">
-  <a href="#" class="logo">Brille <em>&amp;</em>&nbsp;Vibre</a>
-  <div class="header-right">
-    <div class="counter-badge">Stories&nbsp;:&nbsp;<strong id="counter-num">0</strong></div>
-    <div class="header-pill">Gratuit &amp; Sans IA</div>
-  </div>
-</header>
+<div class="container">
+    <header>
+        <h1>Générateur de Stories — Version Scénarios</h1>
+        <p style="color: #666; text-align: center;">Histoires complètes, logiques et humaines de A à Z.</p>
+    </header>
 
-<section class="hero">
-  <div class="hero-eyebrow">✦ Instagram &amp; TikTok</div>
-  <h1>Une story <em>qui vend</em>,<span>en un clic.</span></h1>
-  <p class="hero-sub">Choisis ton profil, ton thème, ton format — et génère instantanément une story avec les 5 déclencheurs psychologiques. Gratuit. Sans inscription.</p>
-</section>
-
-<main class="app-layout">
-  <aside>
-    <div class="config-panel">
-      <div class="panel-head">
-        <div class="panel-head-icon">⚙</div>
-        <div>
-          <div class="panel-head-title">Configuration</div>
-          <div class="panel-head-sub">Paramètre ta story en 30 sec</div>
-        </div>
-      </div>
-      <div class="panel-body">
-        <div class="field">
-          <label class="field-label" for="profil">👤 Profil cible</label>
-          <select id="profil">
-            <option value="salariee">👩‍💼 Salariée — revenu complémentaire</option>
-            <option value="chomage">🔍 Chômage / RSA — solution urgente</option>
-            <option value="maman">👶 Maman — travailler de chez elle</option>
-            <option value="entrepreneuse">🚀 Entrepreneuse — apprendre à vendre</option>
-          </select>
-        </div>
-        <div class="field">
-          <label class="field-label" for="format">📐 Format</label>
-          <select id="format">
-            <option value="3">3 slides — quotidien</option>
-            <option value="7">7 slides — lancement</option>
-            <option value="1">Hook seul — accroche</option>
-          </select>
-        </div>
-        <div class="sep"></div>
-        <div class="field">
-          <label class="field-label">🎯 Thème</label>
-          <div class="chips" id="theme-chips">
-            <button class="chip on" data-val="moment" type="button">✨ Moment de vie</button>
-            <button class="chip" data-val="blocage" type="button">🧱 Blocage</button>
-            <button class="chip" data-val="charniere" type="button">🔄 Avant / Maintenant</button>
-            <button class="chip" data-val="temoignage" type="button">💬 Témoignage</button>
-            <button class="chip" data-val="revelation" type="button">💡 Révélation</button>
-            <button class="chip" data-val="objection" type="button">❓ Objection</button>
-          </div>
-        </div>
-        <div class="field">
-          <label class="field-label">📣 CTA</label>
-          <div class="chips" id="cta-chips">
-            <button class="chip on" data-val="commente" type="button">Commente</button>
-            <button class="chip" data-val="dm" type="button">DM</button>
-            <button class="chip" data-val="lien" type="button">Lien bio</button>
-            <button class="chip" data-val="urgence" type="button">Urgence</button>
-          </div>
-        </div>
-        <div class="sep"></div>
-        <button class="btn-gen" type="button" onclick="generateStory()">
-          <span class="btn-icon">✦</span>
-          <span class="btn-text">Générer la story</span>
-        </button>
-      </div>
-    </div>
-    <div class="tips-card">
-      <div class="tips-head">✦ Les règles d'or</div>
-      <div class="tip"><div class="tip-dot"></div><span>Une story vend parce qu'elle montre <em style="color:var(--gold)">ce que ça change</em> — pas parce qu'elle raconte ta vie.</span></div>
-      <div class="tip"><div class="tip-dot"></div><span>La charnière <strong style="color:rgba(255,255,255,0.85)">Avant / Maintenant</strong> est obligatoire.</span></div>
-      <div class="tip"><div class="tip-dot"></div><span>Toujours une <strong style="color:rgba(255,255,255,0.85)">preuve</strong> avant le CTA.</span></div>
-      <div class="tip"><div class="tip-dot"></div><span>Jamais dramatique. Ton d'<em style="color:var(--gold)">amie qui parle vrai</em>.</span></div>
-    </div>
-  </aside>
-
-  <div class="right-col">
-    <div class="empty-state" id="empty-state">
-      <div class="empty-icon">✍️</div>
-      <div class="empty-title">Ta story apparaîtra ici.</div>
-      <p class="empty-sub">Configure les paramètres et clique sur <strong>Générer</strong>.</p>
-      <div class="empty-steps">
-        <div class="step"><div class="step-num">1</div><span>Choisis le profil de ta cible</span></div>
-        <div class="step"><div class="step-num">2</div><span>Sélectionne le thème</span></div>
-        <div class="step"><div class="step-num">3</div><span>Génère · Copie · Regénère</span></div>
-      </div>
+    <div class="controls">
+        <button onclick="generateStory()">Générer une Histoire Complète</button>
     </div>
 
-    <div class="result-card" id="result-card">
-      <div class="result-head">
-        <div class="result-label">Story générée ✦</div>
-        <div class="result-tags" id="result-tags"></div>
-      </div>
-      <div class="psycho-bar">
-        <div class="psycho-item pi-1"><span>🎯</span>Curiosité</div>
-        <div class="psycho-item pi-2"><span>🪞</span>Identification</div>
-        <div class="psycho-item pi-3"><span>⚡</span>Tension</div>
-        <div class="psycho-item pi-4"><span>💡</span>Révélation</div>
-        <div class="psycho-item pi-5"><span>✅</span>Décision</div>
-      </div>
-      <div class="slides-wrap" id="slides-wrap"></div>
-      <div class="result-footer">
-        <button class="btn-action btn-copy" id="btn-copy" type="button" onclick="copyStory()">📋 Copier</button>
-        <button class="btn-action btn-regen" type="button" onclick="generateStory()">↺ Regénérer</button>
-        <button class="btn-action btn-save" id="btn-save" type="button" onclick="saveStory()">🔖 Sauvegarder</button>
-      </div>
+    <div id="storyOutput" class="story-container">
+        <p style="text-align: center; color: #999;">Clique sur le bouton pour générer ta story cohérente.</p>
     </div>
-
-    <div class="history-card" id="history-card">
-      <div class="history-head">
-        <div class="history-title">🕓 Historique</div>
-        <button class="history-clear" type="button" onclick="clearHistory()">Effacer</button>
-      </div>
-      <div class="history-list" id="history-list"></div>
-    </div>
-  </div>
-</main>
-
-<footer class="site-footer">
-  <div class="footer-brand">Brille &amp; Vibre</div>
-  <div class="footer-note">Générateur de stories · Instagram &amp; TikTok · 100% gratuit</div>
-</footer>
-
-<div class="toast" id="toast"></div>
+</div>
 
 <script>
-'use strict';
-
-// ══════════════════════════════════════════════════════════════════
-//  BANQUE DE DONNÉES — Variables dynamiques
-// ══════════════════════════════════════════════════════════════════
-
-const PRENOMS = ['Lucie','Camille','Julie','Sophie','Claire','Marine','Aurélie','Émilie','Pauline','Céline','Mathilde','Charlotte','Léa','Laura','Sarah','Anaïs','Marie','Alice','Manon','Inès','Chloé','Margot','Elisa','Justine','Laure','Amélie','Sandrine','Nathalie','Valérie','Isabelle','Stéphanie','Virginie','Delphine','Florence','Karine','Laurène','Noémie','Mélanie','Audrey','Vanessa'];
-
-const MONTANTS_PETITS  = ['340 €','480 €','520 €','650 €','720 €','800 €','380 €','410 €','560 €','490 €'];
-const MONTANTS_MOYENS  = ['1 200 €','1 500 €','1 800 €','2 100 €','2 400 €','1 650 €','1 350 €','1 900 €','2 200 €','1 750 €'];
-const MONTANTS_GRANDS  = ['3 200 €','4 100 €','3 800 €','4 600 €','5 200 €','3 500 €','4 800 €','3 950 €','4 200 €','5 100 €'];
-const DUREES_COURTES   = ['8 jours','11 jours','2 semaines','10 jours','12 jours','9 jours','3 semaines'];
-const DUREES_MOYENNES  = ['3 semaines','4 semaines','un mois','5 semaines','6 semaines'];
-const DUREES_LONGUES   = ['2 mois','10 semaines','3 mois','90 jours'];
-const MOTS_CTA         = ['DÉMO','SYSTÈME','MÉTHODE','STRUCTURE','OUI','START','COMMENCER','INFO','ACCÈS','GUIDE','DÉCLIC','LANCER','FIRST'];
-const PRODUITS         = ['une formation digitale','un guide PDF','un programme en ligne','un ebook','un mini-cours','une formation vidéo','un accompagnement en ligne'];
-const NICHES           = ['la cuisine rapide pour mamans','l\'organisation du quotidien','la gestion du budget familial','le développement personnel','la reconversion professionnelle','la vente en ligne','le bien-être au naturel','la photographie smartphone'];
-
-// ══════════════════════════════════════════════════════════════════
-//  BANQUE DE STORIES — Séquences par profil × thème
-//  Chaque story = tableau de slides [ {type, text} ]
-//  Les {VAR} sont remplacées dynamiquement
-// ══════════════════════════════════════════════════════════════════
-
-const STORIES = {
-
-  // ─────────────────────────────────────────────────────────────
-  //  SALARIÉE × MOMENT DE VIE
-  // ─────────────────────────────────────────────────────────────
-  salariee_moment: [
-    [
-      {type:'Hook',        text:'Ce matin j\'avais une réunion à 9h.\nEt pendant qu\'on débattait d\'un PowerPoint que personne ne lira,\nj\'ai reçu une notif.\nUne vente.'},
-      {type:'Avant / Maintenant', text:'Avant : chaque centime que je gagnais,\nje l\'échangeais contre une heure de ma vie.\nMaintenant : j\'ai un produit en ligne.\nIl tourne pendant que je suis en réunion.\nPendant que je dors.\nPendant que je vis.'},
-      {type:'Preuve + CTA', text:'{P1} était encore en poste quand elle a commencé.\nElle a fait ses premières {M1} en {D1}.\nElle n\'a rien quitté. Elle a juste ajouté quelque chose.\nCommente {C1} et je t\'explique comment.'},
-    ],
-    [
-      {type:'Hook',        text:'Tu connais ce moment où tu regardes ton bulletin de salaire\net tu réalises que le chiffre n\'a pas bougé depuis 18 mois ?\nMoi oui. Et c\'est ce jour-là que j\'ai décidé de faire quelque chose.'},
-      {type:'Avant / Maintenant', text:'Avant : j\'attendais une augmentation qui ne venait jamais.\nMaintenant : j\'ai créé ma propre augmentation.\nSans demander la permission à personne.'},
-      {type:'Preuve + CTA', text:'{P2} est RH dans une grande entreprise.\nElle gagne bien. Mais elle voulait plus.\nEn 6 semaines elle a ajouté {M2} par mois à côté.\nCommente {C2} si tu veux voir ce qu\'elle a créé.'},
-    ],
-    [
-      {type:'Hook',        text:'Samedi matin. Café chaud. Enfants qui dorment encore.\nJ\'ai ouvert mon téléphone.\nDeux ventes pendant la nuit.\nJe n\'avais rien fait la veille.'},
-      {type:'Avant / Maintenant', text:'Avant : le week-end c\'était pour récupérer de la semaine.\nMaintenant : c\'est aussi pour encaisser.\nSans travailler. Vraiment.'},
-      {type:'Preuve + CTA', text:'{P3} a mis son premier produit en ligne un dimanche soir.\nElle avait hésité 3 mois avant.\nSa première semaine : {M1}.\nCommente {C3} pour voir ce qu\'elle a créé en premier.'},
-    ],
-    [
-      {type:'Hook',        text:'Mon collègue a démissionné cette semaine.\nIl s\'est lancé.\nMon premier réflexe ? De la jalousie mélangée à de l\'admiration.\nEt une question : pourquoi pas moi ?'},
-      {type:'Avant / Maintenant', text:'Avant : je regardais les autres se lancer en trouvant des raisons de ne pas le faire.\nMaintenant : j\'ai compris que l\'attente a un coût.\nEt ce coût augmente chaque mois.'},
-      {type:'Preuve + CTA', text:'{P4} a vu sa meilleure amie se lancer.\nElle a attendu encore 3 semaines.\nPuis elle a sauté.\nEn {D2} elle avait {M2}.\nCommente {C1} si tu veux son premier pas concret.'},
-    ],
-    [
-      {type:'Hook',        text:'J\'ai demandé des congés cette semaine.\nJ\'ai dû expliquer pourquoi j\'avais besoin de partir.\nJustifier mes vacances à mon propre patron.\nÀ un moment ça te choque, ce truc-là.'},
-      {type:'Avant / Maintenant', text:'Avant : mon temps appartenait à quelqu\'un d\'autre.\nMaintenant : j\'ai un revenu qui ne me demande pas d\'autorisation.\nC\'est ça qui change tout.'},
-      {type:'Preuve + CTA', text:'{P5} a eu sa dernière conversation sur ses congés il y a 8 mois.\nDepuis elle a construit quelque chose qui lui appartient.\n{M3} générés le mois dernier.\nCommente {C2} pour qu\'elle te raconte comment.'},
-    ],
-    [
-      {type:'Hook',        text:'40 minutes dans le train.\nD\'habitude je scroll Instagram.\nAujourd\'hui j\'ai utilisé ce temps pour finaliser mon produit.\nEt en arrivant au bureau, j\'avais déjà une vente.'},
-      {type:'Avant / Maintenant', text:'Avant : mes trajets c\'était du temps mort.\nMaintenant : c\'est mon temps de construction.\n20 à 40 minutes par jour.\nSur le bon projet, ça change une vie.'},
-      {type:'Preuve + CTA', text:'{P6} travaille 45 minutes de trajet chaque matin.\nElle n\'a pas d\'autre temps libre.\nElle a construit {P_PRODUIT} en 3 semaines comme ça.\n{M2} le premier mois.\nCommente {C3} pour voir sa méthode.'},
-    ],
-    [
-      {type:'Hook',        text:'Il y a un an, je comptais les jours avant le week-end.\nAujourd\'hui je compte mes ventes de la semaine.\nCe n\'est pas une grande histoire.\nC\'est juste une décision que j\'ai prise un soir.'},
-      {type:'Avant / Maintenant', text:'Avant : vivre du lundi au vendredi pour le samedi.\nMaintenant : chaque jour peut rapporter quelque chose.\nPas parce que je travaille plus.\nParce que je travaille autrement.'},
-      {type:'Preuve + CTA', text:'{P7} a pris cette décision il y a 8 mois.\nElle est encore salariée. Par choix.\nPas par obligation.\nSon revenu digital ce mois : {M3}.\nCommente {C1} si tu veux son histoire complète.'},
-    ],
-    [
-      {type:'Hook',        text:'Tu connais le sentiment quand tu regardes ton compte le 25 du mois ?\nCe calcul rapide dans ta tête.\nJusqu\'au 5 du mois prochain.\nJ\'ai connu ça. Longtemps.'},
-      {type:'Avant / Maintenant', text:'Avant : la fin du mois avait une saveur d\'angoisse.\nMaintenant : j\'ai une deuxième entrée d\'argent.\nElle n\'est pas énorme. Mais elle change ce que ça fait de regarder son compte.'},
-      {type:'Preuve + CTA', text:'{P8} gagnait {M1} de plus par mois grâce à son produit digital.\nPas une fortune. Mais assez pour que le 25 du mois ait un goût différent.\nCommente {C2} si tu veux savoir ce qu\'elle a créé.'},
-    ],
-  ],
-
-  // ─────────────────────────────────────────────────────────────
-  //  SALARIÉE × BLOCAGE
-  // ─────────────────────────────────────────────────────────────
-  salariee_blocage: [
-    [
-      {type:'Hook',        text:'Tu te dis que tu n\'as pas le temps.\nEt c\'est vrai. Tu travailles. Tu gères tout.\nMais voilà la question honnête :\ncombien de minutes par jour tu scrolles sans te souvenir de quoi ?'},
-      {type:'Révélation',  text:'Ce n\'est pas une question de temps.\nC\'est une question de priorité.\n{P1} a commencé avec 25 minutes par soir.\nPas plus. Elle avait les mêmes journées que toi.'},
-      {type:'Preuve + CTA', text:'En {D2} elle avait son produit en ligne.\nEn {D3} elle avait fait {M2}.\n25 minutes. Le bon projet. La bonne méthode.\nCommente {C1} et je t\'envoie son planning exact.'},
-    ],
-    [
-      {type:'Hook',        text:'Tu attends que les conditions soient parfaites.\nPlus de temps. Moins de stress. Une idée claire.\nMais ces conditions-là — elles n\'arrivent jamais toutes ensemble.'},
-      {type:'Révélation',  text:'Celles qui ont réussi n\'avaient pas de meilleures conditions.\nElles ont juste commencé avec ce qu\'elles avaient.\nImparfaitement. Courageusement.'},
-      {type:'Preuve + CTA', text:'{P2} a lancé son produit depuis son canapé.\nAprès une longue journée de travail.\nElle était fatiguée. Elle l\'a fait quand même.\n{M2} le premier mois.\nCommente {C2} pour voir son histoire.'},
-    ],
-    [
-      {type:'Hook',        text:'Tu te demandes si tu es légitime.\nSi tu as vraiment quelque chose à apporter.\nSi quelqu\'un voudrait payer pour ce que tu sais faire.'},
-      {type:'Révélation',  text:'La légitimité ne se donne pas.\nElle se prend. En commençant.\nTu n\'as pas besoin d\'être l\'experte numéro un.\nJuste quelques étapes devant celles à qui tu parles.'},
-      {type:'Preuve + CTA', text:'{P3} pensait qu\'elle n\'avait rien de spécial à vendre.\nElle a créé {P_PRODUIT} sur {P_NICHE}.\n{M1} en {D1}.\nCommente {C3} et je t\'envoie son idée de départ.'},
-    ],
-    [
-      {type:'Hook',        text:'Tu as peur de te planter.\nD\'investir du temps et de l\'énergie pour rien.\nCette peur-là, je la comprends. Elle est normale.'},
-      {type:'Révélation',  text:'Mais l\'inaction a un coût aussi.\nChaque mois où tu ne construis rien,\nc\'est un mois de plus où tout dépend de ton employeur.\nC\'est un risque aussi — juste moins visible.'},
-      {type:'Preuve + CTA', text:'{P4} avait raté un premier essai.\nElle a recommencé différemment.\nSon deuxième lancement : {M3} en une semaine.\nCommente {C1} pour lire son analyse.'},
-    ],
-    [
-      {type:'Hook',        text:'Tu te compares à des gens qui ont 50 000 abonnés.\nDes screenshots de chiffres énormes.\nEt tu te demandes ce qu\'ils ont que tu n\'as pas.'},
-      {type:'Révélation',  text:'Ce que tu ne vois pas : leurs débuts.\nLeurs premiers mois à 0 vente.\nLeurs doutes à 2h du matin.\nOn ne montre que les victoires. Jamais la salle d\'attente.'},
-      {type:'Preuve + CTA', text:'{P5} avait 189 abonnés quand elle a fait sa première vente.\n189. Pas 10 000. Pas 50 000.\nElle avait une méthode. Pas une grande audience.\nCommente {C2} pour voir cette méthode.'},
-    ],
-  ],
-
-  // ─────────────────────────────────────────────────────────────
-  //  SALARIÉE × CHARNIÈRE
-  // ─────────────────────────────────────────────────────────────
-  salariee_charniere: [
-    [
-      {type:'Hook',        text:'Il y a 12 mois, je regardais mon compte le 25 du mois avec de l\'anxiété.\nAujourd\'hui je regarde mes stats de vente avec de la satisfaction.\nJe n\'ai rien quitté. J\'ai juste construit quelque chose en parallèle.'},
-      {type:'Charnière',   text:'AVANT : un seul revenu. Fixe. Plafonné. Décidé par quelqu\'un d\'autre.\nMAINTENANT : un revenu principal et un revenu digital qui grandit chaque mois.\nLa différence ? Une décision et {D3} de travail régulier.'},
-      {type:'Preuve + CTA', text:'{P1} a fait ce chemin en {D3}.\nElle est encore dans son entreprise. Par choix.\n{M3} générés le mois dernier en dehors de son salaire.\nCommente {C1} pour voir comment elle a commencé.'},
-    ],
-    [
-      {type:'Hook',        text:'Avant je vendais mon temps à l\'heure.\nMaintenant je vends ce que je sais, à ma façon, quand je veux.\nCe n\'est pas la même vie.'},
-      {type:'Charnière',   text:'AVANT : chaque heure travaillée = un montant fixe. Pas un centime de plus.\nMAINTENANT : un produit en ligne peut se vendre 10 fois dans la nuit.\nSans que je sois là. Sans que j\'échange du temps contre de l\'argent.'},
-      {type:'Preuve + CTA', text:'{P2} a créé {P_PRODUIT}.\nElle l\'a vendu {M2} le premier mois.\nElle dormait quand les premières ventes sont arrivées.\nCommente {C2} pour voir ce qu\'elle a créé.'},
-    ],
-    [
-      {type:'Hook',        text:'La différence entre moi il y a 1 an et moi aujourd\'hui ?\nCe n\'est pas mon salaire. Il n\'a pas changé.\nC\'est ce que j\'ai construit à côté.'},
-      {type:'Charnière',   text:'AVANT : anxiété financière. Pas de marge. Pas de choix.\nMAINTENANT : un coussin. Une respiration. La liberté de dire non si je veux.'},
-      {type:'Preuve + CTA', text:'{P3} a ajouté {M2} par mois à son salaire.\nSans changer d\'employeur. Sans travailler la nuit.\nAvec 30 minutes par jour sur le bon projet.\nCommente {C3} si tu veux son histoire.'},
-    ],
-  ],
-
-  // ─────────────────────────────────────────────────────────────
-  //  SALARIÉE × TÉMOIGNAGE
-  // ─────────────────────────────────────────────────────────────
-  salariee_temoignage: [
-    [
-      {type:'Hook',        text:'{P1} m\'a écrit il y a 3 jours.\nElle m\'a envoyé un screenshot.\nJe l\'ai regardé longtemps.'},
-      {type:'Identification', text:'Il y a {D3} elle me disait qu\'elle n\'avait pas le temps.\nQu\'elle était trop fatiguée le soir.\nQue ça ne marcherait sûrement pas pour elle.\nJe connais ce discours. Je me le suis tenu aussi.'},
-      {type:'Preuve + CTA', text:'Son screenshot ce mois : {M3}.\nCôté de son salaire. Sans rien quitter.\nElle travaillait 20 minutes par soir sur son produit.\nCommente {C1} pour que je t\'envoie son histoire complète.'},
-    ],
-    [
-      {type:'Hook',        text:'{P2} était comptable. CDI. Salaire correct. Vie correcte.\nMais "correcte" ça ne fait pas rêver.'},
-      {type:'Identification', text:'Elle voulait plus. Pas forcément partir.\nJuste avoir quelque chose à elle.\nUn projet. Un revenu qu\'elle contrôle.\nElle a créé {P_PRODUIT} sur {P_NICHE}.'},
-      {type:'Preuve + CTA', text:'En {D2} : {M2}.\nElle est encore comptable. Mais différemment.\nAvec le choix que ce revenu lui donne.\nCommente {C2} pour voir ce qu\'elle a créé.'},
-    ],
-    [
-      {type:'Hook',        text:'Je vais te parler de {P3}.\nElle avait peur. Vraiment peur.\nElle m\'a dit : "Et si personne n\'achète ?"'},
-      {type:'Identification', text:'Je lui ai dit : "Et si quelqu\'un achète ?"\nElle a lancé. En tremblant un peu.\nSon premier produit. Son premier prix. Sa première story.'},
-      {type:'Preuve + CTA', text:'72 heures après : {M1}.\n8 ventes. Toute seule. Sans audience énorme.\nAujourd\'hui elle ne tremble plus en publiant.\nCommente {C3} si tu veux voir sa première story.'},
-    ],
-  ],
-
-  // ─────────────────────────────────────────────────────────────
-  //  SALARIÉE × RÉVÉLATION
-  // ─────────────────────────────────────────────────────────────
-  salariee_revelation: [
-    [
-      {type:'Hook',        text:'Il y a un moment où j\'ai compris que rien ne changerait si je ne changeais rien.\nCe n\'était pas une révélation dramatique.\nJuste une évidence froide, un mardi matin ordinaire.'},
-      {type:'Révélation',  text:'J\'attendais le bon moment.\nLe bon moment n\'existe pas.\nIl y a juste le moment où tu décides que maintenant, c\'est assez bien pour commencer.'},
-      {type:'Preuve + CTA', text:'{P1} a pris cette décision un soir après une journée ordinaire.\nPas d\'élan particulier. Pas d\'enthousiasme fou.\nJuste une action. Et puis une autre.\nEn {D3} : {M3}.\nCommente {C1} pour lire ce qui l\'a déclenchée.'},
-    ],
-    [
-      {type:'Hook',        text:'Ce qui m\'a changé, ce n\'est pas une formation.\nNi un livre. Ni une citation inspirante.\nC\'est de réaliser que le risque de ne rien faire\nétait plus grand que le risque d\'essayer.'},
-      {type:'Révélation',  text:'Rester dans une situation qui ne te convient pas,\nc\'est aussi un risque.\nJuste un risque lent. Invisible. Qui ne fait pas mal tout de suite.'},
-      {type:'Preuve + CTA', text:'{P2} a réalisé ça à 34 ans.\nElle a construit {P_PRODUIT} en {D2}.\n{M2} le premier mois.\nCommente {C2} pour voir ce qui l\'a fait sauter le pas.'},
-    ],
-  ],
-
-  // ─────────────────────────────────────────────────────────────
-  //  SALARIÉE × OBJECTION
-  // ─────────────────────────────────────────────────────────────
-  salariee_objection: [
-    [
-      {type:'Hook',        text:'"Je n\'ai pas le temps."\nC\'est la phrase que j\'entends le plus souvent.\nEt je ne vais pas te dire que c\'est faux.\nTu n\'as peut-être vraiment pas beaucoup de temps.'},
-      {type:'Révélation',  text:'Mais voilà ce que j\'ai appris :\nTu n\'as pas besoin de beaucoup de temps.\nTu as besoin du bon temps.\n20 minutes par jour sur le bon projet.\nÇa change une trajectoire.'},
-      {type:'Preuve + CTA', text:'{P1} travaillait 20 minutes dans le train chaque matin.\nEn {D3} elle avait {M2} de revenus supplémentaires par mois.\nCommente {C1} pour voir son organisation exacte.'},
-    ],
-    [
-      {type:'Hook',        text:'"Je ne suis pas assez experte."\nCette phrase a mis des projets en pause pendant des années.\nPour beaucoup de femmes. Peut-être pour toi aussi.'},
-      {type:'Révélation',  text:'Tu n\'as pas besoin d\'être l\'experte numéro un.\nTu as besoin d\'être quelques étapes devant celles à qui tu t\'adresses.\nC\'est tout. Et c\'est déjà énorme.'},
-      {type:'Preuve + CTA', text:'{P2} pensait pareil.\nElle a créé {P_PRODUIT} sur {P_NICHE}.\nElle n\'était pas la meilleure. Elle était utile.\n{M2} en {D2}.\nCommente {C2} pour voir son offre.'},
-    ],
-    [
-      {type:'Hook',        text:'"Et si ça ne marche pas pour moi ?"\nC\'est une vraie question. Elle mérite une vraie réponse.'},
-      {type:'Révélation',  text:'Ça ne marche pas toujours du premier coup.\nMais voilà ce que j\'ai vu :\ncelles qui ajustent au lieu d\'abandonner — elles y arrivent.\nToujours.'},
-      {type:'Preuve + CTA', text:'{P3} a eu un premier lancement à 0 vente.\nElle a compris pourquoi. Elle a ajusté.\nSon deuxième essai : {M3} en 5 jours.\nCommente {C3} pour voir ce qu\'elle a changé.'},
-    ],
-  ],
-
-  // ─────────────────────────────────────────────────────────────
-  //  MAMAN × MOMENT DE VIE
-  // ─────────────────────────────────────────────────────────────
-  maman_moment: [
-    [
-      {type:'Hook',        text:'Aujourd\'hui j\'ai récupéré mes enfants à 15h30.\nOn est allés au parc.\nJ\'ai laissé mon téléphone dans mon sac.\nEt je n\'ai pas culpabilisé une seule fois.'},
-      {type:'Avant / Maintenant', text:'Avant : je rentrais à 19h. Épuisée. Coupable d\'avoir raté leur journée.\nMaintenant : j\'ai construit quelque chose qui me donne du temps.\nPas de la magie. Un revenu digital qui tourne pendant que je vis.'},
-      {type:'Preuve + CTA', text:'{P1} est maman de deux enfants.\nElle travaillait 45h par semaine avant.\nElle a réduit à 3 jours grâce à ce qu\'elle a construit.\n{M3} générés le mois dernier.\nCommente {C1} pour voir comment elle a commencé.'},
-    ],
-    [
-      {type:'Hook',        text:'Ce matin pendant la sieste du bébé,\nj\'ai eu une notif.\nUne vente.\nJ\'ai souri toute seule dans ma cuisine.'},
-      {type:'Avant / Maintenant', text:'Avant : les heures de sieste c\'était pour rattraper le ménage.\nMaintenant : c\'est aussi pour encaisser.\nSans être là. Sans échanger mon temps contre rien.'},
-      {type:'Preuve + CTA', text:'{P2} a commencé pendant les siestes de son bébé.\n20 minutes. Pas plus.\nEn {D3} : {M2} par mois.\nCommente {C2} pour voir son produit de départ.'},
-    ],
-    [
-      {type:'Hook',        text:'J\'ai eu une conversation avec ma fille ce soir.\nUne vraie conversation. Pas pressée. Pas fatiguée.\nJe l\'ai regardée dans les yeux sans penser au lendemain.'},
-      {type:'Avant / Maintenant', text:'Avant : le soir je décompressais d\'une journée que je n\'avais pas choisie.\nMaintenant : j\'arrive chez eux légère.\nPas parce que tout est parfait. Parce que j\'ai du choix sur mon temps.'},
-      {type:'Preuve + CTA', text:'{P3} dit que c\'est ça qui a le plus changé chez elle.\nPas le chiffre sur son compte.\nLa qualité de ses soirées avec ses enfants.\n{M2} de revenus en plus, et une maman différente.\nCommente {C3} pour son histoire.'},
-    ],
-    [
-      {type:'Hook',        text:'Congé maternité qui se termine dans 6 semaines.\nEt la question que je n\'arrête pas de me poser :\nEst-ce que je veux vraiment reprendre exactement là où j\'avais arrêté ?'},
-      {type:'Avant / Maintenant', text:'Avant : reprendre le boulot = reprendre la même vie.\nMaintenant : il y a une autre option.\nConstruire quelque chose pendant ces dernières semaines.\nPour avoir le choix après.'},
-      {type:'Preuve + CTA', text:'{P4} a créé son produit pendant son congé mat.\nElle avait 2h par jour max.\nEn {D2} elle avait lancé.\nAvant même de reprendre le travail : {M2}.\nCommente {C1} pour voir ce qu\'elle a fait.'},
-    ],
-    [
-      {type:'Hook',        text:'Il y a des matins où tu te réveilles avant tout le monde.\nTu bois un café chaud en silence.\nEt tu réalises que ce moment-là — il t\'appartient.'},
-      {type:'Avant / Maintenant', text:'Avant : je volais ces moments pour souffler.\nMaintenant : j\'en profite aussi pour construire.\n30 minutes le matin, avant que la maison se réveille.\nC\'est devenu mon heure la plus productive.'},
-      {type:'Preuve + CTA', text:'{P5} se lève 45 minutes avant ses enfants.\nElle a construit {P_PRODUIT} comme ça.\nEn {D3} : {M3}.\nCommente {C2} pour voir son programme exact.'},
-    ],
-  ],
-
-  // ─────────────────────────────────────────────────────────────
-  //  MAMAN × BLOCAGE
-  // ─────────────────────────────────────────────────────────────
-  maman_blocage: [
-    [
-      {type:'Hook',        text:'Tu te dis que tu n\'as vraiment pas le temps.\nEnfants, maison, peut-être un boulot en plus.\nEt quelqu\'un te parle de "se lancer en ligne" comme si tu avais des heures libres.'},
-      {type:'Révélation',  text:'Personne ne te demande des heures.\nOn te demande 20 minutes. Au bon endroit.\n20 minutes bien utilisées sur le bon projet\nchangent plus qu\'une heure perdue sur le mauvais.'},
-      {type:'Preuve + CTA', text:'{P1} est maman de 3 enfants.\n20 minutes le soir, pendant les devoirs.\nEn {D3} : {M2} par mois.\nCommente {C1} pour voir son planning.'},
-    ],
-    [
-      {type:'Hook',        text:'La culpabilité de maman, elle trouve toujours un angle.\nTu travailles : tu culpabilises d\'être absente.\nTu restes : tu culpabilises de ne rien produire.\nIl n\'y a pas de bonne case.'},
-      {type:'Révélation',  text:'La culpabilité diminue quand tu as du choix.\nPas quand tu subis.\nConstruire quelque chose depuis chez toi,\nc\'est reprendre le contrôle de cette équation.'},
-      {type:'Preuve + CTA', text:'{P2} avait cette culpabilité permanente.\nElle a construit un revenu digital en {D3}.\nAujourd\'hui elle fait ses choix. Vraiment.\nCommente {C2} pour lire son histoire.'},
-    ],
-    [
-      {type:'Hook',        text:'"Je ne sais pas quoi vendre."\nC\'est souvent la première chose qu\'on me dit.\nEt je comprends. Parce que moi aussi j\'ai pensé que je n\'avais rien de spécial.'},
-      {type:'Révélation',  text:'Chaque maman a quelque chose.\nUne compétence. Une expérience. Un chemin parcouru.\nLe problème n\'est pas le contenu.\nC\'est de ne pas voir la valeur de ce qu\'on sait déjà.'},
-      {type:'Preuve + CTA', text:'{P3} a créé {P_PRODUIT} sur {P_NICHE}.\nElle pensait que personne ne paierait pour ça.\nEn {D1} : {M1}.\nCommente {C3} pour voir son idée de départ.'},
-    ],
-  ],
-
-  // ─────────────────────────────────────────────────────────────
-  //  MAMAN × TÉMOIGNAGE
-  // ─────────────────────────────────────────────────────────────
-  maman_temoignage: [
-    [
-      {type:'Hook',        text:'{P1} est maman solo de deux garçons.\nElle gérait tout toute seule.\nElle m\'a dit un jour : "J\'ai pas le luxe d\'hésiter longtemps."'},
-      {type:'Identification', text:'Elle n\'avait pas beaucoup de temps.\nPas beaucoup de budget.\nMais elle avait une chose claire : elle ne voulait plus dépendre d\'un seul salaire.'},
-      {type:'Preuve + CTA', text:'En {D3} elle avait construit son produit.\nEn {D3_PLUS} elle gagnait plus en ligne qu\'à son ancien poste.\n{M3} le mois dernier.\nCommente {C1} pour son témoignage complet.'},
-    ],
-    [
-      {type:'Hook',        text:'{P2} avait un objectif simple :\npayer les activités de ses enfants sans stresser.'},
-      {type:'Identification', text:'Pas devenir riche.\nJuste arrêter de calculer à chaque inscription au foot.\nÀ chaque sortie scolaire.\nÀ chaque petit plaisir qu\'elle voulait leur offrir.'},
-      {type:'Preuve + CTA', text:'En {D3} son produit digital couvrait toutes ces charges.\n{M2} par mois.\nSes enfants font tout ce qu\'ils veulent maintenant.\nCommente {C2} pour voir ce qu\'elle a créé.'},
-    ],
-  ],
-
-  // ─────────────────────────────────────────────────────────────
-  //  MAMAN × CHARNIÈRE
-  // ─────────────────────────────────────────────────────────────
-  maman_charniere: [
-    [
-      {type:'Hook',        text:'Je vais te parler de deux versions de moi.\nL\'une d\'il y a {D3}. L\'autre d\'aujourd\'hui.'},
-      {type:'Charnière',   text:'AVANT : je courais partout. Boulot. Enfants. Maison. Rien pour moi.\nMAINTENANT : je cours encore — mais dans la bonne direction.\nJ\'ai quelque chose à moi. Un revenu à moi. Une fierté à moi.'},
-      {type:'Preuve + CTA', text:'{P1} a fait ce chemin.\n{M3} par mois en dehors de son emploi.\nSes enfants la voient différente.\nElle se voit différente.\nCommente {C1} pour lire son histoire.'},
-    ],
-    [
-      {type:'Hook',        text:'Avant et après. La vraie version. Pas celle des réseaux.'},
-      {type:'Charnière',   text:'AVANT : regarder son compte avec de l\'anxiété. Calculer. Renoncer.\nMAINTENANT : un revenu complémentaire régulier. Pas énorme. Mais réel.\nCette sensation de marge — ça change tout le reste.'},
-      {type:'Preuve + CTA', text:'{P2} a ajouté {M2} par mois à son foyer.\nPas en travaillant plus. En travaillant autrement.\nCommente {C2} pour voir sa méthode.'},
-    ],
-  ],
-
-  // ─────────────────────────────────────────────────────────────
-  //  MAMAN × RÉVÉLATION + OBJECTION
-  // ─────────────────────────────────────────────────────────────
-  maman_revelation: [
-    [
-      {type:'Hook',        text:'Il y a un moment où j\'ai arrêté d\'attendre\nque quelqu\'un vienne améliorer ma situation.\nCe n\'était pas dramatique. C\'était juste évident.'},
-      {type:'Révélation',  text:'Personne ne viendra.\nPas le bon moment. Pas la bonne occasion.\nJuste toi. Aujourd\'hui. Avec ce que tu as.'},
-      {type:'Preuve + CTA', text:'{P1} a eu ce déclic un dimanche soir.\nElle a créé son produit le lendemain matin.\nEn {D2} : {M2}.\nCommente {C1} pour lire son message de ce dimanche soir.'},
-    ],
-  ],
-
-  maman_objection: [
-    [
-      {type:'Hook',        text:'"Je suis maman, j\'ai pas de temps pour ça."\nJe n\'ai pas de contre-argument.\nTu as raison. Tu n\'as pas de temps.'},
-      {type:'Révélation',  text:'Mais voilà la vraie question :\nun peu de temps maintenant\nou beaucoup de contraintes pour longtemps encore ?'},
-      {type:'Preuve + CTA', text:'{P1} avait le même raisonnement.\nElle a commencé avec 15 minutes le soir quand les enfants dormaient.\nEn {D3} : {M2} par mois.\nCommente {C1} pour voir son planning.'},
-    ],
-    [
-      {type:'Hook',        text:'"C\'est pas pour moi ce truc de vendre en ligne."\nJe t\'entends. Vraiment.\nMais dis-moi — c\'est quoi "ton truc" alors ?\nParce que continuer comme ça — c\'est vraiment ton truc ?'},
-      {type:'Révélation',  text:'La vente en ligne n\'est pas réservée à un certain type de femmes.\nC\'est une compétence. Ça s\'apprend. Ça se construit.\nComme tout.'},
-      {type:'Preuve + CTA', text:'{P2} pensait pareil.\nElle ne se voyait pas "vendre".\nAujourd\'hui elle vend {P_PRODUIT} et elle adore ça.\n{M2} le mois dernier.\nCommente {C2} pour son histoire.'},
-    ],
-  ],
-
-  // ─────────────────────────────────────────────────────────────
-  //  CHOMAGE / RSA × tous thèmes
-  // ─────────────────────────────────────────────────────────────
-  chomage_moment: [
-    [
-      {type:'Hook',        text:'Ce matin j\'ai regardé mon compte.\nPas par curiosité. Par réflexe anxieux.\nCe calcul qu\'on fait dans sa tête avant même d\'ouvrir l\'appli.'},
-      {type:'Avant / Maintenant', text:'Avant : cette angoisse tous les matins. Chaque dépense comptée.\nMaintenant : j\'ai une rentrée qui ne dépend pas d\'un employeur.\nPas énorme. Mais suffisante pour que le matin soit différent.'},
-      {type:'Preuve + CTA', text:'{P1} était au RSA quand elle a commencé.\nElle a utilisé des outils gratuits.\nPas de budget de départ.\nEn {D2} : {M1}.\nCommente {C1} pour voir son premier produit.'},
-    ],
-    [
-      {type:'Hook',        text:'Il y a ce regard dans la famille.\nQuand tu dis que tu es "entre deux".\nQue tu cherches encore.\nCe regard-là, il pèse.'},
-      {type:'Avant / Maintenant', text:'Avant : attendre qu\'on valide ma situation pour agir.\nMaintenant : j\'ai compris que l\'action crée la légitimité.\nPas l\'inverse.'},
-      {type:'Preuve + CTA', text:'{P2} a commencé pendant sa période de chômage.\nSans en parler à personne au départ.\nQuand elle a annoncé ses premiers résultats,\nle regard a changé.\n{M2} en {D2}.\nCommente {C2} pour son témoignage.'},
-    ],
-  ],
-
-  chomage_blocage: [
-    [
-      {type:'Hook',        text:'Tu as peut-être déjà essayé quelque chose.\nEt ça n\'a pas marché.\nEt maintenant tu hésites à recommencer.\nParce que se planter une deuxième fois, ça fait encore plus mal.'},
-      {type:'Révélation',  text:'Mais voilà ce que j\'ai appris sur celles qui réussissent :\ncelles qui ont échoué une fois mais qui ont compris pourquoi —\nelles réussissent presque toujours la deuxième fois.'},
-      {type:'Preuve + CTA', text:'{P1} avait raté un premier essai.\nElle a analysé. Elle a ajusté.\nSon deuxième lancement : {M3} en une semaine.\nCommente {C1} pour son analyse honnête.'},
-    ],
-    [
-      {type:'Hook',        text:'Pas de budget. Pas d\'expérience en ligne. Pas d\'audience.\nTu penses que tu pars avec trop peu pour commencer.'},
-      {type:'Révélation',  text:'Les premières qui se sont lancées en ligne n\'avaient rien non plus.\nPas de budget pub. Pas d\'équipe. Pas de notoriété.\nElles avaient une méthode. C\'est tout.'},
-      {type:'Preuve + CTA', text:'{P2} a commencé avec 0 € de budget.\nElle a utilisé uniquement des outils gratuits.\n{M1} en {D2}.\nCommente {C2} pour voir exactement ce qu\'elle a utilisé.'},
-    ],
-  ],
-
-  chomage_charniere: [
-    [
-      {type:'Hook',        text:'La différence entre où j\'étais et où j\'en suis.\nJe vais te la raconter honnêtement.'},
-      {type:'Charnière',   text:'AVANT : regarder des offres d\'emploi tous les jours. Attendre. Douter.\nMAINTENANT : j\'ai créé ma propre offre. Je n\'attends plus personne.'},
-      {type:'Preuve + CTA', text:'{P1} a fait ce chemin en {D3}.\nElle ne cherche plus de poste.\nElle en est à {M3} par mois avec son produit digital.\nCommente {C1} pour voir son histoire.'},
-    ],
-  ],
-
-  chomage_temoignage: [
-    [
-      {type:'Hook',        text:'{P1} m\'a envoyé un message la semaine dernière.\nJe ne m\'y attendais pas.'},
-      {type:'Identification', text:'Il y a {D3} elle était au RSA.\nElle avait peur d\'investir quoi que ce soit.\nPeur de perdre ce qu\'elle n\'avait pas.\nElle a quand même essayé. Avec les outils gratuits. Avec ce qu\'elle avait.'},
-      {type:'Preuve + CTA', text:'Son message : elle en est à {M3} par mois.\nElle a remboursé ses dettes de l\'année dernière.\nCommente {C1} pour lire son témoignage complet.'},
-    ],
-    [
-      {type:'Hook',        text:'Le premier euro en ligne.\nIl y a des gens qui disent que c\'est rien.\nMoi je dis que c\'est tout.'},
-      {type:'Identification', text:'Parce que ce premier euro prouve que c\'est réel.\nQue quelqu\'un a choisi de donner de l\'argent pour ce que tu fais.\nCette preuve-là vaut plus que n\'importe quel argumentaire.'},
-      {type:'Preuve + CTA', text:'Pour {P2} c\'était {M1} pour un guide PDF de 8 pages.\nElle pleurait. Pas à cause du montant.\nÀ cause de ce que ça signifiait.\nCommente {C2} pour créer ton premier euro.'},
-    ],
-  ],
-
-  chomage_revelation: [
-    [
-      {type:'Hook',        text:'J\'attendais que la situation s\'améliore.\nQue le marché se débloque.\nQu\'une opportunité arrive.\nEt j\'attendais. Et j\'attendais.'},
-      {type:'Révélation',  text:'La révélation ? Personne ne va venir débloquer ma situation.\nC\'est moi. C\'est maintenant. C\'est avec ce que j\'ai.\nCette réalisation-là — elle est dure. Et elle libère.'},
-      {type:'Preuve + CTA', text:'{P1} a eu ce déclic un lundi matin.\nElle a commencé le soir même.\nEn {D3} : {M2}.\nCommente {C1} pour lire ce qui l\'a déclenchée.'},
-    ],
-  ],
-
-  chomage_objection: [
-    [
-      {type:'Hook',        text:'"Je n\'ai pas d\'argent pour me former."\nJe comprends.\nMais voilà une question :\ncombien coûte de ne pas agir encore 6 mois ?'},
-      {type:'Révélation',  text:'L\'inaction a un coût aussi.\nCe coût, il est moins visible. Mais il est réel.\nChaque mois sans revenus propres, c\'est un mois de dépendance de plus.'},
-      {type:'Preuve + CTA', text:'{P1} n\'avait pas de budget.\nElle a commencé avec des outils 100% gratuits.\n{M1} en {D2}.\nCommente {C1} pour voir la liste exacte des outils qu\'elle a utilisés.'},
-    ],
-  ],
-
-  // ─────────────────────────────────────────────────────────────
-  //  ENTREPRENEUSE × tous thèmes
-  // ─────────────────────────────────────────────────────────────
-  entrepreneuse_moment: [
-    [
-      {type:'Hook',        text:'J\'ai posté une story hier.\nPas parfaite. Pas filmée avec un super téléphone.\nSimple. Directe. Dans mon style.\n14 réponses en 2 heures. 3 ventes dans la journée.'},
-      {type:'Avant / Maintenant', text:'Avant : je passais des heures sur chaque post.\nParfait visuellement. Zéro vente.\nMaintenant : je suis une structure. 3 slides. 5 minutes.\nEt ça convertit.'},
-      {type:'Preuve + CTA', text:'{P1} a appliqué cette structure à ses stories.\nElle postait depuis 8 mois sans vendre.\nEn {D1} avec la bonne structure : {M2}.\nCommente {C1} pour recevoir les 5 règles.'},
-    ],
-    [
-      {type:'Hook',        text:'Cette semaine j\'ai vendu pendant que j\'étais chez le médecin.\nPendant que j\'étais dans les embouteillages.\nPendant que je déjeunais.\nMon système tourne. Je n\'ai pas besoin d\'être là.'},
-      {type:'Avant / Maintenant', text:'Avant : chaque vente demandait que je sois présente, disponible, en train de relancer.\nMaintenant : j\'ai un funnel. Il travaille à ma place.'},
-      {type:'Preuve + CTA', text:'{P2} a mis en place ce système en un week-end.\nDepuis : entre 3 et 8 ventes par semaine sans être là.\nCommente {C2} pour voir l\'architecture de son funnel.'},
-    ],
-    [
-      {type:'Hook',        text:'J\'ai passé la barre des {M3} ce mois-ci.\nJe ne pensais pas que ça arriverait si vite.\nMais j\'ai fait une chose différente des mois précédents.'},
-      {type:'Avant / Maintenant', text:'Avant : je créais du contenu sans stratégie. Je postais. J\'espérais.\nMaintenant : chaque story a un objectif. Une structure. Un résultat attendu.'},
-      {type:'Preuve + CTA', text:'{P3} a eu le même déclic.\nEn {D2} avec la bonne approche : {M3}.\nCommente {C3} pour voir sa stratégie de contenu.'},
-    ],
-  ],
-
-  entrepreneuse_blocage: [
-    [
-      {type:'Hook',        text:'Tu postes. Régulièrement. Vraiment.\nMais les vues ne deviennent pas des messages.\nEt les messages ne deviennent pas des achats.\nTu te demandes ce que tu rates.'},
-      {type:'Révélation',  text:'Le problème n\'est presque jamais le contenu.\nC\'est la structure.\nUne story peut être belle, bien filmée, bien écrite —\net ne rien vendre si elle ne suit pas la bonne architecture.'},
-      {type:'Preuve + CTA', text:'{P1} postait depuis 6 mois sans résultat.\nElle a changé la structure de ses stories.\n3 semaines après : {M2}.\nMême produit. Même audience. Structure différente.\nCommente {C1} pour recevoir les 5 règles.'},
-    ],
-    [
-      {type:'Hook',        text:'Tu baisses ton prix avant même qu\'on te le demande.\nTu t\'excuses de le mentionner.\nTu proposes des remises que personne n\'a réclamées.\nTu t\'auto-sabotes sur le tarif.'},
-      {type:'Révélation',  text:'Le problème n\'est pas ton prix.\nC\'est ce que tu crois valoir.\nTant que tu ne crois pas pleinement en ta valeur,\nta communication va transmettre ce doute —\net ta cliente va le ressentir.'},
-      {type:'Preuve + CTA', text:'{P2} vendait ses sessions à 60 €.\nElle les a passées à 160 € après une seule chose :\nElle a arrêté de s\'excuser de son prix.\nSes ventes ont augmenté.\nCommente {C2} pour comprendre ce changement.'},
-    ],
-    [
-      {type:'Hook',        text:'Tu te compares à des comptes qui font des gros lancements.\nDes six chiffres affichés partout.\nEt tu te demandes si tu auras jamais ça.'},
-      {type:'Révélation',  text:'Ce que tu ne vois pas :\nleurs premiers lancements à quelques centaines d\'euros.\nLeurs stories à 3 réponses.\nLeurs doutes.\nOn ne montre que les victoires.'},
-      {type:'Preuve + CTA', text:'{P3} a commencé avec {M1} sur son premier lancement.\nAujourd\'hui elle est à {M3} par mois.\nElle montre maintenant les deux.\nCommente {C3} pour voir son premier lancement.'},
-    ],
-  ],
-
-  entrepreneuse_charniere: [
-    [
-      {type:'Hook',        text:'Je vais te montrer deux versions de mon business.\nUne d\'il y a {D3}. Une d\'aujourd\'hui.'},
-      {type:'Charnière',   text:'AVANT : beaucoup de contenu. Peu de ventes. Beaucoup d\'épuisement.\nMAINTENANT : moins de contenu. Plus de structure. Plus de résultats.\nLa différence : j\'ai appris à raconter mes stories différemment.'},
-      {type:'Preuve + CTA', text:'{P1} a fait cette transition.\nElle postait 7 fois par semaine avant. Zéro vente.\nMaintenant : 3 fois. {M2} par mois.\nCommente {C1} pour voir ce qu\'elle a changé.'},
-    ],
-    [
-      {type:'Hook',        text:'Mon chiffre d\'affaires il y a 6 mois vs aujourd\'hui.\nJe vais être honnête.'},
-      {type:'Charnière',   text:'AVANT : {M1} par mois. Avec beaucoup de stress et de travail.\nMAINTENANT : {M3} par mois. Avec un système. Avec des soirées libres.\nPas parce que j\'ai travaillé plus. Parce que j\'ai travaillé mieux.'},
-      {type:'Preuve + CTA', text:'{P2} a fait le même chemin en {D3}.\nElle a divisé son temps de travail par deux.\nEt triplé ses revenus.\nCommente {C2} pour son histoire complète.'},
-    ],
-  ],
-
-  entrepreneuse_temoignage: [
-    [
-      {type:'Hook',        text:'{P1} m\'a contactée parce qu\'elle postait depuis 8 mois\net n\'avait toujours pas vendu.'},
-      {type:'Identification', text:'Elle avait pourtant tout fait "correctement".\nBeau feed. Captions travaillées. Régularité exemplaire.\nMais ses abonnés ne devenaient pas clients.\nElle ne comprenait pas pourquoi.'},
-      {type:'Preuve + CTA', text:'On a changé la structure de ses stories.\nEn {D1} : {M2}.\n14 ventes. Avec la même audience qu\'avant.\nCommente {C1} pour voir exactement ce qu\'on a changé.'},
-    ],
-    [
-      {type:'Hook',        text:'Je vais te parler de {P2}.\nElle avait un super produit.\nElle en était convaincue.\nMais les ventes ne venaient pas.'},
-      {type:'Identification', text:'Pas parce que le produit était mauvais.\nParce que la façon de le présenter ne créait pas le désir.\nUn bon produit mal raconté ne se vend pas.\nUn produit moyen bien raconté peut cartonner.'},
-      {type:'Preuve + CTA', text:'On a retravaillé sa communication.\nEn {D2} : {M3}.\nMême produit. Même prix. Histoire différente.\nCommente {C2} pour voir comment elle a retravaillé sa story.'},
-    ],
-  ],
-
-  entrepreneuse_revelation: [
-    [
-      {type:'Hook',        text:'Le jour où j\'ai compris que mon problème n\'était pas mon produit.\nNi mon prix. Ni mon audience.\nC\'était la façon dont je racontais ce que je faisais.'},
-      {type:'Révélation',  text:'Le copywriting, ce n\'est pas du marketing.\nC\'est de l\'empathie mise en mots.\nC\'est comprendre ce que ta cliente ressent\navant même qu\'elle sache ce qu\'elle veut.'},
-      {type:'Preuve + CTA', text:'{P1} a eu ce déclic.\nElle a réécrit ses stories avec cette logique.\nSon prochain lancement : {M3}.\nCommente {C1} pour voir ses nouvelles stories.'},
-    ],
-    [
-      {type:'Hook',        text:'J\'ai failli tout arrêter un dimanche de novembre.\nVraiment. J\'avais le message de fermeture prêt dans ma tête.'},
-      {type:'Révélation',  text:'Ce qui m\'a arrêtée ?\nUne cliente qui m\'a écrit ce soir-là.\nElle me disait que mon contenu avait changé quelque chose pour elle.\nJe n\'ai pas fermé.'},
-      {type:'Preuve + CTA', text:'Le mois suivant était mon meilleur mois.\n{M3}.\nJe ne sais pas ce qui se serait passé si j\'avais arrêté ce soir-là.\nCommente {C2} si tu es au même endroit que moi ce soir-là.'},
-    ],
-  ],
-
-  entrepreneuse_objection: [
-    [
-      {type:'Hook',        text:'"Mon audience est trop petite pour vendre."\nC\'est ce que je me disais aussi.\nAvant de comprendre que la taille de l\'audience\nn\'a presque rien à voir avec les ventes.'},
-      {type:'Révélation',  text:'Ce qui compte : l\'engagement et la confiance.\nPas le nombre.\n500 personnes qui te font confiance\nvalent mieux que 50 000 qui ne te connaissent pas.'},
-      {type:'Preuve + CTA', text:'{P1} avait 312 abonnés quand elle a fait ses premières {M2}.\n312. Pas 10 000.\nElle avait une audience petite et très engagée.\nCommente {C1} pour voir sa méthode d\'engagement.'},
-    ],
-    [
-      {type:'Hook',        text:'"Je ne suis pas à l\'aise pour vendre."\nNi moi au départ.\nVendre me semblait agressif. Intrusif.\nUne sorte de mensonge habillé en enthousiasme.'},
-      {type:'Révélation',  text:'J\'ai compris que la vente, quand c\'est fait avec intégrité,\nc\'est juste montrer à quelqu\'un comment résoudre son problème.\nPas de manipulation. De l\'utilité.'},
-      {type:'Preuve + CTA', text:'{P2} ressentait la même chose.\nElle a changé sa façon de voir la vente.\nAujourd\'hui elle vend {P_PRODUIT} et elle dit que c\'est la partie qu\'elle préfère.\n{M2} le mois dernier.\nCommente {C2} pour voir son approche.'},
-    ],
-  ],
-};
-
-// ══════════════════════════════════════════════════════════════════
-//  CTA TEMPLATES
-// ══════════════════════════════════════════════════════════════════
-
-const CTA_TEMPLATES = {
-  commente: (mot) => `Commente ${mot} et je t'envoie les détails.`,
-  dm:       (mot) => `Envoie-moi ${mot} en DM et je te réponds dans la journée.`,
-  lien:     ()    => `Le lien est dans ma bio. Tout y est expliqué.`,
-  urgence:  (mot) => `Commente ${mot} — il reste peu de places cette semaine.`,
-};
-
-// ══════════════════════════════════════════════════════════════════
-//  STATE & HELPERS
-// ══════════════════════════════════════════════════════════════════
-
-let sessionCount  = 0;
-let savedStories  = [];
-let currentSlides = [];
-
-function pick(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
-
-function fillVars(text) {
-  const p  = [pick(PRENOMS), pick(PRENOMS), pick(PRENOMS), pick(PRENOMS), pick(PRENOMS), pick(PRENOMS), pick(PRENOMS), pick(PRENOMS)];
-  const mot = pick(MOTS_CTA);
-  return text
-    .replace(/\{P1\}/g, p[0]).replace(/\{P2\}/g, p[1]).replace(/\{P3\}/g, p[2])
-    .replace(/\{P4\}/g, p[3]).replace(/\{P5\}/g, p[4]).replace(/\{P6\}/g, p[5])
-    .replace(/\{P7\}/g, p[6]).replace(/\{P8\}/g, p[7])
-    .replace(/\{M1\}/g, pick(MONTANTS_PETITS))
-    .replace(/\{M2\}/g, pick(MONTANTS_MOYENS))
-    .replace(/\{M3\}/g, pick(MONTANTS_GRANDS))
-    .replace(/\{D1\}/g, pick(DUREES_COURTES))
-    .replace(/\{D2\}/g, pick(DUREES_MOYENNES))
-    .replace(/\{D3\}/g, pick(DUREES_LONGUES))
-    .replace(/\{D3_PLUS\}/g, '5 mois')
-    .replace(/\{C1\}/g, mot).replace(/\{C2\}/g, pick(MOTS_CTA)).replace(/\{C3\}/g, pick(MOTS_CTA))
-    .replace(/\{P_PRODUIT\}/g, pick(PRODUITS))
-    .replace(/\{P_NICHE\}/g, pick(NICHES));
-}
-
-// ══════════════════════════════════════════════════════════════════
-//  CHIPS
-// ══════════════════════════════════════════════════════════════════
-
-document.querySelectorAll('[id$="-chips"]').forEach(group => {
-  group.querySelectorAll('.chip').forEach(chip => {
-    chip.addEventListener('click', () => {
-      group.querySelectorAll('.chip').forEach(c => c.classList.remove('on'));
-      chip.classList.add('on');
-    });
-  });
-});
-
-// ══════════════════════════════════════════════════════════════════
-//  GENERATE
-// ══════════════════════════════════════════════════════════════════
-
-function generateStory() {
-  const profil  = document.getElementById('profil').value;
-  const format  = parseInt(document.getElementById('format').value);
-  const theme   = document.querySelector('#theme-chips .chip.on')?.dataset.val || 'moment';
-  const ctaType = document.querySelector('#cta-chips .chip.on')?.dataset.val   || 'commente';
-
-  // Build key
-  const key = `${profil}_${theme}`;
-  let pool  = STORIES[key];
-
-  // Fallback: try moment if no match
-  if (!pool || !pool.length) pool = STORIES[`${profil}_moment`] || STORIES['salariee_moment'];
-
-  // Pick a random story template
-  const template = pick(pool);
-
-  // Determine slides to show
-  let slides;
-  if (format === 1) {
-    slides = [template[0]]; // hook only
-  } else if (format === 7) {
-    // 7 slides distincts : Hook / Douleur / Amplification / Tournant / Solution / Preuve / Décision
-    const hook   = template[0];
-    const middle = template[1] || template[0];
-    const proof  = template[2] || template[1] || template[0];
-    slides = [
-      hook,
-      { type: 'Douleur',       text: 'Tu te reconnais là-dedans ?\nCette situation — elle dure depuis trop longtemps.\nEt le pire c\'est que tu ne vois pas vraiment comment en sortir.\nTu cherches. Mais tu ne trouves pas encore le bon chemin.' },
-      { type: 'Amplification', text: 'Chaque semaine qui passe sans changer quelque chose,\nc\'est une semaine de plus dans la même case.\nPas forcément une catastrophe. Juste une lente usure.\nEt l\'usure, ça finit par coûter cher.' },
-      { type: 'Tournant',      text: middle.text },
-      { type: 'Solution',      text: 'Ce n\'est pas une méthode magique.\nC\'est une structure. Des étapes dans le bon ordre.\nAvec les bons outils. Le bon rythme.\nPas parfait dès le début — mais concret dès le départ.' },
-      proof,
-      { type: 'Décision',      text: 'Tu peux continuer à attendre le bon moment.\nOu tu peux décider que maintenant, c\'est suffisamment bon pour commencer.\nLe bon moment n\'existe pas.\nIl y a juste le moment où tu choisis d\'agir.' },
+    // BIBLE DES SCÉNARIOS COHÉRENTS
+    const baseHistoires = [
+        {
+            theme: "L'ANGOISSE DES COURSES (Cible : Fins de mois difficiles)",
+            slides: [
+                ["Je sors tout juste des courses. J'ai pris ce qui me faisait envie sans faire de calculs mentaux.", "Je savoure. C'est tout bête, mais c'est précieux."],
+                ["Parce que je sais ce que c'est de regarder son compte avec la boule au ventre en passant à la caisse.\n\nAvant, je finissais mes mois dans le rouge. Maintenant, je respire enfin librement.", "Tu penses peut-être que ce n'est pas pour toi. Que c'est réservé aux autres."],
+                ["Une de mes clientes m'a dit hier qu'elle respirait enfin elle aussi.\n\nÉcris-moi 'BULLE' en DM pour échanger sur ta situation.", "Tape 'INFOS' et on regarde ça ensemble."]
+            ]
+        },
+        {
+            theme: "LE RÉVEIL SANS ALARME (Cible : Salariée épuisée)",
+            slides: [
+                ["Ce matin, pas de réveil qui hurle. Juste mes yeux qui s'ouvrent quand ils en ont envie.", "Le silence du petit matin. Avant que tout le monde ne se réveille."],
+                ["Avant, je subissais mes journées et je stressais dès le dimanche soir. Maintenant, le lundi est un jour comme un autre.", "Tu te dis sûrement que tu n'as pas l'énergie pour lancer un projet à côté de ton CDI."],
+                ["C'est le déclic qu'a eu Sophie le mois dernier. Regarde son retour.\n\nDis-moi 'DÉCLIC' en DM pour qu'on en discute.", "Envoie 'PRÊTE' et je t'explique les étapes."]
+            ]
+        },
+        {
+            theme: "LES ÉCLATS DE RIRE (Cible : Maman au foyer)",
+            slides: [
+                ["Mes enfants rigolent aux éclats dans la pièce d'à côté. Je savoure chaque éclat de voix.", "Être là pour eux. C'est devenu ma priorité absolue."],
+                ["Avant, je passais à côté de mes enfants pour enrichir un patron. Maintenant, je travaille à leurs côtés.", "Tu as peur de ne pas avoir assez de temps dans tes journées de maman. Je comprends."],
+                ["C'est accessible à n'importe quelle maman motivée. Regarde le message de Julie.\n\nEnvoie 'MAMAN' en DM et on en parle.", "Dis-moi 'PRÊTE' en message privé."]
+            ]
+        },
+        {
+            theme: "LA BALADE À 14H (Cible : Besoin de reconversion)",
+            slides: [
+                ["Je marche à bon rythme. Mon corps bouge. Et ma tête se vide enfin.", "Prendre l'air en plein milieu de l'après-midi. C'est ça le luxe."],
+                ["Avant, je devais demander la permission pour m'absenter. Maintenant, je suis ma seule boss.", "Tu te dis que tu n'as aucun talent particulier à monétiser. C'est faux."],
+                ["C'est exactement ce que mes élèves appliquent. Et ça marche.\n\nEnvoie-moi 'GO' et on en parle simplement.", "Tape 'ENSEMBLE' et voyons ce qu'on peut faire."]
+            ]
+        },
+        {
+            theme: "LE MESSAGE DE LA CLIENTE (Cible : Peur d'échouer)",
+            slides: [
+                ["Je viens de lire le message d'une cliente. Elle me remercie d'avoir changé son quotidien.", "Ça me touche tellement à chaque fois."],
+                ["Avant, le mot 'vendre' me terrifiait. Maintenant, c'est juste aider des personnes qui en ont besoin.", "Tu as peur de te lancer pour rien. De perdre ton temps et d'échouer."],
+                ["Mais la méthode est là, il ne manque plus que toi.\n\nEnvoie 'ACTION' et je t'envoie la vidéo explicative.", "Écris-moi 'VRAI' et je t'explique le principe."]
+            ]
+        }
     ];
-  } else {
-    slides = template.slice(0, 3);
-  }
 
-  // Add CTA to last slide if needed
-  const lastSlide = slides[slides.length - 1];
-  const ctaFn     = CTA_TEMPLATES[ctaType] || CTA_TEMPLATES.commente;
-  const ctaLine   = ctaFn(pick(MOTS_CTA));
+    function generateStory() {
+        // 1. Choix d'un scénario complet au hasard
+        const histoire = baseHistoires[Math.floor(Math.random() * baseHistoires.length)];
+        
+        // 2. Pour chaque slide de ce scénario, on pioche une variante au hasard
+        const s1 = histoire.slides[0][Math.floor(Math.random() * histoire.slides[0].length)];
+        const s2 = histoire.slides[1][Math.floor(Math.random() * histoire.slides[1].length)];
+        const s3 = histoire.slides[2][Math.floor(Math.random() * histoire.slides[2].length)];
 
-  // Render
-  currentSlides = slides.map((s, i) => {
-    let text = fillVars(s.text);
-    if (i === slides.length - 1 && !text.includes('Commente') && !text.includes('DM') && !text.includes('bio')) {
-      text += '\n' + ctaLine;
+        const output = `
+            <div class="theme-tag">Thématique : ${histoire.theme}</div>
+            <div class="slide">
+                <span class="slide-number">Slide 1 — L'accroche / Le moment</span>
+                <div class="slide-content">${s1}</div>
+            </div>
+            <div class="slide">
+                <span class="slide-number">Slide 2 — Le problème / La charnière</span>
+                <div class="slide-content">${s2}</div>
+            </div>
+            <div class="slide">
+                <span class="slide-number">Slide 3 — La preuve / L'action</span>
+                <div class="slide-content">${s3}</div>
+            </div>
+        `;
+
+        document.getElementById('storyOutput').innerHTML = output;
     }
-    return { type: s.type, text };
-  });
-
-  renderResult(profil, theme, format, ctaType);
-  sessionCount++;
-  document.getElementById('counter-num').textContent = sessionCount;
-}
-
-// ══════════════════════════════════════════════════════════════════
-//  RENDER
-// ══════════════════════════════════════════════════════════════════
-
-function renderResult(profil, theme, format, ctaType) {
-  document.getElementById('empty-state').style.display = 'none';
-
-  const wrap = document.getElementById('slides-wrap');
-  wrap.innerHTML = '';
-
-  currentSlides.forEach((s, i) => {
-    const slide = document.createElement('div');
-    slide.className = 'slide';
-
-    const num = document.createElement('div');
-    num.className = 'slide-num';
-    num.textContent = i + 1;
-
-    const inner = document.createElement('div');
-    inner.className = 'slide-inner';
-
-    const lbl = document.createElement('span');
-    lbl.className = 'slide-type-label';
-    lbl.textContent = s.type;
-
-    const txt = document.createElement('div');
-    txt.className = 'slide-text';
-    txt.textContent = s.text;
-
-    inner.appendChild(lbl);
-    inner.appendChild(txt);
-    slide.appendChild(num);
-    slide.appendChild(inner);
-    wrap.appendChild(slide);
-  });
-
-  // Tags
-  const profilSel  = document.getElementById('profil');
-  const formatSel  = document.getElementById('format');
-  const themeChip  = document.querySelector('#theme-chips .chip.on');
-  const ctaChip    = document.querySelector('#cta-chips .chip.on');
-
-  document.getElementById('result-tags').innerHTML = [
-    profilSel.options[profilSel.selectedIndex].text.split('—')[0].trim(),
-    formatSel.options[formatSel.selectedIndex].text.split('—')[0].trim(),
-    themeChip?.textContent.trim(),
-    ctaChip?.textContent.trim(),
-  ].map(t => `<span class="result-tag">${esc(t)}</span>`).join('');
-
-  document.getElementById('result-card').classList.add('show');
-
-  if (window.innerWidth <= 840) {
-    document.getElementById('result-card').scrollIntoView({ behavior: 'smooth', block: 'start' });
-  }
-}
-
-// ══════════════════════════════════════════════════════════════════
-//  COPY
-// ══════════════════════════════════════════════════════════════════
-
-function copyStory() {
-  if (!currentSlides.length) return;
-  const text = currentSlides.map((s, i) => `— SLIDE ${i + 1} — ${s.type.toUpperCase()}\n${s.text}`).join('\n\n');
-
-  const fallback = () => {
-    const ta = document.createElement('textarea');
-    ta.value = text;
-    Object.assign(ta.style, { position:'fixed', opacity:'0', top:'0', left:'0' });
-    document.body.appendChild(ta);
-    ta.select();
-    try { document.execCommand('copy'); } catch {}
-    document.body.removeChild(ta);
-  };
-
-  (navigator.clipboard ? navigator.clipboard.writeText(text) : Promise.reject())
-    .catch(fallback)
-    .finally(() => {
-      const btn = document.getElementById('btn-copy');
-      btn.textContent = '✓ Copié !';
-      btn.classList.add('ok');
-      setTimeout(() => { btn.textContent = '📋 Copier'; btn.classList.remove('ok'); }, 2000);
-    });
-}
-
-// ══════════════════════════════════════════════════════════════════
-//  SAVE / HISTORY
-// ══════════════════════════════════════════════════════════════════
-
-function saveStory() {
-  if (!currentSlides.length) return;
-  const preview = currentSlides[0]?.text.substring(0, 80) || '';
-  const profilSel = document.getElementById('profil');
-  const tag = profilSel.options[profilSel.selectedIndex].text.split('—')[0].trim();
-
-  savedStories.unshift({ preview, slides: [...currentSlides], tag, n: sessionCount });
-  if (savedStories.length > 8) savedStories.pop();
-  renderHistory();
-
-  const btn = document.getElementById('btn-save');
-  btn.textContent = '✓ Sauvegardé';
-  btn.classList.add('ok');
-  setTimeout(() => { btn.textContent = '🔖 Sauvegarder'; btn.classList.remove('ok'); }, 1800);
-}
-
-function renderHistory() {
-  const card = document.getElementById('history-card');
-  const list = document.getElementById('history-list');
-  if (!savedStories.length) { card.classList.remove('show'); return; }
-  card.classList.add('show');
-  list.innerHTML = savedStories.map((h, i) => `
-    <div class="hist-item" onclick="loadHistory(${i})" tabindex="0" onkeydown="if(event.key==='Enter')loadHistory(${i})">
-      <div class="hist-num">${h.n}</div>
-      <div class="hist-text">
-        <span style="font-size:9px;color:var(--gold);font-weight:700;letter-spacing:.06em;text-transform:uppercase;">${esc(h.tag)}</span><br>
-        ${esc(h.preview)}…
-      </div>
-      <div class="hist-arrow">›</div>
-    </div>`).join('');
-}
-
-function loadHistory(i) {
-  const h = savedStories[i];
-  if (!h) return;
-  currentSlides = h.slides;
-  renderResult(null, null, null, null);
-}
-
-function clearHistory() {
-  savedStories = [];
-  renderHistory();
-}
-
-// ══════════════════════════════════════════════════════════════════
-//  UTILS
-// ══════════════════════════════════════════════════════════════════
-
-function esc(str) {
-  return (str || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-}
 </script>
+
 </body>
 </html>
